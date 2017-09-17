@@ -1,0 +1,62 @@
+<template>
+    <div class="container bet">
+        <lottery-top></lottery-top>
+        <div class="betContent fix">
+            <bet6-h-c></bet6-h-c>
+            <lottery-right></lottery-right>
+        </div>
+    </div>
+</template>
+<script>
+import LotteryTop from '../../components/LotteryTop.vue';
+import LotteryRight from '../../components/LotteryRight.vue';
+import Bet6HC from '../../components/Bet6HC.vue';
+export default {
+    components: {
+        LotteryTop,
+        LotteryRight,
+        Bet6HC
+    },
+    data() {
+        return {
+            caiName: {
+                SSC: "时时彩",
+                XYNC: "幸运农场",
+                PK10: "北京PK10",
+                KL8: "北京快乐8",
+                PL35: "排列3",
+                FC3D: "福彩3D",
+                SYX5: "11选5",
+                K3: "快3",
+                "6HC": "六合彩"
+            },
+            LotterArr: {
+                K3: [1407, "L_K3"],
+                SSC: [1e3, "L_SSC"],
+                SYX5: [1100, "L_SYX5"],
+                PK10: [1303, "L_PK10"],
+                KL8: [1302, "L_KL8"],
+                FC3D: [1201, "L_FC3D"],
+                PL35: [1202, "L_PL35"],
+                "6HC": [1301, "L_6HC"]
+            }
+        }
+    },
+    methods: {
+
+    },
+    mounted() {
+        this.$NProgress.done();
+    }
+}
+</script>
+<style lang="scss" scoped>
+@import url('../../assets/style/common/normalize.css');
+@import url('../../assets/style/common/reset.css');
+@import url('../../assets/style/lottery/lottery.scss');
+.betContent {
+    border-top: 1px solid #ddd;
+}
+</style>
+
+

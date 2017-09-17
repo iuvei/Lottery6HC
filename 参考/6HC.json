@@ -1,0 +1,51 @@
+// LocalStorage
+
+// UserName
+
+web2017
+
+// UserUpGradeBonus
+
+{"State":1,"GradeBonus":"1","Grade":2}
+
+// NoticeData
+
+
+[{"ID":1709,"Title":"入款账户 （陈益锋）停用通知！","Add_Time":"2017-09-05 16:31:59"},{"ID":1686,"Title":"充值通知！","Add_Time":"2017-09-03 15:09:58"}]
+
+// UserPhoto
+
+
+9A9C9E1A719CE536.jpg
+
+// AgentRebate
+
+
+[{"LotteryType":"SSC","MaxPoint":"7.3","MinPoint":"0.0","Point":"7.3"},{"LotteryType":"K3","MaxPoint":"6.0","MinPoint":"0.0","Point":"6.0"},{"LotteryType":"SYX5","MaxPoint":"4.9","MinPoint":"0.0","Point":"4.9"},{"LotteryType":"FC3D","MaxPoint":"4.9","MinPoint":"0.0","Point":"4.9"},{"LotteryType":"PL35","MaxPoint":"4.9","MinPoint":"0.0","Point":"4.9"},{"LotteryType":"KL8","MaxPoint":"4.9","MinPoint":"0.0","Point":"4.9"},{"LotteryType":"PK10","MaxPoint":"7.3","MinPoint":"0.0","Point":"7.3"},{"LotteryType":"6HC","MaxPoint":"10.0","MinPoint":"0.0","Point":"10.0"}]
+
+// CacheData
+
+{"FooterConfig":"b6cd","SiteConfig":"b820","HallBanner":"8c9c","BannerList":"e8fa","ActivityConfig":"d751","DefaultPhotoList":"9942","RewardData":"7960","GradeList":"759a","LotteryList":"9540","LotteryHot":"2fc6","LotteryConfig":"f68f","SysActivity":"2948","NoticeData":"ba99"}
+
+// Difftime
+
+-158003
+
+// Rebate6HC
+
+
+{"Rebate":"10.00%","Odds":[{"PlayCode":"A01","Bonus":"48.51"},{"PlayCode":"A02","Bonus":"1.980,3.960,1.980,1.980,1.901,1.980,2.795,2.970"},{"PlayCode":"B01","Bonus":"8.00"},{"PlayCode":"B03","Bonus":"47.04"},{"PlayCode":"B04","Bonus":"47.04"},{"PlayCode":"B05","Bonus":"47.04"},{"PlayCode":"B06","Bonus":"47.04"},{"PlayCode":"B07","Bonus":"47.04"},{"PlayCode":"B08","Bonus":"47.04"},{"PlayCode":"B09","Bonus":"1.980,3.960,1.980,1.980,1.901,1.980,2.795,2.970"},{"PlayCode":"B10","Bonus":"1.980,3.960,1.980,1.980,1.901,1.980,2.795,2.970"},{"PlayCode":"B11","Bonus":"1.980,3.960,1.980,1.980,1.901,1.980,2.795,2.970"},{"PlayCode":"B12","Bonus":"1.980,3.960,1.980,1.980,1.901,1.980,2.795,2.970"},{"PlayCode":"B13","Bonus":"1.980,3.960,1.980,1.980,1.901,1.980,2.795,2.970"},{"PlayCode":"B14","Bonus":"1.980,3.960,1.980,1.980,1.901,1.980,2.795,2.970"},{"PlayCode":"C01","Bonus":"663.26"},{"PlayCode":"C02","Bonus":"20.88,109.62"},{"PlayCode":"C03","Bonus":"66.64"},{"PlayCode":"C04","Bonus":"53.31,33.32"},{"PlayCode":"C05","Bonus":"160.72"},{"PlayCode":"D01","Bonus":"6.650,4.655,5.818,5.172,5.172,5.818,5.818,6.650,5.818,6.650,6.650,5.818,5.172,6.650,5.818,5.818,5.818,5.818"},{"PlayCode":"E01","Bonus":"9.31,11.63"},{"PlayCode":"E02","Bonus":"1.715,2.013"},{"PlayCode":"E03","Bonus":"3.62,4.28"},{"PlayCode":"E04","Bonus":"9.17,10.93"},{"PlayCode":"E05","Bonus":"26.57,31.97"},{"PlayCode":"F01","Bonus":"5.17,4.65,11.63,9.31"},{"PlayCode":"F02","Bonus":"3.62,3.06"},{"PlayCode":"F03","Bonus":"7.69,6.45"},{"PlayCode":"F04","Bonus":"18.36,15.28"},{"PlayCode":"G01","Bonus":"2.12"},{"PlayCode":"G02","Bonus":"2.53"},{"PlayCode":"G03","Bonus":"3.02"},{"PlayCode":"G04","Bonus":"3.62"},{"PlayCode":"G05","Bonus":"4.37"},{"PlayCode":"G06","Bonus":"5.30"}]}
+
+// lotteryPlan1301
+
+{"Month":9,"BeforeIssue":"102","Schedule":"2,5,7,9,12,14,17,19,21,23,26,28,30","NextFirst":"2"}
+
+
+
+
+// SessionStorage
+
+
+// needVerify
+
+1

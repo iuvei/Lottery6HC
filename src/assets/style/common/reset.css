@@ -1,0 +1,114 @@
+@font-face {
+    font-family: iconfont;
+    src: url("//at.alicdn.com/t/font_380332_8l0intui8mxfajor.eot");
+    src: url("//at.alicdn.com/t/font_380332_8l0intui8mxfajor.eot?#iefix") format("embedded-opentype"),url("//at.alicdn.com/t/font_380332_8l0intui8mxfajor.woff") format("woff"),url("//at.alicdn.com/t/font_380332_8l0intui8mxfajor.ttf") format("truetype"),url("//at.alicdn.com/t/font_380332_8l0intui8mxfajor.svg#iconfont") format("svg")
+}
+.iconfont {
+    font-family: iconfont
+}
+html {
+    box-sizing: border-box;
+}
+
+*,:after,:before {
+    box-sizing: inherit
+}
+
+
+textarea {
+    resize: none
+}
+
+li,ul {
+    margin: 0;
+    padding: 0
+}
+
+ul {
+    list-style: none
+}
+
+a {
+    text-decoration: none;
+    cursor: pointer
+}
+
+a,body {
+    color: #666
+}
+
+em,i {
+    font-style: normal
+}
+
+ins {
+    text-decoration: none
+}
+
+.iconfont {
+    font-family: iconfont
+}
+
+.textCenter {
+    text-align: center
+}
+
+.flr {
+    float: right!important
+}
+input {
+    border-radius: 2px
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0
+}
+
+body {
+    font: 12px/2em Microsoft YaHei,SimSun,Arial;
+}
+li {
+    list-style: none
+}
+
+a {
+    text-decoration: none
+}
+.banner .hd ul:after, .bonusTable ul:after, .fix:after, .safeList li:after, .winnerList li:after {
+    clear: both;
+    overflow: hidden;
+}
+.banner .hd ul:after, .banner .hd ul:before, .bonusTable ul:after, .bonusTable ul:before, .fix:after, .fix:before, .safeList li:after, .safeList li:before, .winnerList li:after, .winnerList li:before {
+    content: "";
+    display: table;
+}
+
+
+/* user */
+
+.L_6HC:before, .L_FC3D:before, .L_K3:before, .L_KL8:before, .L_more:before, .L_PK10:before, .L_PL35:before, .L_SSC:before, .L_SYX5:before, .L_XYNC:before {
+    content: "\E65C";
+    display: block;
+    width: 0;
+    height: 0;
+    color: #fff;
+    font-size: 56px;
+    text-shadow: 0 4px 5px rgba(224,21,6,.42);
+    transform: translate(2px);
+    position: relative;
+    z-index: 1;
+}
+.L_6HC:after, .L_FC3D:after, .L_K3:after, .L_KL8:after, .L_PK10:after, .L_PL35:after, .L_SSC:after, .L_SYX5:after, .L_XYNC:after {
+    display: inline-block;
+    position: relative;
+    z-index: 2;
+    text-shadow: 0 1px 1px hsla(0,0%,100%,.55);
+}
+.L_6HC:before {
+    text-shadow: 0 0.07em 0.1em rgba(56,179,158,.42);
+}
+.L_6HC:after {
+    content: "\E65F";
+    color: #07b39e;
+}

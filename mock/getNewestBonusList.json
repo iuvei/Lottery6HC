@@ -1,0 +1,194 @@
+{
+    "Code": 1,
+    "StrCode": "数据获取成功",
+    "DataCount": 0,
+    "BackUrl": null,
+    "BackData": {
+        "NewestBonusList": [
+            {
+                "Id": 141958856,
+                "UserId": 136273,
+                "UserPhoto": "C362F2B1E0EA389A.jpg",
+                "UserName": "15***8",
+                "Nickname": "",
+                "LotteryName": "北京快乐8",
+                "Bonus": "0.05"
+            },
+            {
+                "Id": 141958855,
+                "UserId": 432086,
+                "UserPhoto": "EED50A5799E76E58.jpg",
+                "UserName": "18***9",
+                "Nickname": "兵哥哥",
+                "LotteryName": "北京快乐8",
+                "Bonus": "0.94"
+            },
+            {
+                "Id": 141958854,
+                "UserId": 752738,
+                "UserPhoto": "C7BB5088540C8040.jpg",
+                "UserName": "a2***9",
+                "Nickname": "搏一搏",
+                "LotteryName": "北京快乐8",
+                "Bonus": "3.05"
+            },
+            {
+                "Id": 141958853,
+                "UserId": 824557,
+                "UserPhoto": "1B6A214FF62BD91F.jpg",
+                "UserName": "25***2",
+                "Nickname": "",
+                "LotteryName": "北京快乐8",
+                "Bonus": "1.52"
+            },
+            {
+                "Id": 141958852,
+                "UserId": 899964,
+                "UserPhoto": "5C5A53823438F2CD.jpg",
+                "UserName": "wo***3",
+                "Nickname": "赌神在哈哈",
+                "LotteryName": "北京快乐8",
+                "Bonus": "0.77"
+            },
+            {
+                "Id": 141958851,
+                "UserId": 898357,
+                "UserPhoto": "F0E57CF931E45118.jpg",
+                "UserName": "13***9",
+                "Nickname": "",
+                "LotteryName": "北京快乐8",
+                "Bonus": "7.2"
+            },
+            {
+                "Id": 141958850,
+                "UserId": 898357,
+                "UserPhoto": "F0E57CF931E45118.jpg",
+                "UserName": "13***9",
+                "Nickname": "",
+                "LotteryName": "北京快乐8",
+                "Bonus": "7.2"
+            },
+            {
+                "Id": 141958849,
+                "UserId": 878237,
+                "UserPhoto": "6F1A99A3D02A6DEC.jpg",
+                "UserName": "zf***6",
+                "Nickname": "财神敲门",
+                "LotteryName": "北京快乐8",
+                "Bonus": "7.2"
+            },
+            {
+                "Id": 141958848,
+                "UserId": 878237,
+                "UserPhoto": "6F1A99A3D02A6DEC.jpg",
+                "UserName": "zf***6",
+                "Nickname": "财神敲门",
+                "LotteryName": "北京快乐8",
+                "Bonus": "7.2"
+            },
+            {
+                "Id": 141958847,
+                "UserId": 878237,
+                "UserPhoto": "6F1A99A3D02A6DEC.jpg",
+                "UserName": "zf***6",
+                "Nickname": "财神敲门",
+                "LotteryName": "北京快乐8",
+                "Bonus": "7.2"
+            },
+            {
+                "Id": 141958846,
+                "UserId": 836790,
+                "UserPhoto": "6F1A99A3D02A6DEC.jpg",
+                "UserName": "wo***4",
+                "Nickname": "",
+                "LotteryName": "大发时时彩",
+                "Bonus": "137.2"
+            },
+            {
+                "Id": 141958845,
+                "UserId": 862800,
+                "UserPhoto": "C362F2B1E0EA389A.jpg",
+                "UserName": "yo***3",
+                "Nickname": "",
+                "LotteryName": "大发时时彩",
+                "Bonus": "1.96"
+            },
+            {
+                "Id": 141958844,
+                "UserId": 894058,
+                "UserPhoto": "3578E1EB410B49C7.jpg",
+                "UserName": "at***t",
+                "Nickname": "",
+                "LotteryName": "大发时时彩",
+                "Bonus": "1960"
+            },
+            {
+                "Id": 141958843,
+                "UserId": 626881,
+                "UserPhoto": "F0E57CF931E45118.jpg",
+                "UserName": "cy***0",
+                "Nickname": "",
+                "LotteryName": "大发时时彩",
+                "Bonus": "9.36"
+            },
+            {
+                "Id": 141958842,
+                "UserId": 84546,
+                "UserPhoto": "C362F2B1E0EA389A.jpg",
+                "UserName": "13***5",
+                "Nickname": "",
+                "LotteryName": "大发时时彩",
+                "Bonus": "15680"
+            },
+            {
+                "Id": 141958841,
+                "UserId": 503494,
+                "UserPhoto": "C362F2B1E0EA389A.jpg",
+                "UserName": "ya***5",
+                "Nickname": "杨先生",
+                "LotteryName": "大发时时彩",
+                "Bonus": "56"
+            },
+            {
+                "Id": 141958840,
+                "UserId": 56354,
+                "UserPhoto": "C362F2B1E0EA389A.jpg",
+                "UserName": "55***6",
+                "Nickname": "",
+                "LotteryName": "大发时时彩",
+                "Bonus": "130.66"
+            },
+            {
+                "Id": 141958839,
+                "UserId": 86040,
+                "UserPhoto": "EF01C8BED7B70053.jpg",
+                "UserName": "ji***1",
+                "Nickname": "璐璐",
+                "LotteryName": "大发时时彩",
+                "Bonus": "1306.64"
+            },
+            {
+                "Id": 141958838,
+                "UserId": 72359,
+                "UserPhoto": "F0E57CF931E45118.jpg",
+                "UserName": "lu***8",
+                "Nickname": "佐罗",
+                "LotteryName": "大发时时彩",
+                "Bonus": "325.33"
+            },
+            {
+                "Id": 141958837,
+                "UserId": 757945,
+                "UserPhoto": "1B6A214FF62BD91F.jpg",
+                "UserName": "yy***5",
+                "Nickname": "",
+                "LotteryName": "大发时时彩",
+                "Bonus": "5.82"
+            }
+        ]
+    },
+    "Data": null,
+    "CacheData": null,
+    "OpenType": 0,
+    "Style": null
+}
