@@ -72,7 +72,7 @@
                     <div id="bd">
                         <div class="tempWrap" style="overflow: hidden; height: 510px;">
                             <ul class="winnerList">
-                                <li v-for="(item, index) in newestBonusList" :key="index">
+                                <li v-for="(item, index) in newestBonusList" :key="index" data-card :card-id="'cardA' + index">
                                     <img :src="'//imagess-google.com/system/common/headimg/'+ item.UserPhoto" alt="">
                                     <p>{{ item.Nickname !== '' ? item.Nickname : item.UserName }} 大发时时彩<br/>喜中
                                         <span>￥{{ item.Bonus }}</span>
@@ -87,7 +87,7 @@
                         <tr>
                             <th colspan="2">昨日累计奖金排行榜</th>
                         </tr>
-                        <tr v-for="(item, index) in yesterdayBonusList" :key="index">
+                        <tr v-for="(item, index) in yesterdayBonusList" :key="index" data-card :card-id="'cardB' + index">
                             <td>
                                 <img :src="'//imagess-google.com/system/common/headimg/' + item.UserPhoto" alt="">
                                 <p>
@@ -104,7 +104,36 @@
                 </div>
             </div>
         </div>
-        <div class="cardBox"></div>
+        <!-- 卡片 -->
+        <div class="cardBox">
+            <div class="card fix" v-if="cardBoxFlag">
+                <div class="cardLeft">
+                    <img :src="'//imagess-google.com/system/common/headimg/' + userCardAllInfo.userCardInfo.UserPhoto" alt="" width="80" height="80">
+                    <h6>{{ userCardAllInfo.userCardInfo.NickName ? userCardAllInfo.userCardInfo.NickName : '昵称未设置' }}</h6>
+                </div>
+                <div class="cardInfo">
+                    <ul>
+                        <li>性别：{{ userCardAllInfo.userCardInfo.Sex | SexFilter }}</li>
+                        <li>账号：{{ userCardAllInfo.userCardInfo.UserName }}</li>
+                        <li>等级：{{ userCardAllInfo.userCardInfo.GroupTitle }}</li>
+                        <li>头衔：{{ userCardAllInfo.userCardInfo.Rank }}</li>
+                        <li>累计中奖：{{ userCardAllInfo.userCardInfo.Award }}</li>
+                    </ul>
+                </div>
+                <div class="cardIcon fix">
+                    <li v-for="(item, index) in userCardAllInfo.hueLotteryTypeList" :key="index">
+                        <a href="###">
+                            <i class="iconfont" :class="'L_' + item"></i>
+                        </a>
+                    </li>
+                    <li v-for="(item, index) in userCardAllInfo.LotteryTypeList" :key="index">
+                        <a href="###">
+                            <i class="iconfont noActive" :class="'L_' + item"></i>
+                        </a>
+                    </li>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 <script>
@@ -120,7 +149,13 @@ export default {
             LotteryOpenList: [],
             mybetContentList: [{}, {}, {}, {}, {}],
             newestBonusList: [],
-            yesterdayBonusList: []
+            yesterdayBonusList: [],
+            userCardAllInfo: {
+                userCardInfo: {},
+                LotteryTypeList: [],
+                hueLotteryTypeList: []
+            },
+            cardBoxFlag: false
         }
     },
     filters: {
@@ -132,6 +167,20 @@ export default {
             arr[0] = addZero(arr[0]);
             res = arr[2] + '.' + arr[0] + '.' + arr[1];
             return res;
+        },
+        SexFilter(value) {
+            switch (value) {
+                case 0:
+                    return '女';
+                    break;
+                case 1:
+                    return '男';
+                    break;
+            
+                default:
+                return '保密'
+                    break;
+            }
         }
     },
     methods: {
@@ -148,6 +197,7 @@ export default {
             $('.winningList h3:contains("昨日奖金榜")')[0].className = '';
             $('.winningList h3:contains("中奖信息")')[0].className = 'notSelect';
         },
+        // 昨日奖金榜
         loadData() {
             this.$axios({
                 method: 'GET',
@@ -158,15 +208,15 @@ export default {
                 alert('数据请求错误');
             });
         },
-        // 昨日奖金榜
-        getInitData() {
+        // 今日开奖
+        todayLottery() {
             this.$axios({
                 method: 'GET',
-                url: '/mock/getNewestBonusList.json',
+                url: '/mock/getLotteryOpenList.json',
             }).then(res => {
-                this.newestBonusList = resData;
+                this.LotteryOpenList = res.data.BackData;
             }).catch(err => {
-                alert('获取昨日奖金榜失败');
+                alert('获取今日开奖列表失败');
             });
         },
         // 获取最新的奖金列表
@@ -195,7 +245,6 @@ export default {
             var animationFunc = function() {
                 t = setInterval(() => {
                     if (parseInt(limit) > parseInt(topLimit)) {
-                        console.log('重置');
                         obj.style.top = '0px';
                         limit = 51;
                     }
@@ -210,9 +259,69 @@ export default {
             obj.onmouseleave = function() {
                 animationFunc();
             }
+        },
+        getCard(cardID, fn) {
+            var f = sessionStorage.getItem(cardID);
+            if(f !== null) {
+                this.userCardAllInfo = JSON.parse(f);
+                console.log('有缓存的啦, 小样~',this.userCardAllInfo);
+                fn();
+                return;
+            }
+            this.$axios({
+                method: 'GET',
+                url: '/mock/getCard.json'
+            }).then(res => {
+                var allTypeList = ["SSC", "XYNC", "PK10", "KL8", "PL35", "FC3D", "SYX5", "K3"];
+                this.userCardAllInfo.userCardInfo = res.data.BackData;
+                this.userCardAllInfo.hueLotteryTypeList = res.data.BackData.LotteryType.split(',');
+                allTypeList.map((i,index) => {
+                    var r = RegExp(i);  
+                    var flag = r.test(res.data.BackData.LotteryType);
+                    if(flag) {
+                        allTypeList.splice(index, 1);
+                    }
+                });
+                setTimeout(() => {
+                    this.userCardAllInfo.LotteryTypeList = allTypeList;
+                    this.cardBoxFlag = true;
+                    sessionStorage.setItem(cardID, JSON.stringify(this.userCardAllInfo));
+                    fn();
+                },0);
+            }).catch(err => {
+                alert('获取用户卡片信息失败');
+            })
+        },
+        $jqAction() {
+            var _this = this;
+            $('#Ranking').on('mouseenter', '[data-card]', function(e) {
+                var self = this;
+                var cardID = $(self).attr('card-id');
+                _this.getCard(cardID,function() {
+                    $('.betRight .cardBox').show();
+                    var top = $(self).offset().top-$(document).scrollTop();
+                    var left = $(self).offset().left-$(document).scrollLeft() - 300;
+                    $('.betRight .cardBox').css({
+                        top: top + 'px',
+                        left: left + 'px'
+                    });
+                });
+                
+            });
+            $('#app').on('mouseleave', '#Ranking', function(e) {
+                $('.betRight .cardBox').hide();
+            });
+            $('#app').on('mouseenter', '.betRight .cardBox', function(e) {
+                $(this).show();
+            });
+            $('#app').on('mouseleave', '.betRight .cardBox', function(e) {
+                $(this).hide();
+            });
         }
     },
     mounted() {
+        this.$jqAction();
+        this.todayLottery();
         this.loadData();
         this.getNewestBonusList();
     }
@@ -446,6 +555,74 @@ export default {
     }
     #moneyList {
         display: none;
+    }
+}
+
+.cardBox {
+    top: 0;
+    position: fixed;
+    z-index: 119;
+    .card {
+        color: #666;
+        width: 300px;
+        height: 202px;
+        background: #fff;
+        border: 1px solid #d9d9d9;
+        box-shadow: 4px 4px 8px rgba(0, 0, 0, .3);
+        font: 14px/1.8 Microsoft YaHei, SimSun, Arial;
+        box-sizing: border-box;
+    }
+    .cardLeft,
+    .cardInfo {
+        float: left;
+        height: 150px;
+    }
+    .cardLeft {
+        width: 135px;
+        img {
+            border-radius: 50%;
+            margin-top: 20px;
+            margin-left: 28px;
+        }
+        h6 {
+            margin: 5px 0;
+            color: #1d93d8;
+            font-weight: 100;
+            text-align: center;
+            font-size: 14px;
+        }
+    }
+    .cardInfo {
+        width: 160px;
+        font-size: 14px;
+        padding-top: 15px;
+    }
+    .cardIcon {
+        clear: both;
+        height: 50px;
+        background: #f5f5f5;
+        padding: 0 2%;
+        li {
+            float: left;
+            width: 12.5%;
+            i {
+                font-size: 25px;
+                display: block;
+                text-align: center;
+                line-height: 55px;
+                &:before {
+                    font-size: 23px;
+                    transform: translate(8px);
+                    color: #fff!important;
+                }
+            }
+            .noActive:before {
+                text-shadow: 0 4px 5px hsla(0, 0%, 60%, .42)!important;
+            }
+            .noActive:after {
+                color: #999!important;
+            }
+        }
     }
 }
 </style>

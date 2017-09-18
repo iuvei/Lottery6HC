@@ -85,9 +85,9 @@ a {
 }
 
 
-/* user */
+/* user cardBox */
 
-.L_6HC:before, .L_FC3D:before, .L_K3:before, .L_KL8:before, .L_more:before, .L_PK10:before, .L_PL35:before, .L_SSC:before, .L_SYX5:before, .L_XYNC:before {
+.L_6HC:before,.L_FC3D:before,.L_K3:before,.L_KL8:before,.L_more:before,.L_PK10:before,.L_PL35:before,.L_SSC:before,.L_SYX5:before,.L_XYNC:before {
     content: "\E65C";
     display: block;
     width: 0;
@@ -97,18 +97,105 @@ a {
     text-shadow: 0 4px 5px rgba(224,21,6,.42);
     transform: translate(2px);
     position: relative;
-    z-index: 1;
+    z-index: 1
 }
-.L_6HC:after, .L_FC3D:after, .L_K3:after, .L_KL8:after, .L_PK10:after, .L_PL35:after, .L_SSC:after, .L_SYX5:after, .L_XYNC:after {
+
+.L_6HC:after,.L_FC3D:after,.L_K3:after,.L_KL8:after,.L_PK10:after,.L_PL35:after,.L_SSC:after,.L_SYX5:after,.L_XYNC:after {
     display: inline-block;
     position: relative;
     z-index: 2;
-    text-shadow: 0 1px 1px hsla(0,0%,100%,.55);
+    text-shadow: 0 1px 1px hsla(0,0%,100%,.55)
 }
-.L_6HC:before {
-    text-shadow: 0 0.07em 0.1em rgba(56,179,158,.42);
+
+.L_K3:after {
+    content: "\E657";
+    color: #e41404
 }
+
+.L_K3:before {
+    text-shadow: 0 4px 5px rgba(228,20,4,.42)
+}
+
+.L_XYNC:after {
+    content: "\E63B";
+    color: #094
+}
+
+.L_XYNC:before {
+    text-shadow: 0 4px 5px rgba(0,153,68,.42)
+}
+
+.L_PK10:after {
+    content: "\E65D";
+    color: #f22751
+}
+
+.L_PK10:before {
+    text-shadow: 0 4px 5px rgba(242,39,81,.42)
+}
+
+.L_KL8:after {
+    content: "\E65E";
+    color: #fc5826
+}
+
+.L_KL8:before {
+    text-shadow: 0 4px 5px rgba(252,88,38,.42)
+}
+
+.L_PL35:after {
+    content: "\E65A";
+    color: #38b366
+}
+
+.L_PL35:before {
+    text-shadow: 0 4px 5px rgba(56,179,102,.42)
+}
+
+.L_FC3D:after {
+    content: "\E658";
+    color: #00b7ee
+}
+
+.L_FC3D:before {
+    text-shadow: 0 4px 5px rgba(0,183,238,.42)
+}
+
+.L_SSC:after {
+    content: "\E65B";
+    color: #f96e00
+}
+
+.L_SSC:before {
+    text-shadow: 0 4px 5px rgba(249,110,0,.42)
+}
+
+.L_SYX5:after {
+    content: "\E659";
+    color: #218ddd
+}
+
+.L_SYX5:before {
+    text-shadow: 0 4px 5px rgba(33,141,221,.42)
+}
+
+.L_more:before {
+    content: "\E650";
+    color: #fa7e00
+}
+
+.L_more:after {
+    text-shadow: 0 .07em .1em rgba(250,126,0,.42)
+}
+
 .L_6HC:after {
     content: "\E65F";
-    color: #07b39e;
+    color: #07b39e
 }
+
+.L_6HC:before {
+    text-shadow: 0 .07em .1em rgba(56,179,158,.42)
+}
+
+
+

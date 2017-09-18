@@ -1,0 +1,20 @@
+{
+    "Code": 1,
+    "StrCode": "数据获取成功",
+    "DataCount": 0,
+    "BackUrl": null,
+    "BackData": {
+        "UserName": "13********4",
+        "NickName": "周建龙",
+        "UserPhoto": "9A9C9E1A719CE536.jpg",
+        "GroupTitle": "VIP4",
+        "Rank": "通判",
+        "Sex": "1",
+        "Award": "63242.04",
+        "LotteryType": "SSC,PK10,K3"
+    },
+    "Data": null,
+    "CacheData": null,
+    "OpenType": 0,
+    "Style": null
+}
