@@ -24,18 +24,22 @@ export default {
 	height: 100%;
 	background: #e6e6e6;
 }
+
 .header {
 	height: 40px;
 	line-height: 40px;
 	margin-bottom: 15px;
+	text-align: center;
 }
+
 .footer {
 	width: 100%;
-    overflow: hidden;
-    background: #fff;
+	overflow: hidden;
+	background: #fff;
 	box-sizing: border-box;
 	margin-top: 10px;
 	height: 260px;
+	text-align: center;
 }
 </style>
 
