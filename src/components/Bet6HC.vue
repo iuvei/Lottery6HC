@@ -20,32 +20,23 @@
                         赔率
                         <ins>{{ oddCount() }}</ins>
                     </span>
-                    <div class="hoverContent">
+                    <div class="hoverMoney" v-if="nowItem.lottery.bonusMode == 1 ? parseInt(nowItem.lottery.bonusMode) : false">奖金奖励</div>
+                    <div class="hoverContent" v-if="nowItem.lottery.bonusMode == 1 ? parseInt(nowItem.lottery.bonusMode) : false">
                         <table>
                             <tr>
                                 <th>猜中</th>
                                 <th>单注最高奖金</th>
                             </tr>
+                            <tr v-for="(item, index) in nowItem.lottery.odd" :key="index">
+                                <td>{{ item.name }}</td>
+                                <td>{{ (Math.floor(item.odd[0] * 100) / 100).toFixed(2) }}</td>
+                            </tr>
                         </table>
                     </div>
                 </div>
             </div>
-            <!-- 选非号码 -->
-            <div class="checkNumber normalbox" :class="nowItem.mode">
-                <ul class="fix">
-                    <li v-for="(item, index) in nowItem.lottery.data" :key="index">
-                        <a class="ClickShade">
-                            {{ item.name }}
-                            <div class="bet-item-eg-box fix">
-                                <span class="bet-item-eg" v-for="(subItem, subIndex) in item.eg" :key="subIndex">{{ subItem }}</span>
-                            </div>
-                        </a>
-                        <span class="bet-item-rate">{{ (item.odd !== undefined) ? "赔率" + (Math.floor(item.odd[0] * 100) / 100) : ''}}</span>
-                    </li>
-                </ul>
-            </div>
             <!-- 选号码 -->
-            <div class="sscCheckNumber colorbox" v-if="lotteryNumber">
+            <div class="sscCheckNumber colorbox" v-if="!parseInt(nowItem.lottery.mode)">
                 <ul class="fix">
                     <li>
                         <div class="fix selectMini">
@@ -59,6 +50,20 @@
                                 </a>
                             </div>
                         </div>
+                    </li>
+                </ul>
+            </div>
+            <!-- 选非号码 -->
+            <div class="checkNumber normalbox" :class="nowItem.mode" v-else>
+                <ul class="fix">
+                    <li v-for="(item, index) in nowItem.lottery.data" :key="index">
+                        <a class="ClickShade">
+                            {{ item.name }}
+                            <div class="bet-item-eg-box fix">
+                                <span class="bet-item-eg" v-for="(subItem, subIndex) in item.eg" :key="subIndex">{{ subItem }}</span>
+                            </div>
+                        </a>
+                        <span class="bet-item-rate">{{ (item.odd !== undefined) ? "赔率" + (Math.floor(item.odd[0] * 100) / 100).toFixed(2) : ''}}</span>
                     </li>
                 </ul>
             </div>
@@ -545,7 +550,7 @@ export default {
                             bonusMode: '1',
                             flag: '1',
                             odd: [
-                                { name: "中二", odd: [663.264, 571.144] },
+                                { name: "中二", odd: [20.88053, 18.424] },
                                 { name: "中三", odd: [109.6228, 96.726] },
                             ],
                             data: allNum()
@@ -833,8 +838,6 @@ export default {
             oddShow: true,
             // number 型彩票
             lotteryNumber: false,
-            // 非 number 型彩票
-            lotteryNoNumber: true,
             oddNum: this.oddCount,
             tip: '从1-49中任选1个或多个号码，每个号码为一注，所选号码中包含特码，即为中奖。',
             red: ["01", "02", "07", "08", "12", "13", "18", "19", "23", "24", "29", "30", "34", "35", "40", "45", "46"],
@@ -893,11 +896,7 @@ export default {
             } else {
                 this.oddShow = true;
                 var res = (Math.floor(this.nowItem.lottery.odd[0] * 100)) / 100;
-                if(res === 8 || res === "8") {
-                    res = "8.00";
-                }else if(res === 5.3 || res === "5.3") {
-                    res = "5.30"
-                }
+                res = res.toFixed(2);
                 return res;
             }
         },
@@ -907,6 +906,19 @@ export default {
             setTimeout(() => {
                 $('.betFilterAnd div a').eq(0).addClass('curr');
             }, 0);
+            $('#app').on('mouseenter', '.hoverMoney',function() {
+                var top = $(this).offset().top-$(document).scrollTop();
+                var left = $(this).offset().left-$(document).scrollLeft() + 48;
+                $('.hoverContent').css({
+                        position: 'fixed',
+                        top: top + 'px',
+                        left: left + 'px'
+                    });
+                $('.hoverContent').show();
+            });
+            $('#app').on('mouseleave', '.hoverMoney',function() {
+                $('.hoverContent').hide();
+            });
         },
         // 二级菜单点击事件
         clickTab2(ele, inx) {
@@ -1328,5 +1340,16 @@ export default {
 .checkNumber.E05 ul li {
     width: 112px;
     margin: 8px 11px;
+}
+.hoverMoney, 
+.selectEg {
+    display: inline;
+    margin-left: 4px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: pointer;
+    color: #ff9831;
 }
 </style>
