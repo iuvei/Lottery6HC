@@ -4,19 +4,22 @@
             <!-- 头部 -->
             <div>
                 <ul class="betFilter">
-                    <li v-for="(item, index) in AllData" :key="index" @click="selectRender(index)">{{ index }}</li>
+                    <li v-for="(item, index) in AllData" :key="index" @click="selectRender(item,index)">{{ index }}</li>
                 </ul>
                 <ul class="betFilterAnd">
                     <li>
-                        <span >{{ nowGroupItem.groupTitle }}</span>
+                        <span>{{ nowGroupItem.groupTitle }}</span>
                         <div>
-                            <a v-for="(item, index) in nowGroupItem.BackData" :key="index">{{ item.name }}</a>
+                            <a v-for="(item, index) in nowGroupItem.BackData" :key="index" @click="clickTab2(item, index)">{{ item.name }}</a>
                         </div>
                     </li>
                 </ul>
                 <div class="betTip">
-                    <i class="iconfont"></i>{{ tip }} 赔率
-                    <ins>{{ odds() }}</ins>
+                    <i class="iconfont"></i>{{ tip }}
+                    <span v-if="oddShow">
+                        赔率
+                        <ins>{{ oddCount() }}</ins>
+                    </span>
                     <div class="hoverContent">
                         <table>
                             <tr>
@@ -27,8 +30,22 @@
                     </div>
                 </div>
             </div>
+            <!-- 选非号码 -->
+            <div class="checkNumber normalbox" :class="nowItem.mode">
+                <ul class="fix">
+                    <li v-for="(item, index) in nowItem.lottery.data" :key="index">
+                        <a class="ClickShade">
+                            {{ item.name }}
+                            <div class="bet-item-eg-box fix">
+                                <span class="bet-item-eg" v-for="(subItem, subIndex) in item.eg" :key="subIndex">{{ subItem }}</span>
+                            </div>
+                        </a>
+                        <span class="bet-item-rate">{{ (item.odd !== undefined) ? "赔率" + (Math.floor(item.odd[0] * 100) / 100) : ''}}</span>
+                    </li>
+                </ul>
+            </div>
             <!-- 选号码 -->
-            <div class="sscCheckNumber colorbox">
+            <div class="sscCheckNumber colorbox" v-if="lotteryNumber">
                 <ul class="fix">
                     <li>
                         <div class="fix selectMini">
@@ -37,7 +54,7 @@
                                 <i></i>
                             </span>
                             <div class="buyNumber fix">
-                                <a :class="item | color(red,blue,green)" v-for="(item, index) in allBall" :key="index" active="0">
+                                <a :class="item | color(red,blue,green)" v-for="(item, index) in nowItem.lottery.data" :key="index" active="0" @click="clickNumber(item,index)">
                                     <span>{{ item }}</span>
                                 </a>
                             </div>
@@ -96,6 +113,188 @@ function c(t) {
 function u(t) {
     return "开奖号码第" + t + "位，大于或等于25为大，小于或等于24为小；奇数为单，偶数为双；和单和双为两个数相加后得数的单双；尾大尾小即看个位数值，小于等于4为小，大于4为大；为49时为和，不算任何大小单双，但算波色。"
 }
+function allNum() {
+    return ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49"];
+}
+function mode1Data() {
+    return [
+        { name: '大', odd: [1.98042, 1.77625] },
+        { name: '小', odd: [1.98042, 1.77625] },
+        { name: '单', odd: [1.98042, 1.77625] },
+        { name: '双', odd: [1.98042, 1.77625] },
+        { name: '大单', odd: [3.96083, 3.5525] },
+        { name: '大双', odd: [3.96083, 3.5525] },
+        { name: '小单', odd: [3.96083, 3.5525] },
+        { name: '小双', odd: [3.96083, 3.5525] },
+        { name: '合大', odd: [1.98042, 1.77625] },
+        { name: '合小', odd: [1.98042, 1.77625] },
+        { name: '合单', odd: [1.98042, 1.77625] },
+        { name: '合双', odd: [1.98042, 1.77625] },
+        { name: '尾大', odd: [1.98042, 1.77625] },
+        { name: '尾小', odd: [1.98042, 1.77625] },
+        { name: '家禽', odd: [1.9012, 1.7052] },
+        { name: '野兽', odd: [1.98042, 1.77625] },
+        { name: '红波', odd: [2.79588, 2.50765] },
+        { name: '绿波', odd: [2.97063, 2.66438] },
+        { name: '蓝波', odd: [2.97063, 2.66438] }
+    ];
+}
+// 服务器获取时间
+function getServerYear() {
+    var s;
+    var url = '/mock/getServerTime.json';
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, false);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            s = JSON.parse(xhr.responseText);
+        } else {
+            s = false;
+            console.log(xhr.statusText);
+        }
+    };
+    xhr.send();
+    return s;
+}
+// 算本命年
+function animalData(params) {
+    var lottery = {};
+    lottery.mode = '1';
+    lottery.flag = '1';
+    var base = 2017;
+    // 特肖
+    var b_odd1 = [9.31, 8.33];
+    var no_b_odd1 = [11.6375, 10.4125];
+    // 一肖
+    var b_odd2 = [1.71512, 1.53458];
+    var no_b_odd2 = [2.01391, 1.80192];
+
+    var animal = ["鼠", "牛", "虎", "兔", "龙", "蛇", "马", "羊", "猴", "鸡", "狗", "猪"];
+    var benmingArr = ["鸡", "狗", "猪", "鼠", "牛", "虎", "兔", "龙", "蛇", "马", "羊", "猴"];
+    var egs = [
+        ["10", "22", "34", "46"],
+        ["09", "21", "33", "45"],
+        ["08", "20", "32", "44"],
+        ["07", "19", "31", "43"],
+        ["06", "18", "30", "42"],
+        ["05", "17", "29", "41"],
+        ["04", "16", "28", "40"],
+        ["03", "15", "27", "39"],
+        ["02", "14", "26", "38"],
+        ["01", "13", "25", "37", "49"],
+        ["12", "24", "36", "48"],
+        ["11", "23", "35", "47"],
+    ];
+    lottery.data = [];
+    var yearResponse = getServerYear();
+    if (yearResponse) {
+        var year = parseInt(new Date(parseInt(yearResponse.Data)).getFullYear());
+        var remainder = (year - 1) % 12 + 1;
+        var step = parseInt(remainder - base);
+        // remainder  0 
+        if (params === 'odd1' || params === 'odd2') {
+            for (let i = 0; i < animal.length; i++) {
+                var o = {};
+                o.name = animal[i];
+                var e = parseInt((i - step) % 12);
+                o.eg = egs[e];
+                if (animal[i] == benmingArr[remainder - 1]) {
+                    var od = params === 'odd1' ? b_odd1 : b_odd2;
+                    o.odd = od;
+                } else {
+                    var no_od = params === 'odd1' ? no_b_odd1 : no_b_odd2;
+                    o.odd = no_od;
+                }
+                lottery.data.push(o);
+            }
+            return lottery;
+        } else if (params === 'noOdd1' || params === 'noOdd2' || params === 'noOdd3') {
+            lottery.bonusMode = '1';
+            var r = {};
+            if (params === 'noOdd1') {
+                lottery.odd = [
+                    { name: "含本命", odd: [3.62659, 3.21448] },
+                    { name: "不含本命", odd: [4.28935, 3.80193] }
+                ];
+            } else if (params === 'noOdd2') {
+                lottery.odd = [
+                    { name: "含本命", odd: [9.17145, 8.12924] },
+                    { name: "不含本命", odd: [10.9363, 9.69354] }
+                ];
+            } else if (params === 'noOdd3') {
+                lottery.odd = [
+                    { name: "含本命", odd: [26.5703, 23.55095] },
+                    { name: "不含本命", odd: [31.97783, 28.34398] }
+                ];
+            }
+            for (let i = 0; i < animal.length; i++) {
+                var o = {};
+                o.name = animal[i];
+                var e = parseInt((i - step) % 12);
+                o.eg = egs[e];
+                lottery.data.push(o);
+            }
+            return lottery;
+        }
+    }
+}
+// 尾数算法
+function mantissa(n) {
+    var lottery = {};
+    lottery.mode = '1';
+    lottery.flag = '1';
+    if (n === 'odd') {
+        lottery.data = [
+            { name: '0头', odd: [5.17222, 4.62778] },
+            { name: '1头', odd: [4.655, 4.165] },
+            { name: '2头', odd: [4.655, 4.165] },
+            { name: '3头', odd: [4.655, 4.165] },
+            { name: '4头', odd: [4.655, 4.165] },
+            { name: '0尾', odd: [11.6375, 10.4125] },
+            { name: '1尾', odd: [9.31, 8.33] },
+            { name: '2尾', odd: [9.31, 8.33] },
+            { name: '3尾', odd: [9.31, 8.33] },
+            { name: '4尾', odd: [9.31, 8.33] },
+            { name: '5尾', odd: [9.31, 8.33] },
+            { name: '6尾', odd: [9.31, 8.33] },
+            { name: '7尾', odd: [9.31, 8.33] },
+            { name: '8尾', odd: [9.31, 8.33] },
+            { name: '9尾', odd: [9.31, 8.33] }
+        ];
+        return lottery;
+    } else {
+        lottery.bonusMode = '1';
+        lottery.data = [
+            { name: '0尾' },
+            { name: '1尾' },
+            { name: '2尾' },
+            { name: '3尾' },
+            { name: '4尾' },
+            { name: '5尾' },
+            { name: '6尾' },
+            { name: '7尾' },
+            { name: '8尾' },
+            { name: '9尾' }
+        ];
+        if (n === 'noOdd1') {
+            lottery.odd = [
+                { name: "含0尾", odd: [3.62659, 3.21448] },
+                { name: "不含0尾", odd: [3.06783, 2.71921] }
+            ];
+        } else if (n === 'noOdd2') {
+            lottery.odd = [
+                { name: "含0尾", odd: [7.69518, 6.82072] },
+                { name: "不含0尾", odd: [6.45975, 5.72569] }
+            ];
+        } else if (n === 'noOdd3') {
+            lottery.odd = [
+                { name: "含0尾", odd: [18.36832, 16.28101] },
+                { name: "不含0尾", odd: [15.28279, 13.54611] }
+            ];
+        }
+        return lottery;
+    }
+}
 export default {
     data() {
         return {
@@ -109,6 +308,12 @@ export default {
                         group: "特码",
                         subGroup: "特码",
                         tag: "特码直选",
+                        lottery: {
+                            // mode 0 代表 number 型彩票
+                            mode: '0',
+                            odd: [48.51, 43.61],
+                            data: allNum()
+                        },
                         eg: [],
                         default:
                         !0
@@ -120,7 +325,12 @@ export default {
                         group: "特码",
                         subGroup: "特码",
                         eg: ["01 02", "01 02 03 04 05 06 07 08 21 22 71 72 73 74 75 76 77 78 79 80"],
-                        tag: "特码两面"
+                        tag: "特码两面",
+                        lottery: {
+                            // mode 代表非 number 型数据
+                            mode: '1',
+                            data: mode1Data()
+                        }
                     }]
                 },
                 "正码": {
@@ -133,6 +343,11 @@ export default {
                         subGroup: "正码",
                         tag: "正码任选",
                         eg: [],
+                        lottery: {
+                            mode: '0',
+                            odd: [8.00333, 7.18667],
+                            data: allNum()
+                        },
                         default:
                         !0
                     },
@@ -143,7 +358,12 @@ export default {
                         group: "正码",
                         subGroup: "正码",
                         tag: "正１特",
-                        eg: []
+                        eg: [],
+                        lottery: {
+                            mode: '0',
+                            odd: [47.04, 42.14],
+                            data: allNum()
+                        },
                     },
                     {
                         name: "正１两面",
@@ -152,7 +372,11 @@ export default {
                         group: "正码",
                         subGroup: "正码",
                         tag: "正１两面",
-                        eg: []
+                        eg: [],
+                        lottery: {
+                            mode: '1',
+                            data: mode1Data()
+                        },
                     },
                     {
                         name: "正２特",
@@ -161,7 +385,12 @@ export default {
                         group: "正码",
                         subGroup: "正码",
                         tag: "正２特",
-                        eg: []
+                        eg: [],
+                        lottery: {
+                            mode: '0',
+                            odd: [47.04, 42.14],
+                            data: allNum()
+                        }
                     },
                     {
                         name: "正２两面",
@@ -170,7 +399,11 @@ export default {
                         group: "正码",
                         subGroup: "正码",
                         tag: "正２两面",
-                        eg: []
+                        eg: [],
+                        lottery: {
+                            mode: '1',
+                            data: mode1Data()
+                        },
                     },
                     {
                         name: "正３特",
@@ -179,7 +412,12 @@ export default {
                         group: "正码",
                         subGroup: "正码",
                         tag: "正３特",
-                        eg: []
+                        eg: [],
+                        lottery: {
+                            mode: '0',
+                            odd: [47.04, 42.14],
+                            data: allNum()
+                        }
                     },
                     {
                         name: "正３两面",
@@ -188,7 +426,11 @@ export default {
                         group: "正码",
                         subGroup: "正码",
                         tag: "正３两面",
-                        eg: []
+                        eg: [],
+                        lottery: {
+                            mode: '1',
+                            data: mode1Data()
+                        },
                     },
                     {
                         name: "正４特",
@@ -197,7 +439,12 @@ export default {
                         group: "正码",
                         subGroup: "正码",
                         tag: "正４特",
-                        eg: []
+                        eg: [],
+                        lottery: {
+                            mode: '0',
+                            odd: [47.04, 42.14],
+                            data: allNum()
+                        }
                     },
                     {
                         name: "正４两面",
@@ -206,7 +453,11 @@ export default {
                         group: "正码",
                         subGroup: "正码",
                         tag: "正４两面",
-                        eg: []
+                        eg: [],
+                        lottery: {
+                            mode: '1',
+                            data: mode1Data()
+                        },
                     },
                     {
                         name: "正５特",
@@ -215,7 +466,12 @@ export default {
                         group: "正码",
                         subGroup: "正码",
                         tag: "正５特",
-                        eg: []
+                        eg: [],
+                        lottery: {
+                            mode: '0',
+                            odd: [47.04, 42.14],
+                            data: allNum()
+                        }
                     },
                     {
                         name: "正５两面",
@@ -224,7 +480,11 @@ export default {
                         group: "正码",
                         subGroup: "正码",
                         tag: "正５两面",
-                        eg: []
+                        eg: [],
+                        lottery: {
+                            mode: '1',
+                            data: mode1Data()
+                        },
                     },
                     {
                         name: "正６特",
@@ -233,7 +493,12 @@ export default {
                         group: "正码",
                         subGroup: "正码",
                         tag: "正６特",
-                        eg: []
+                        eg: [],
+                        lottery: {
+                            mode: '0',
+                            odd: [47.04, 42.14],
+                            data: allNum()
+                        }
                     },
                     {
                         name: "正６两面",
@@ -242,7 +507,11 @@ export default {
                         group: "正码",
                         subGroup: "正码",
                         tag: "正６两面",
-                        eg: []
+                        eg: [],
+                        lottery: {
+                            mode: '1',
+                            data: mode1Data()
+                        },
                     }]
                 },
                 "连码": {
@@ -255,6 +524,11 @@ export default {
                         subGroup: "连码",
                         tag: "连码三全中",
                         eg: [],
+                        lottery: {
+                            mode: '0',
+                            odd: [663.264, 571.144],
+                            data: allNum()
+                        },
                         default:
                         !0
                     },
@@ -265,7 +539,17 @@ export default {
                         group: "连码",
                         subGroup: "连码",
                         tag: "连码三中二",
-                        eg: []
+                        eg: [],
+                        lottery: {
+                            mode: '0',
+                            bonusMode: '1',
+                            flag: '1',
+                            odd: [
+                                { name: "中二", odd: [663.264, 571.144] },
+                                { name: "中三", odd: [109.6228, 96.726] },
+                            ],
+                            data: allNum()
+                        },
                     },
                     {
                         name: "二全中",
@@ -274,7 +558,12 @@ export default {
                         group: "连码",
                         subGroup: "连码",
                         tag: "连码二全中",
-                        eg: []
+                        eg: [],
+                        lottery: {
+                            mode: '0',
+                            odd: [66.64, 58.8],
+                            data: allNum()
+                        },
                     },
                     {
                         name: "二中特",
@@ -283,7 +572,17 @@ export default {
                         group: "连码",
                         subGroup: "连码",
                         tag: "连码二中特",
-                        eg: []
+                        eg: [],
+                        lottery: {
+                            mode: '0',
+                            bonusMode: '1',
+                            flag: '1',
+                            odd: [
+                                { name: '二中', odd: [53.312, 47.04] },
+                                { name: '中特', odd: [33.32, 29.4] },
+                            ],
+                            data: allNum()
+                        },
                     },
                     {
                         name: "特串",
@@ -292,7 +591,12 @@ export default {
                         group: "连码",
                         subGroup: "连码",
                         tag: "连码特串",
-                        eg: []
+                        eg: [],
+                        lottery: {
+                            mode: '0',
+                            odd: [160.72, 141.12],
+                            data: allNum()
+                        },
                     }]
                 },
                 "半波": {
@@ -305,6 +609,29 @@ export default {
                         subGroup: "半波",
                         tag: "特码半波",
                         eg: [],
+                        lottery: {
+                            mode: '1',
+                            data: [
+                                { name: "红大", odd: [6.65, 5.95], eg: ["29", "30", "34", "35", "40", "45", "46"] },
+                                { name: "红小", odd: [4.655, 4.165], eg: ["01", "02", "07", "08", "12", "13", "18", "19", "23", "24"] },
+                                { name: "红单", odd: [5.81875, 5.20625], eg: ["01", "07", "13", "19", "23", "29", "35", "45"] },
+                                { name: "红双", odd: [5.17222, 4.62778], eg: ["02", "08", "12", "18", "24", "30", "34", "40", "46"] },
+                                { name: "红合单", odd: [5.17222, 4.62778], eg: ["01", "07", "12", "18", "23", "29", "30", "34", "45"] },
+                                { name: "红合双", odd: [5.81875, 5.20625], eg: ["02", "08", "13", "19", "24", "35", "40", "46"] },
+                                { name: "绿大", odd: [5.81875, 5.20625], eg: ["27", "28", "32", "33", "38", "39", "43", "44"] },
+                                { name: "绿小", odd: [6.65, 5.95], eg: ["05", "06", "11", "16", "17", "21", "22"] },
+                                { name: "绿单", odd: [5.81875, 5.20625], eg: ["05", "11", "17", "21", "27", "33", "39", "43"] },
+                                { name: "绿双", odd: [6.65, 5.95], eg: ["06", "16", "22", "28", "32", "38", "44"] },
+                                { name: "绿合单", odd: [6.65, 5.95], eg: ["05", "16", "21", "27", "32", "38", "43"] },
+                                { name: "绿合双", odd: [5.81875, 5.20625], eg: ["06", "11", "17", "22", "28", "33", "39", "44"] },
+                                { name: "蓝大", odd: [5.17222, 4.62778], eg: ["25", "26", "31", "36", "37", "41", "42", "47", "48"] },
+                                { name: "蓝小", odd: [6.65, 5.95], eg: ["03", "04", "09", "10", "14", "15", "20"] },
+                                { name: "蓝单", odd: [5.81875, 5.20625], eg: ["03", "09", "15", "25", "31", "37", "41", "47"] },
+                                { name: "蓝双", odd: [5.81875, 5.20625], eg: ["04", "10", "14", "20", "26", "36", "42", "48"] },
+                                { name: "蓝合单", odd: [5.81875, 5.20625], eg: ["03", "09", "10", "14", "25", "36", "41", "47"] },
+                                { name: "蓝合双", odd: [5.81875, 5.20625], eg: ["04", "15", "20", "26", "31", "37", "42", "48"] },
+                            ]
+                        },
                         default:
                         !0
                     }]
@@ -319,6 +646,7 @@ export default {
                         subGroup: "生肖",
                         tag: "特肖",
                         eg: [],
+                        lottery: animalData('odd1'),
                         default:
                         !0
                     },
@@ -329,7 +657,8 @@ export default {
                         group: "生肖",
                         subGroup: "生肖",
                         tag: "一肖",
-                        eg: []
+                        eg: [],
+                        lottery: animalData('odd2'),
                     },
                     {
                         name: "二肖连",
@@ -338,7 +667,8 @@ export default {
                         group: "生肖",
                         subGroup: "生肖",
                         tag: "二肖连",
-                        eg: []
+                        eg: [],
+                        lottery: animalData('noOdd1'),
                     },
                     {
                         name: "三肖连",
@@ -347,7 +677,8 @@ export default {
                         group: "生肖",
                         subGroup: "生肖",
                         tag: "三肖连",
-                        eg: []
+                        eg: [],
+                        lottery: animalData('noOdd2'),
                     },
                     {
                         name: "四肖连",
@@ -356,7 +687,8 @@ export default {
                         group: "生肖",
                         subGroup: "生肖",
                         tag: "四肖连",
-                        eg: []
+                        eg: [],
+                        lottery: animalData('noOdd3'),
                     }]
                 },
                 "尾数": {
@@ -369,6 +701,7 @@ export default {
                         subGroup: "尾数",
                         tag: "特码头尾",
                         eg: [],
+                        lottery: mantissa('odd'),
                         default:
                         !0
                     },
@@ -379,7 +712,8 @@ export default {
                         group: "尾数",
                         subGroup: "尾数",
                         tag: "二尾连",
-                        eg: []
+                        eg: [],
+                        lottery: mantissa('noOdd1'),
                     },
                     {
                         name: "三尾连",
@@ -388,7 +722,8 @@ export default {
                         group: "尾数",
                         subGroup: "尾数",
                         tag: "三尾连",
-                        eg: []
+                        eg: [],
+                        lottery: mantissa('noOdd2'),
                     },
                     {
                         name: "四尾连",
@@ -397,7 +732,8 @@ export default {
                         group: "尾数",
                         subGroup: "尾数",
                         tag: "四尾连",
-                        eg: []
+                        eg: [],
+                        lottery: mantissa('noOdd3'),
                     }]
                 },
                 "不中": {
@@ -410,6 +746,11 @@ export default {
                         subGroup: "不中",
                         tag: "五不中",
                         eg: [],
+                        lottery: {
+                            mode: '0',
+                            odd: [2.12955, 1.90539],
+                            data: allNum()
+                        },
                         default:
                         !0
                     },
@@ -420,7 +761,12 @@ export default {
                         group: "不中",
                         subGroup: "不中",
                         tag: "六不中",
-                        eg: []
+                        eg: [],
+                        lottery: {
+                            mode: '0',
+                            odd: [2.53244, 2.26587],
+                            data: allNum()
+                        },
                     },
                     {
                         name: "七不中",
@@ -429,7 +775,12 @@ export default {
                         group: "不中",
                         subGroup: "不中",
                         tag: "七不中",
-                        eg: []
+                        eg: [],
+                        lottery: {
+                            mode: '0',
+                            odd: [3.02486, 2.70645],
+                            data: allNum()
+                        },
                     },
                     {
                         name: "八不中",
@@ -438,7 +789,12 @@ export default {
                         group: "不中",
                         subGroup: "不中",
                         tag: "八不中",
-                        eg: []
+                        eg: [],
+                        lottery: {
+                            mode: '0',
+                            odd: [3.62983, 3.24774],
+                            data: allNum()
+                        },
                     },
                     {
                         name: "九不中",
@@ -447,7 +803,12 @@ export default {
                         group: "不中",
                         subGroup: "不中",
                         tag: "九不中",
-                        eg: []
+                        eg: [],
+                        lottery: {
+                            mode: '0',
+                            odd: [4.37714, 3.91639],
+                            data: allNum()
+                        },
                     },
                     {
                         name: "十不中",
@@ -456,387 +817,26 @@ export default {
                         group: "不中",
                         subGroup: "不中",
                         tag: "十不中",
-                        eg: []
+                        eg: [],
+                        lottery: {
+                            mode: '0',
+                            odd: [5.30563, 4.74714],
+                            data: allNum()
+                        },
                     }]
                 }
             },
-            ListArr: {
-                Rebate: [10, 0],
-                List: [{
-                    Mode: "特码-直选",
-                    Odd: [48.51, 43.61]
-                },
-                {
-                    Mode: "特码-两面-大小单双",
-                    Odd: [1.98042, 1.77625]
-                },
-                {
-                    Mode: "特码-两面-大单",
-                    Odd: [3.96083, 3.5525]
-                },
-                {
-                    Mode: "特码-两面-大双",
-                    Odd: [3.96083, 3.5525]
-                },
-                {
-                    Mode: "特码-两面-小单",
-                    Odd: [3.96083, 3.5525]
-                },
-                {
-                    Mode: "特码-两面-小双",
-                    Odd: [3.96083, 3.5525]
-                },
-                {
-                    Mode: "特码-两面-合单",
-                    Odd: [1.98042, 1.77625]
-                },
-                {
-                    Mode: "特码-两面-合双",
-                    Odd: [1.98042, 1.77625]
-                },
-                {
-                    Mode: "特码-两面-合大",
-                    Odd: [1.98042, 1.77625]
-                },
-                {
-                    Mode: "特码-两面-合小",
-                    Odd: [1.98042, 1.77625]
-                },
-                {
-                    Mode: "特码-两面-尾大",
-                    Odd: [1.98042, 1.77625]
-                },
-                {
-                    Mode: "特码-两面-尾小",
-                    Odd: [1.98042, 1.77625]
-                },
-                {
-                    Mode: "特码-两面-红波",
-                    Odd: [2.79588, 2.50765]
-                },
-                {
-                    Mode: "特码-两面-蓝绿波",
-                    Odd: [2.97063, 2.66438]
-                },
-                {
-                    Mode: "特码-两面-家禽含本命",
-                    Odd: [1.9012, 1.7052]
-                },
-                {
-                    Mode: "特码-两面-家禽不含本命",
-                    Odd: [1.98042, 1.77625]
-                },
-                {
-                    Mode: "特码-两面-野兽含本命",
-                    Odd: [1.9012, 1.7052]
-                },
-                {
-                    Mode: "特码-两面-野兽不含本命",
-                    Odd: [1.98042, 1.77625]
-                },
-                {
-                    Mode: "正码-任选",
-                    Odd: [8.00333, 7.18667]
-                },
-                {
-                    Mode: "正码-正特",
-                    Odd: [47.04, 42.14]
-                },
-                {
-                    Mode: "正码-两面-大",
-                    Odd: [1.98042, 1.77625]
-                },
-                {
-                    Mode: "正码-两面-小",
-                    Odd: [1.98042, 1.77625]
-                },
-                {
-                    Mode: "正码-两面-单",
-                    Odd: [1.98042, 1.77625]
-                },
-                {
-                    Mode: "正码-两面-双",
-                    Odd: [1.98042, 1.77625]
-                },
-                {
-                    Mode: "正码-两面-大单",
-                    Odd: [3.96083, 3.5525]
-                },
-                {
-                    Mode: "正码-两面-大双",
-                    Odd: [3.96083, 3.5525]
-                },
-                {
-                    Mode: "正码-两面-小单",
-                    Odd: [3.96083, 3.5525]
-                },
-                {
-                    Mode: "正码-两面-小双",
-                    Odd: [3.96083, 3.5525]
-                },
-                {
-                    Mode: "正码-两面-合单",
-                    Odd: [1.98042, 1.77625]
-                },
-                {
-                    Mode: "正码-两面-合双",
-                    Odd: [1.98042, 1.77625]
-                },
-                {
-                    Mode: "正码-两面-合大",
-                    Odd: [1.98042, 1.77625]
-                },
-                {
-                    Mode: "正码-两面-合小",
-                    Odd: [1.98042, 1.77625]
-                },
-                {
-                    Mode: "正码-两面-尾大",
-                    Odd: [1.98042, 1.77625]
-                },
-                {
-                    Mode: "正码-两面-尾小",
-                    Odd: [1.98042, 1.77625]
-                },
-                {
-                    Mode: "正码-两面-红波",
-                    Odd: [2.79588, 2.50765]
-                },
-                {
-                    Mode: "正码-两面-蓝绿波",
-                    Odd: [2.97063, 2.66438]
-                },
-                {
-                    Mode: "连码-三全中",
-                    Odd: [663.264, 571.144]
-                },
-                {
-                    Mode: "连码-三中二之中二",
-                    Odd: [20.88053, 18.424]
-                },
-                {
-                    Mode: "连码-三中二之中三",
-                    Odd: [109.6228, 96.726]
-                },
-                {
-                    Mode: "连码-二全中",
-                    Odd: [66.64, 58.8]
-                },
-                {
-                    Mode: "连码-二中特之二中",
-                    Odd: [53.312, 47.04]
-                },
-                {
-                    Mode: "连码-二中特之中特",
-                    Odd: [33.32, 29.4]
-                },
-                {
-                    Mode: "连码-特串",
-                    Odd: [160.72, 141.12]
-                },
-                {
-                    Mode: "半波-特码半波-红大",
-                    Odd: [6.65, 5.95]
-                },
-                {
-                    Mode: "半波-特码半波-红小",
-                    Odd: [4.655, 4.165]
-                },
-                {
-                    Mode: "半波-特码半波-红单",
-                    Odd: [5.81875, 5.20625]
-                },
-                {
-                    Mode: "半波-特码半波-红双",
-                    Odd: [5.17222, 4.62778]
-                },
-                {
-                    Mode: "半波-特码半波-红合单",
-                    Odd: [5.17222, 4.62778]
-                },
-                {
-                    Mode: "半波-特码半波-红合双",
-                    Odd: [5.81875, 5.20625]
-                },
-                {
-                    Mode: "半波-特码半波-绿大",
-                    Odd: [5.81875, 5.20625]
-                },
-                {
-                    Mode: "半波-特码半波-绿小",
-                    Odd: [6.65, 5.95]
-                },
-                {
-                    Mode: "半波-特码半波-绿单",
-                    Odd: [5.81875, 5.20625]
-                },
-                {
-                    Mode: "半波-特码半波-绿双",
-                    Odd: [6.65, 5.95]
-                },
-                {
-                    Mode: "半波-特码半波-绿合单",
-                    Odd: [6.65, 5.95]
-                },
-                {
-                    Mode: "半波-特码半波-绿合双",
-                    Odd: [5.81875, 5.20625]
-                },
-                {
-                    Mode: "半波-特码半波-蓝大",
-                    Odd: [5.17222, 4.62778]
-                },
-                {
-                    Mode: "半波-特码半波-蓝小",
-                    Odd: [6.65, 5.95]
-                },
-                {
-                    Mode: "半波-特码半波-蓝单",
-                    Odd: [5.81875, 5.20625]
-                },
-                {
-                    Mode: "半波-特码半波-蓝双",
-                    Odd: [5.81875, 5.20625]
-                },
-                {
-                    Mode: "半波-特码半波-蓝合单",
-                    Odd: [5.81875, 5.20625]
-                },
-                {
-                    Mode: "半波-特码半波-蓝合双",
-                    Odd: [5.81875, 5.20625]
-                },
-                {
-                    Mode: "生肖-特肖-本命",
-                    Odd: [9.31, 8.33]
-                },
-                {
-                    Mode: "生肖-特肖-非本命",
-                    Odd: [11.6375, 10.4125]
-                },
-                {
-                    Mode: "生肖-一肖-本命",
-                    Odd: [1.71512, 1.53458]
-                },
-                {
-                    Mode: "生肖-一肖-非本命",
-                    Odd: [2.01391, 1.80192]
-                },
-                {
-                    Mode: "生肖-二肖连-含本命",
-                    Odd: [3.62659, 3.21448]
-                },
-                {
-                    Mode: "生肖-二肖连-不含本命",
-                    Odd: [4.28935, 3.80193]
-                },
-                {
-                    Mode: "生肖-三肖连-含本命",
-                    Odd: [9.17145, 8.12924]
-                },
-                {
-                    Mode: "生肖-三肖连-不含本命",
-                    Odd: [10.9363, 9.69354]
-                },
-                {
-                    Mode: "生肖-四肖连-含本命",
-                    Odd: [26.5703, 23.55095]
-                },
-                {
-                    Mode: "生肖-四肖连-不含本命",
-                    Odd: [31.97783, 28.34398]
-                },
-                {
-                    Mode: "尾数-特码头尾-0头",
-                    Odd: [5.17222, 4.62778]
-                },
-                {
-                    Mode: "尾数-特码头尾-非0头",
-                    Odd: [4.655, 4.165]
-                },
-                {
-                    Mode: "尾数-特码头尾-0尾",
-                    Odd: [11.6375, 10.4125]
-                },
-                {
-                    Mode: "尾数-特码头尾-非0尾",
-                    Odd: [9.31, 8.33]
-                },
-                {
-                    Mode: "尾数-二尾连-含0",
-                    Odd: [3.62659, 3.21448]
-                },
-                {
-                    Mode: "尾数-二尾连-不含0",
-                    Odd: [3.06783, 2.71921]
-                },
-                {
-                    Mode: "尾数-三尾连-含0",
-                    Odd: [7.69518, 6.82072]
-                },
-                {
-                    Mode: "尾数-三尾连-不含0",
-                    Odd: [6.45975, 5.72569]
-                },
-                {
-                    Mode: "尾数-四尾连-含0",
-                    Odd: [18.36832, 16.28101]
-                },
-                {
-                    Mode: "尾数-四尾连-不含0",
-                    Odd: [15.28279, 13.54611]
-                },
-                {
-                    Mode: "不中-五不中",
-                    Odd: [2.12955, 1.90539]
-                },
-                {
-                    Mode: "不中-六不中",
-                    Odd: [2.53244, 2.26587]
-                },
-                {
-                    Mode: "不中-七不中",
-                    Odd: [3.02486, 2.70645]
-                },
-                {
-                    Mode: "不中-八不中",
-                    Odd: [3.62983, 3.24774]
-                },
-                {
-                    Mode: "不中-九不中",
-                    Odd: [4.37714, 3.91639]
-                },
-                {
-                    Mode: "不中-十不中",
-                    Odd: [5.30563, 4.74714]
-                }]
-            },
             selectTab: ["特码", "直选"],
-            nowGroupItem: {
-                groupTitle: "特码",
-                BackData: [{
-                    name: "直选",
-                    mode: "A01",
-                    tip: "从1-49中任选1个或多个号码，每个号码为一注，所选号码中包含特码，即为中奖。",
-                    group: "特码",
-                    subGroup: "特码",
-                    tag: "特码直选",
-                    eg: [],
-                    default:
-                    !0
-                },
-                {
-                    name: "两面",
-                    mode: "A02",
-                    tip: "开奖号码最后一位为特码。大于或等于25为特码大，小于或等于24为特码小；奇数为单，偶数为双；特码两个数相加后得数，奇数为合单，偶数为合双，小于等于6为合小，大于6为合大；尾大尾小即看特码个位数值，小于等于4为小，大于4为大；特码为49时为和，不算任何大小单双，但算波色。",
-                    group: "特码",
-                    subGroup: "特码",
-                    eg: ["01 02", "01 02 03 04 05 06 07 08 21 22 71 72 73 74 75 76 77 78 79 80"],
-                    tag: "特码两面"
-                }]
-            },
-            nowMode: {},
-            tip: '',
+            nowGroupItem: {},
+            nowItem: {},
+            // 赔率显示
+            oddShow: true,
+            // number 型彩票
+            lotteryNumber: false,
+            // 非 number 型彩票
+            lotteryNoNumber: true,
+            oddNum: this.oddCount,
+            tip: '从1-49中任选1个或多个号码，每个号码为一注，所选号码中包含特码，即为中奖。',
             red: ["01", "02", "07", "08", "12", "13", "18", "19", "23", "24", "29", "30", "34", "35", "40", "45", "46"],
             blue: ["03", "04", "09", "10", "14", "15", "20", "25", "26", "31", "36", "37", "41", "42", "47", "48"],
             green: ["05", "06", "11", "16", "17", "21", "22", "27", "28", "32", "33", "38", "39", "43", "44", "49"],
@@ -859,54 +859,84 @@ export default {
         }
     },
     methods: {
-        selectRender(m1) {
-            for(let i in this.AllData) {
-                if(m1 === i) {
+        // 一级菜单点击事件
+        selectRender(ele, inx) {
+            var $this = $('.betFilter li:contains(' + inx + ')');
+            $this.siblings().removeClass('curr').end().addClass('curr');
+            var msg = $this.text();
+            if (msg === '正码') {
+                $('.betFilterAnd').addClass('modeZM');
+            } else {
+                $('.betFilterAnd').removeClass('modeZM');
+            }
+            for (let i in this.AllData) {
+                if (inx === i) {
                     this.nowGroupItem = this.AllData[i];
+                    this.nowItem = this.nowGroupItem.BackData[0];
+                    this.tip = this.nowGroupItem.BackData[0].tip;
                 }
             }
+            this.selectTab[0] = inx;
+            this.initTab2();
         },
-        // 赔率
-        odds() {
-            var mode = this.selectTab.join('-');
-            var s;
-            this.ListArr.List.map(i => {
-                if (i.Mode === mode) {
-                    s = i.Odd[0];
+        // 初始化二级菜单
+        initTab2() {
+            $('.betFilterAnd div a').eq(0).addClass('curr').siblings().removeClass('curr');
+            this.selectTab[1] = this.nowGroupItem.BackData[0].name;
+        },
+        oddCount() {
+            var b = this.nowItem.lottery.bonusMode;
+            var r = this.nowItem.lottery.mode;
+            var f = this.nowItem.lottery.flag;
+            if ((b === undefined && r === '1') || f === '1') {
+                this.oddShow = false;
+            } else {
+                this.oddShow = true;
+                var res = (Math.floor(this.nowItem.lottery.odd[0] * 100)) / 100;
+                if(res === 8 || res === "8") {
+                    res = "8.00";
+                }else if(res === 5.3 || res === "5.3") {
+                    res = "5.30"
                 }
-            });
-            return s;
+                return res;
+            }
         },
-        $jqAction() {
+        // 初始化
+        $jqInit() {
             $('.betFilter li').eq(0).addClass('curr');
-            $('.betFilterAnd div a').eq(0).addClass('curr');
-            $('#app').on('click', '.betFilter li', function() {
-                $(this).siblings().removeClass('curr').end().addClass('curr');
-                var msg = $(this).text();
-                if(msg === '正码') {
-                    console.log('1')
-                    $('.betFilterAnd').addClass('modeZM');
-                }else {
-                    $('.betFilterAnd').removeClass('modeZM');
-                }
-            });
-            $('#app').on('click', '.betFilterAnd div a', function() {
-                $(this).siblings().removeClass('curr').end().addClass('curr');
-            });
-            $('#app').on('click', '.sscCheckNumber .buyNumber a', function() {
-                var flag = $(this).attr('active');
-                if (flag === '1') {
-                    $(this).removeClass('curr');
-                    $(this).attr('active', '0');
-                } else {
-                    $(this).addClass('curr');
-                    $(this).attr('active', '1');
-                }
-            });
+            setTimeout(() => {
+                $('.betFilterAnd div a').eq(0).addClass('curr');
+            }, 0);
+        },
+        // 二级菜单点击事件
+        clickTab2(ele, inx) {
+            $('.betFilterAnd div a').eq(inx).siblings().removeClass('curr').end().addClass('curr');
+            this.tip = this.nowGroupItem.BackData[inx].tip;
+            this.nowItem = this.nowGroupItem.BackData[inx];
+            this.selectTab[1] = $('.betFilterAnd div a').eq(inx).text();
+        },
+        // 选号点击事件
+        clickNumber(ele, inx) {
+            var $this = $('.sscCheckNumber .buyNumber a').eq(inx);
+            var flag = $this.attr('active');
+            if (flag === '1') {
+                $this.removeClass('curr');
+                $this.attr('active', '0');
+            } else {
+                $this.addClass('curr');
+                $this.attr('active', '1');
+            }
         }
     },
+    created() {
+        this.nowGroupItem = this.AllData["特码"];
+        this.nowItem = this.nowGroupItem.BackData[0];
+    },
     mounted() {
-        this.$jqAction();
+        this.$jqInit();
+    },
+    updated() {
+        this.oddCount();
     }
 }
 </script>
@@ -1220,5 +1250,83 @@ export default {
     table {
         width: 100%;
     }
+}
+
+.checkNumber {
+    margin: 24px 15px;
+    padding: 25px 0;
+    background: url(http://imagess-google.com/system/pc/k3/betBg.png);
+    border-radius: 6px;
+    span {
+        color: #333;
+    }
+    &.normalbox ul {
+        padding: 0 20px;
+        li {
+            .bet-item-rate {
+                display: block;
+                text-align: center;
+            }
+            .bet-item-eg-box {
+                font-size: 12px;
+                line-height: 16px;
+                transform: translateY(-6px);
+                span {
+                    display: inline-block;
+                    margin: 0 3px;
+                    color: #666;
+                }
+            }
+            a {
+                font-size: 24px;
+            }
+        }
+    }
+    ul {
+        li {
+            float: left;
+            display: inline-block;
+            margin: 12px 15px;
+            vertical-align: top;
+            a {
+                box-shadow: 0 1px 5px #d4d4d4;
+                display: block;
+                background: linear-gradient(180deg, #fff 0, #f1efef 90%, #f7f7f7);
+                filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffffff", endColorstr="#f7f7f7", GradientType=0);
+                border-radius: 5px;
+                border: 1px solid #c0c5d2;
+                line-height: 50px;
+                font-size: 30px;
+                color: #000;
+                text-align: center;
+                min-width: 52px;
+            }
+        }
+    }
+}
+
+.checkNumber.A02 ul li,
+.checkNumber.B09 ul li,
+.checkNumber.B10 ul li,
+.checkNumber.B11 ul li,
+.checkNumber.B12 ul li,
+.checkNumber.B13 ul li,
+.checkNumber.B14 ul li,
+.checkNumber.F01 ul li,
+.checkNumber.F02 ul li,
+.checkNumber.F03 ul li,
+.checkNumber.F04 ul li {
+    width: 83px;
+    margin: 8px 14px;
+}
+
+.checkNumber.D01 ul li,
+.checkNumber.E01 ul li,
+.checkNumber.E02 ul li,
+.checkNumber.E03 ul li,
+.checkNumber.E04 ul li,
+.checkNumber.E05 ul li {
+    width: 112px;
+    margin: 8px 11px;
 }
 </style>
