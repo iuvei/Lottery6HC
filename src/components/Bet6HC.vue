@@ -35,51 +35,99 @@
                     </div>
                 </div>
             </div>
-            <!-- 选号码 -->
-            <div class="sscCheckNumber colorbox" v-if="!parseInt(nowItem.lottery.mode)">
-                <ul class="fix">
-                    <li>
-                        <div class="fix selectMini">
-                            <span class="buyNumberTitle">
-                                号码
-                                <i></i>
-                            </span>
-                            <div class="buyNumber fix">
-                                <a :class="item | color(red,blue,green)" v-for="(item, index) in nowItem.lottery.data" :key="index" active="0" @click="clickNumber(item,index)">
-                                    <span>{{ item }}</span>
-                                </a>
+            <div v-if="!parseInt(nowItem.lottery.mode)">
+                <!-- 选号码 -->
+                <div class="sscCheckNumber colorbox">
+                    <ul class="fix">
+                        <li>
+                            <div class="fix selectMini">
+                                <span class="buyNumberTitle">
+                                    号码
+                                    <i></i>
+                                </span>
+                                <div class="buyNumber fix">
+                                    <a :class="item | color(red,blue,green)" v-for="(item, index) in nowItem.lottery.data" :key="index" active="0" @click="clickNumber(item,index)">
+                                        <span>{{ item }}</span>
+                                    </a>
+                                </div>
                             </div>
-                        </div>
-                    </li>
-                </ul>
+                        </li>
+                    </ul>
+                </div>
+                <!-- number下注 -->
+                <div class="Panel">
+                    <p class="betTotal">
+                        您选择了
+                        <em>{{ betCount !== undefined ? betCount : 0 }}</em>
+                        注
+                    </p>
+                    <a class="betBtn ClickShade" @click="affirmNum">确认选号</a>
+                </div>
             </div>
-            <!-- 选非号码 -->
-            <div class="checkNumber normalbox" :class="nowItem.mode" v-else>
-                <ul class="fix">
-                    <li v-for="(item, index) in nowItem.lottery.data" :key="index">
-                        <a class="ClickShade">
-                            {{ item.name }}
-                            <div class="bet-item-eg-box fix">
-                                <span class="bet-item-eg" v-for="(subItem, subIndex) in item.eg" :key="subIndex">{{ subItem }}</span>
-                            </div>
-                        </a>
-                        <span class="bet-item-rate">{{ (item.odd !== undefined) ? "赔率" + (Math.floor(item.odd[0] * 100) / 100).toFixed(2) : ''}}</span>
-                    </li>
-                </ul>
+
+            <div v-else>
+                <!-- 选非号码 -->
+                <div class="checkNumber normalbox" :class="nowItem.mode">
+                    <ul class="fix">
+                        <li v-for="(item, index) in nowItem.lottery.data" :key="index" @click="clickNoNumber(item,index)">
+                            <a class="ClickShade">
+                                {{ item.name }}
+                                <div class="bet-item-eg-box fix">
+                                    <span class="bet-item-eg" v-for="(subItem, subIndex) in item.eg" :key="subIndex">{{ subItem }}</span>
+                                </div>
+                            </a>
+                            <span class="bet-item-rate">{{ (item.odd !== undefined) ? "赔率" + (Math.floor(item.odd[0] * 100) / 100).toFixed(2) : ''}}</span>
+                        </li>
+                    </ul>
+                </div>
+                <!-- 非 number 下注 -->
+                <div class="Panel" v-if="nowItem.lottery.bonusMode == 1 ? parseInt(nowItem.lottery.bonusMode) : false">
+                    <p class="betTotal">
+                        您选择了
+                        <em>{{ betCount !== undefined ? betCount : 0 }}</em>
+                        注
+                    </p>
+                    <a class="betBtn ClickShade" @click="affirmNoNum">确认选号</a>
+                </div>
             </div>
-            <!-- 下注 -->
-            <div class="Panel">
-                <p class="betTotal">
-                    您选择了
-                    <em>0</em>
-                    注
-                </p>
-                <a class="betBtn ClickShade">确认选号</a>
-            </div>
+            
             <!-- 编辑区 -->
             <div class="checkedList">
                 <table>
-                    <tbody></tbody>
+                    <tbody>
+                        <tr v-for="(item,index) in chosenLotteryItems" :key="index">
+                            <td>
+                                <i class="order_type">[{{ item.text }}] {{ item.betting_number }}</i>
+                                <a class="orderDetail" style="display:none">详情</a>
+                            </td>
+                            <td>
+                                <span class="order_zhushu">
+                                    总共
+                                    <i class="order_num c_red">{{ item.betting_count }}</i>
+                                    注
+                                </span>
+                            </td>
+                            <td>
+                                <i class="order_price">
+                                    每注
+                                    <input type="text" class="eachPrice" v-model="item.betting_unitPrice">
+                                    元
+                                </i>
+                            </td>
+                            <td>
+                                <i class="c_3">
+                                    <span class="hide_this">
+                                        可中金额
+                                        <i class="orderMoney c_red">{{ (parseInt(item.betting_unitPrice) * parseFloat(item.maxAward)).toFixed(2) }}</i>
+                                        元
+                                    </span>
+                                </i>
+                            </td>
+                            <td>
+                                <i class="orderCancel" @click="cancelItem(index)">删除</i>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
             <!-- 方案 -->
@@ -97,6 +145,7 @@
     </div>
 </template>
 <script>
+import $store from '../vuex/store.js';
 function filterColor(arr, obj) {
     var i = arr.length;
     while (i--) {
@@ -195,9 +244,12 @@ function animalData(params) {
     if (yearResponse) {
         var year = parseInt(new Date(parseInt(yearResponse.Data)).getFullYear());
         var remainder = (year - 1) % 12 + 1;
+        $store.state.natal = benmingArr[remainder - 1];
         var step = parseInt(remainder - base);
         // remainder  0 
         if (params === 'odd1' || params === 'odd2') {
+            if(params === 'odd1') lottery.award = ["9.31","11.63"];
+            if(params === 'odd2') lottery. award = ["1.715","2.013"];
             for (let i = 0; i < animal.length; i++) {
                 var o = {};
                 o.name = animal[i];
@@ -217,16 +269,19 @@ function animalData(params) {
             lottery.bonusMode = '1';
             var r = {};
             if (params === 'noOdd1') {
+                lottery.award = ["3.62","4.28"];
                 lottery.odd = [
                     { name: "含本命", odd: [3.62659, 3.21448] },
                     { name: "不含本命", odd: [4.28935, 3.80193] }
                 ];
             } else if (params === 'noOdd2') {
+                lottery.award = ["9.17","10.93"];
                 lottery.odd = [
                     { name: "含本命", odd: [9.17145, 8.12924] },
                     { name: "不含本命", odd: [10.9363, 9.69354] }
                 ];
             } else if (params === 'noOdd3') {
+                lottery.award = ["26.57","31.97783"];
                 lottery.odd = [
                     { name: "含本命", odd: [26.5703, 23.55095] },
                     { name: "不含本命", odd: [31.97783, 28.34398] }
@@ -249,6 +304,7 @@ function mantissa(n) {
     lottery.mode = '1';
     lottery.flag = '1';
     if (n === 'odd') {
+        lottery.award = ["5.17","4.655","11.6375","9.31"];
         lottery.data = [
             { name: '0头', odd: [5.17222, 4.62778] },
             { name: '1头', odd: [4.655, 4.165] },
@@ -282,16 +338,19 @@ function mantissa(n) {
             { name: '9尾' }
         ];
         if (n === 'noOdd1') {
+            lottery.award = ["3.62","3.06"];
             lottery.odd = [
                 { name: "含0尾", odd: [3.62659, 3.21448] },
                 { name: "不含0尾", odd: [3.06783, 2.71921] }
             ];
         } else if (n === 'noOdd2') {
+            lottery.award = ["7.69","6.45"];
             lottery.odd = [
                 { name: "含0尾", odd: [7.69518, 6.82072] },
                 { name: "不含0尾", odd: [6.45975, 5.72569] }
             ];
         } else if (n === 'noOdd3') {
+            lottery.award = ["18.36","15.28"];
             lottery.odd = [
                 { name: "含0尾", odd: [18.36832, 16.28101] },
                 { name: "不含0尾", odd: [15.28279, 13.54611] }
@@ -317,6 +376,7 @@ export default {
                             // mode 0 代表 number 型彩票
                             mode: '0',
                             odd: [48.51, 43.61],
+                            award: "48.51",
                             data: allNum()
                         },
                         eg: [],
@@ -334,6 +394,7 @@ export default {
                         lottery: {
                             // mode 代表非 number 型数据
                             mode: '1',
+                            award: ["1.980","3.960","1.980","1.980","1.901","1.980","2.795","2.970"],
                             data: mode1Data()
                         }
                     }]
@@ -351,6 +412,7 @@ export default {
                         lottery: {
                             mode: '0',
                             odd: [8.00333, 7.18667],
+                            award: "8.00",
                             data: allNum()
                         },
                         default:
@@ -367,6 +429,7 @@ export default {
                         lottery: {
                             mode: '0',
                             odd: [47.04, 42.14],
+                            award: "47.04",
                             data: allNum()
                         },
                     },
@@ -380,6 +443,7 @@ export default {
                         eg: [],
                         lottery: {
                             mode: '1',
+                            award: ["1.980","3.960","1.980","1.980","1.901","1.980","2.795","2.970"],
                             data: mode1Data()
                         },
                     },
@@ -394,6 +458,7 @@ export default {
                         lottery: {
                             mode: '0',
                             odd: [47.04, 42.14],
+                            award: "47.04",
                             data: allNum()
                         }
                     },
@@ -407,6 +472,7 @@ export default {
                         eg: [],
                         lottery: {
                             mode: '1',
+                            award: ["1.980","3.960","1.980","1.980","1.901","1.980","2.795","2.970"],
                             data: mode1Data()
                         },
                     },
@@ -421,6 +487,7 @@ export default {
                         lottery: {
                             mode: '0',
                             odd: [47.04, 42.14],
+                            award: "47.04",
                             data: allNum()
                         }
                     },
@@ -434,6 +501,7 @@ export default {
                         eg: [],
                         lottery: {
                             mode: '1',
+                            award: ["1.980","3.960","1.980","1.980","1.901","1.980","2.795","2.970"],
                             data: mode1Data()
                         },
                     },
@@ -448,6 +516,7 @@ export default {
                         lottery: {
                             mode: '0',
                             odd: [47.04, 42.14],
+                            award: "47.04",
                             data: allNum()
                         }
                     },
@@ -461,6 +530,7 @@ export default {
                         eg: [],
                         lottery: {
                             mode: '1',
+                            award: ["1.980","3.960","1.980","1.980","1.901","1.980","2.795","2.970"],
                             data: mode1Data()
                         },
                     },
@@ -475,6 +545,7 @@ export default {
                         lottery: {
                             mode: '0',
                             odd: [47.04, 42.14],
+                            award: "47.04",
                             data: allNum()
                         }
                     },
@@ -488,6 +559,7 @@ export default {
                         eg: [],
                         lottery: {
                             mode: '1',
+                            award: ["1.980","3.960","1.980","1.980","1.901","1.980","2.795","2.970"],
                             data: mode1Data()
                         },
                     },
@@ -502,6 +574,7 @@ export default {
                         lottery: {
                             mode: '0',
                             odd: [47.04, 42.14],
+                            award: "47.04",
                             data: allNum()
                         }
                     },
@@ -515,6 +588,7 @@ export default {
                         eg: [],
                         lottery: {
                             mode: '1',
+                            award: ["1.980","3.960","1.980","1.980","1.901","1.980","2.795","2.970"],
                             data: mode1Data()
                         },
                     }]
@@ -532,6 +606,7 @@ export default {
                         lottery: {
                             mode: '0',
                             odd: [663.264, 571.144],
+                            award: "663.26",
                             data: allNum()
                         },
                         default:
@@ -553,6 +628,7 @@ export default {
                                 { name: "中二", odd: [20.88053, 18.424] },
                                 { name: "中三", odd: [109.6228, 96.726] },
                             ],
+                            award: ["20.88", "109.62"],
                             data: allNum()
                         },
                     },
@@ -567,6 +643,7 @@ export default {
                         lottery: {
                             mode: '0',
                             odd: [66.64, 58.8],
+                            award: '66.64',
                             data: allNum()
                         },
                     },
@@ -586,6 +663,7 @@ export default {
                                 { name: '二中', odd: [53.312, 47.04] },
                                 { name: '中特', odd: [33.32, 29.4] },
                             ],
+                            award: ["53.31","33.32"],
                             data: allNum()
                         },
                     },
@@ -600,6 +678,7 @@ export default {
                         lottery: {
                             mode: '0',
                             odd: [160.72, 141.12],
+                            award: "160.72",
                             data: allNum()
                         },
                     }]
@@ -616,6 +695,7 @@ export default {
                         eg: [],
                         lottery: {
                             mode: '1',
+                            award: ["6.650","4.655","5.818","5.172","5.172","5.818","5.818","6.650","5.818","6.650","6.650","5.818","5.172","6.650","5.818","5.818","5.818","5.818"],
                             data: [
                                 { name: "红大", odd: [6.65, 5.95], eg: ["29", "30", "34", "35", "40", "45", "46"] },
                                 { name: "红小", odd: [4.655, 4.165], eg: ["01", "02", "07", "08", "12", "13", "18", "19", "23", "24"] },
@@ -754,6 +834,7 @@ export default {
                         lottery: {
                             mode: '0',
                             odd: [2.12955, 1.90539],
+                            award: '2.21',
                             data: allNum()
                         },
                         default:
@@ -770,6 +851,7 @@ export default {
                         lottery: {
                             mode: '0',
                             odd: [2.53244, 2.26587],
+                            award: '2.53',
                             data: allNum()
                         },
                     },
@@ -784,6 +866,7 @@ export default {
                         lottery: {
                             mode: '0',
                             odd: [3.02486, 2.70645],
+                            award: '3.02',
                             data: allNum()
                         },
                     },
@@ -798,6 +881,7 @@ export default {
                         lottery: {
                             mode: '0',
                             odd: [3.62983, 3.24774],
+                            award: '3.62',
                             data: allNum()
                         },
                     },
@@ -812,6 +896,7 @@ export default {
                         lottery: {
                             mode: '0',
                             odd: [4.37714, 3.91639],
+                            award: '4.37',
                             data: allNum()
                         },
                     },
@@ -826,6 +911,7 @@ export default {
                         lottery: {
                             mode: '0',
                             odd: [5.30563, 4.74714],
+                            award: '5.30',
                             data: allNum()
                         },
                     }]
@@ -839,11 +925,15 @@ export default {
             // number 型彩票
             lotteryNumber: false,
             oddNum: this.oddCount,
+            // 本命
+            natal: this.$store.state.natal,
+            selectBetCount: 0,
             tip: '从1-49中任选1个或多个号码，每个号码为一注，所选号码中包含特码，即为中奖。',
             red: ["01", "02", "07", "08", "12", "13", "18", "19", "23", "24", "29", "30", "34", "35", "40", "45", "46"],
             blue: ["03", "04", "09", "10", "14", "15", "20", "25", "26", "31", "36", "37", "41", "42", "47", "48"],
             green: ["05", "06", "11", "16", "17", "21", "22", "27", "28", "32", "33", "38", "39", "43", "44", "49"],
-            allBall: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49"]
+            chosenArr: [],
+            chosenLotteryItems:[],
         }
     },
     filters: {
@@ -859,6 +949,23 @@ export default {
             } else if (g_flag) {
                 return 'green';
             }
+        }
+    },
+    computed: {
+        award() {
+            return this.nowItem.lottery.award;
+        },
+        basket() {
+            return this.chosenLotteryItems;
+        },
+        betCount() {
+            return this.selectBetCount;
+        },
+        betStr() {
+            return this.chosen.join(",");
+        },
+        chosen() {
+            return this.chosenArr;
         }
     },
     methods: {
@@ -881,6 +988,11 @@ export default {
             }
             this.selectTab[0] = inx;
             this.initTab2();
+            // 清除其他 tab 选号样式
+            this.clearCurr();
+            // 清除注数
+            this.selectBetCount = 0;
+            this.chosenArr = [];
         },
         // 初始化二级菜单
         initTab2() {
@@ -906,17 +1018,17 @@ export default {
             setTimeout(() => {
                 $('.betFilterAnd div a').eq(0).addClass('curr');
             }, 0);
-            $('#app').on('mouseenter', '.hoverMoney',function() {
-                var top = $(this).offset().top-$(document).scrollTop();
-                var left = $(this).offset().left-$(document).scrollLeft() + 48;
+            $('#app').on('mouseenter', '.hoverMoney', function() {
+                var top = $(this).offset().top - $(document).scrollTop();
+                var left = $(this).offset().left - $(document).scrollLeft() + 48;
                 $('.hoverContent').css({
-                        position: 'fixed',
-                        top: top + 'px',
-                        left: left + 'px'
-                    });
+                    position: 'fixed',
+                    top: top + 'px',
+                    left: left + 'px'
+                });
                 $('.hoverContent').show();
             });
-            $('#app').on('mouseleave', '.hoverMoney',function() {
+            $('#app').on('mouseleave', '.hoverMoney', function() {
                 $('.hoverContent').hide();
             });
         },
@@ -926,18 +1038,187 @@ export default {
             this.tip = this.nowGroupItem.BackData[inx].tip;
             this.nowItem = this.nowGroupItem.BackData[inx];
             this.selectTab[1] = $('.betFilterAnd div a').eq(inx).text();
+            // 清除其他 tab 选号样式
+            this.clearCurr();
+            // 清除注数
+            this.selectBetCount = 0;
+            this.chosenArr = [];
+        },
+        // 清除所有选号
+        clearCurr() {
+            $('.sscCheckNumber .buyNumber a').removeClass('curr');
+            $('.checkNumber li a').removeClass('curr');
         },
         // 选号点击事件
         clickNumber(ele, inx) {
             var $this = $('.sscCheckNumber .buyNumber a').eq(inx);
-            var flag = $this.attr('active');
-            if (flag === '1') {
+            var t = $this.text();
+            var flag = $this.hasClass('curr');
+            var mode = this.selectTab.join(',');
+            var modeFirst = this.selectTab[0];
+            if (flag) {
                 $this.removeClass('curr');
-                $this.attr('active', '0');
+                for(let i = 0;i < this.chosenArr.length;i++) {
+                    if(this.chosenArr[i] === t) {
+                        this.chosenArr.splice(i,1);
+                    }
+                }
+
+                // 判断注数
+                if(mode === '特码,直选' || modeFirst === '正码') {
+                    this.selectBetCount--;
+                }
+
             } else {
                 $this.addClass('curr');
-                $this.attr('active', '1');
+                this.chosenArr.push(t);
+
+                // 判断注数
+                if(mode === '特码,直选' || modeFirst === '正码') {
+                    this.selectBetCount++;
+                }
+
+
             }
+
+            
+
+        },
+        // 非选号点击事件
+        clickNoNumber(ele, inx) {
+            var $this = $('.checkNumber li a').eq(inx);
+            var flag = $this.hasClass('curr');
+            var a = $this.siblings('.bet-item-rate').text().replace('赔率','');
+            var res = $this.contents().filter(function() { return this.nodeType === 3; }).text(); 
+            res = res.replace(/\n/g,'');
+            res = res.replace(/ /g,'');
+            var excludeTab = this.selectTab[1];
+            if (flag) {
+                $this.removeClass('curr');
+
+                // 取消
+                for(let i = 0;i < this.chosenLotteryItems.length;i++) {
+                    let num = this.chosenLotteryItems[i].betting_number;
+                    var tab = this.chosenLotteryItems[i].text;
+                    if(num === res && this.selectTab.join(',') === tab) {
+                        this.chosenLotteryItems.splice(i,1);
+                    }
+                }
+
+                if(excludeTab === '二肖连' || excludeTab === '三肖连' || excludeTab === '四肖连' || excludeTab === '二尾连' || excludeTab === '三尾连'|| excludeTab === '四尾连') {
+                    for(let k = 0; k < this.chosenArr.length; k++) {
+                        if(this.chosenArr[k] === res) {
+                            // 切除取消选中的。
+                            this.chosenArr.splice(k,1);
+                        }
+                    }
+                }
+
+                // 多选非 number 处理中心
+                if(excludeTab === '二肖连') {
+                    let n = this.chosenArr.length;
+                    let limit = 2;
+                    let count = (n * (n-1)) / 2;
+                    this.selectBetCount = count;
+                }
+
+
+            } else {
+                $this.addClass('curr');
+                
+                this.chosenArr.push(res)
+
+                if(excludeTab === '二肖连' || excludeTab === '三肖连' || excludeTab === '四肖连' || excludeTab === '二尾连' || excludeTab === '三尾连'|| excludeTab === '四尾连') {
+                    
+                    
+
+                    
+                    // 多选非 number 处理中心
+                    if(excludeTab === '二肖连') {
+                        let n = this.chosenArr.length;
+                        let limit = 2;
+                        let count = (n * (n-1)) / 2;
+                        this.selectBetCount = count;
+                    }
+
+                    
+                    
+                    return;
+                }else {
+                    var obj = {};
+                    obj.betting_count = this.chosenArr.length;
+                    obj.betting_issuseNo = this.$store.state.issuseNo;
+                    obj.betting_money = '';
+                    obj.betting_number = this.chosenArr.join(',');
+                    obj.betting_unitPrice = 1;
+                    obj.maxAward = parseFloat(a);
+                    obj.text = this.selectTab.join(',');
+                    this.chosenLotteryItems.push(obj);
+                    this.chosenArr = [];
+                }
+            }
+        },
+        // number 确认选号
+        affirmNum() {
+            if(this.chosenArr.length === 0) return;
+            var len = $('.sscCheckNumber .buyNumber').find('a.curr').length;
+            var obj = {};
+            obj.betting_count = this.chosenArr.length;
+            obj.betting_issuseNo = this.$store.state.issuseNo;
+            obj.betting_money = '';
+            obj.betting_number = this.chosenArr.join(',');
+            obj.betting_unitPrice = 1;
+            obj.maxAward = this.award;
+            obj.text = this.selectTab.join(',');
+            this.chosenLotteryItems.push(obj);
+            // 清除其他 tab 选号样式
+            $('.sscCheckNumber .buyNumber a').removeClass('curr');
+            // 清除注数
+            this.selectBetCount = 0;
+            this.chosenArr = [];
+        },
+        // 非 number 确认选号
+        affirmNoNum() {
+            var modeTab = this.selectTab[1];
+            if(modeTab === '二肖连') {
+                var len = this.chosenArr.length;
+                // 注数
+                var zs = this.selectBetCount;
+                // 含不含本命
+                var flag = new RegExp(this.natal).test(this.chosenArr.join());
+                // true 为含本命, false 不含本命
+                if(flag) {
+
+                }else {
+                    
+                }
+                var obj = {};
+                obj.betting_count = this.chosenArr.length;
+                obj.betting_issuseNo = this.$store.state.issuseNo;
+                obj.betting_money = '';
+                obj.betting_number = this.chosenArr.join(',');
+                obj.betting_unitPrice = 1;
+                // obj.maxAward = parseFloat(a);
+                obj.text = this.selectTab.join(',');
+                this.chosenLotteryItems.push(obj);
+                this.chosenArr = [];
+            }
+        },
+        // 删除选号
+        cancelItem(i) {
+            var o = $('.checkNumber li a');
+            // 取消
+            let num = this.chosenLotteryItems[i].betting_number;
+            var tab = this.chosenLotteryItems[i].text;
+            for(let j = 0;j < o.length;j++) {
+                var res = o.eq(j).contents().filter(function() { return this.nodeType === 3; }).text(); 
+                res = res.replace(/\n/g,'');
+                res = res.replace(/ /g,'');
+                if(num === res && this.selectTab.join(',') === tab) {
+                    o.eq(j).removeClass('curr');
+                }
+            }
+            this.chosenLotteryItems.splice(i,1);
         }
     },
     created() {
@@ -953,403 +1234,5 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.betLeft {
-    float: left;
-    width: 740px;
-    min-height: 500px;
-    position: relative;
-}
-
-.betFilter {
-    text-align: left;
-    width: 739px;
-    box-sizing: border-box;
-    padding: 10px 15px;
-    border-bottom: 1px solid #ddd;
-    background: #f2f4f7;
-    border-top: 1px solid #ddd;
-    height: 52px;
-    li {
-        display: inline;
-        padding: 4px 5px;
-        line-height: 30px;
-        border-radius: 3px;
-        cursor: pointer;
-        text-align: center;
-        color: #555;
-        font-size: 14px;
-        margin-right: 13px;
-        margin-bottom: 5px;
-    }
-    .curr {
-        background: #ff9726;
-        color: #fff;
-    }
-}
-
-.betFilterAnd {
-    padding: 10px 15px;
-    font-size: 12px;
-    border-bottom: 1px solid #ccc;
-    line-height: 2.2;
-    &.modeZM span:before {
-        height: 80px;
-    }
-    li {
-        margin: 4px 0;
-    }
-    span {
-        vertical-align: top;
-        display: inline-block;
-        font-weight: 700;
-        color: #555;
-        width: 64px;
-        position: relative;
-        margin-left: 22px;
-        &:before {
-            content: "";
-            display: block;
-            width: 1px;
-            height: 54px;
-            background: #e7e7e8;
-            position: absolute;
-            top: -14px;
-            left: -16px;
-        }
-        &:after {
-            background: #fff;
-            border: 1px solid #e7e7e8;
-            border-radius: 50%;
-            content: "";
-            display: block;
-            height: 11px;
-            left: -21px;
-            position: absolute;
-            top: 7px;
-            width: 11px;
-        }
-    }
-    div {
-        display: inline-block;
-        max-width: 620px;
-        a {
-            color: #555;
-            margin-right: 15px;
-            padding: 4px 6px;
-            border-radius: 3px;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-        .curr {
-            background: #ff9726;
-            color: #fff;
-        }
-    }
-}
-
-.betTip {
-    padding: 3px 15px;
-    color: #555;
-    background: #fdfdfd;
-    i {
-        color: #ff9831;
-        font-size: 14px;
-        margin-right: 3px;
-    }
-    ins {
-        color: red;
-    }
-}
-
-.hoverContent table th,
-.hoverContent table td {
-    white-space: nowrap;
-    padding: 4px 10px;
-    text-align: center;
-    box-shadow: 0 1px 0 #505e70, 1px 0 0 #505e70;
-}
-
-.hoverContent {
-    display: none;
-    background: #2e4158;
-    margin-left: 8px;
-    color: #fff;
-    border-radius: 4px;
-    position: relative;
-    z-index: 999;
-    background: initial;
-    margin-left: 4px;
-    table {
-        background: #455467;
-        border-radius: 4px;
-        overflow: hidden;
-
-        th {
-            font-weight: 400;
-        }
-    }
-}
-
-.sscCheckNumber {
-    margin: 24px 15px;
-    padding: 25px 0;
-    background: url(http://imagess-google.com/system/pc/k3/betBg.png);
-    border-radius: 6px;
-    padding: 15px 0!important;
-    padding-bottom: 5px!important;
-    ul {
-        li {
-            display: table;
-            margin: 10px 0;
-        }
-    }
-}
-
-
-.buyNumber a,
-.buyNumber ins {
-    display: inline-block;
-    margin: 0 6px;
-    background: #cecece;
-    border: 1px solid #c0c5d2;
-    line-height: 38px;
-    font-size: 18px;
-    color: #000;
-    box-shadow: 0 1px 3px #d4d4d4, inset 0 -1px 5px #fff;
-    text-align: center;
-    background: linear-gradient(180deg, #fff 0, #f1efef);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffffff", endColorstr="#f1efef", GradientType=0);
-    filter: none;
-    cursor: pointer;
-    margin-bottom: 10px;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-
-.buyNumber {
-    min-width: 500px;
-    text-align: center;
-    margin: 5px 0;
-    a {
-        filter: none!important;
-        width: 38px;
-        height: 38px;
-        border-radius: 50%;
-    }
-    .red {
-        color: #dc3b40;
-    }
-    .blue {
-        color: #218ddd;
-    }
-    .green {
-        color: #38b366;
-    }
-    .curr {
-        background: linear-gradient(180deg, #d64b15 30%, #ea6a31);
-        background: -moz-linear-gradient(to bottom, #d64b15 30%, #ea6a31 100%);
-        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#d64b15", endColorstr="#ea6a31", GradientType=0);
-        border: 1px solid #d24c10;
-        color: #fff!important;
-        text-decoration: blink;
-        box-shadow: inherit;
-    }
-    .curr.red {
-        background: linear-gradient(180deg, #ff6669 30%, #e53a3d);
-        background: -moz-linear-gradient(to bottom, #ff6669 30%, #e53a3d 100%);
-        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ff6669", endColorstr="#e53a3d", GradientType=0);
-        border: 1px solid #e94548;
-    }
-    .curr.blue {
-        background: linear-gradient(180deg, #33a8ff 30%, #228ede);
-        background: -moz-linear-gradient(to bottom, #33a8ff 30%, #228ede 100%);
-        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#33a8ff", endColorstr="#228ede", GradientType=0);
-        border: 1px solid #2994e3;
-    }
-    .curr.green {
-        background: linear-gradient(180deg, #41e07c 30%, #38b467);
-        background: -moz-linear-gradient(to bottom, #41e07c 30%, #38b467 100%);
-        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#41e07c", endColorstr="#38b467", GradientType=0);
-        border: 1px solid #3cb569;
-    }
-}
-
-.buyNumber,
-.buyNumberFilter,
-.buyNumberTitle {
-    display: block;
-    float: left;
-}
-
-.buyNumberTitle {
-    width: 63px;
-    height: 26px;
-    background: #455467;
-    color: #fff;
-    text-align: center;
-    font-size: 14px;
-    line-height: 26px;
-    border-radius: 0 3px 3px 0;
-    margin: 11px 0;
-    margin-right: 25px;
-    position: relative;
-}
-
-.selectMini {
-    .buyNumberTitle {
-        margin-right: 20px;
-        i {
-            position: absolute;
-            display: block;
-            right: -5px;
-            top: 8px;
-            border-top: 5px solid transparent;
-            border-left: 5px solid #455467;
-            border-bottom: 5px solid transparent;
-        }
-    }
-    .buyNumber {
-        width: 610px;
-    }
-}
-
-.selectMini .buyNumber,
-.selectSYX5 .buyNumber {
-    text-align: left;
-    padding: 0 4px;
-}
-
-.betTotal {
-    padding: 10px;
-    text-align: center;
-    font-size: 16px;
-    .money {
-        color: red;
-    }
-}
-
-.betTotal em,
-.betTotal i {
-    color: #f37036;
-}
-
-.betBtn {
-    display: block;
-    margin: 0 auto;
-    line-height: 44px;
-    font-size: 20px;
-    border-radius: 5px;
-    width: 150px;
-    text-align: center;
-    background: #ea6a31;
-    color: #fff;
-    margin-bottom: 40px;
-}
-
-.checkedList {
-    border: 1px solid #ddd;
-    margin: 15px;
-    padding: 10px;
-    height: 188px;
-    overflow-y: auto;
-    margin-top: 40px;
-    background: #fff;
-    table {
-        width: 100%;
-    }
-}
-
-.checkNumber {
-    margin: 24px 15px;
-    padding: 25px 0;
-    background: url(http://imagess-google.com/system/pc/k3/betBg.png);
-    border-radius: 6px;
-    span {
-        color: #333;
-    }
-    &.normalbox ul {
-        padding: 0 20px;
-        li {
-            .bet-item-rate {
-                display: block;
-                text-align: center;
-            }
-            .bet-item-eg-box {
-                font-size: 12px;
-                line-height: 16px;
-                transform: translateY(-6px);
-                span {
-                    display: inline-block;
-                    margin: 0 3px;
-                    color: #666;
-                }
-            }
-            a {
-                font-size: 24px;
-            }
-        }
-    }
-    ul {
-        li {
-            float: left;
-            display: inline-block;
-            margin: 12px 15px;
-            vertical-align: top;
-            a {
-                box-shadow: 0 1px 5px #d4d4d4;
-                display: block;
-                background: linear-gradient(180deg, #fff 0, #f1efef 90%, #f7f7f7);
-                filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffffff", endColorstr="#f7f7f7", GradientType=0);
-                border-radius: 5px;
-                border: 1px solid #c0c5d2;
-                line-height: 50px;
-                font-size: 30px;
-                color: #000;
-                text-align: center;
-                min-width: 52px;
-            }
-        }
-    }
-}
-
-.checkNumber.A02 ul li,
-.checkNumber.B09 ul li,
-.checkNumber.B10 ul li,
-.checkNumber.B11 ul li,
-.checkNumber.B12 ul li,
-.checkNumber.B13 ul li,
-.checkNumber.B14 ul li,
-.checkNumber.F01 ul li,
-.checkNumber.F02 ul li,
-.checkNumber.F03 ul li,
-.checkNumber.F04 ul li {
-    width: 83px;
-    margin: 8px 14px;
-}
-
-.checkNumber.D01 ul li,
-.checkNumber.E01 ul li,
-.checkNumber.E02 ul li,
-.checkNumber.E03 ul li,
-.checkNumber.E04 ul li,
-.checkNumber.E05 ul li {
-    width: 112px;
-    margin: 8px 11px;
-}
-.hoverMoney, 
-.selectEg {
-    display: inline;
-    margin-left: 4px;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    cursor: pointer;
-    color: #ff9831;
-}
+@import url('../assets/style/lottery/bet6HC.min.css');
 </style>

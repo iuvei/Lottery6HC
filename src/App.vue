@@ -15,6 +15,17 @@ export default {
 	name: 'app',
 	components: {
 
+	},
+	methods: {
+		// 禁止右键事件
+		banRightClick() {
+			document.oncontextmenu = function() {
+				return false;
+			}
+		}
+	},
+	mounted() {
+		this.banRightClick();
 	}
 }
 

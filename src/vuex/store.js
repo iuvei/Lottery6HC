@@ -6,7 +6,13 @@ Vue.use(Vuex);
 // 创建 store 实例
 export default new Vuex.Store({
     state: {
-        count: 0
+        count: 0,
+        // 服务器时间
+        serverTime: 0,
+        // 6HC 期号
+        issuseNo: '',
+        // 本命
+        natal: ''
     },
     mutations: {
         intrement(state, payload) {

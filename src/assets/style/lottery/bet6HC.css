@@ -1,0 +1,470 @@
+.betLeft {
+  float: left;
+  width: 740px;
+  min-height: 500px;
+  position: relative;
+}
+
+.betFilter {
+  text-align: left;
+  width: 739px;
+  box-sizing: border-box;
+  padding: 10px 15px;
+  border-bottom: 1px solid #ddd;
+  background: #f2f4f7;
+  border-top: 1px solid #ddd;
+  height: 52px;
+}
+
+.betFilter li {
+  display: inline;
+  padding: 4px 5px;
+  line-height: 30px;
+  border-radius: 3px;
+  cursor: pointer;
+  text-align: center;
+  color: #555;
+  font-size: 14px;
+  margin-right: 13px;
+  margin-bottom: 5px;
+}
+
+.betFilter .curr {
+  background: #ff9726;
+  color: #fff;
+}
+
+.betFilterAnd {
+  padding: 10px 15px;
+  font-size: 12px;
+  border-bottom: 1px solid #ccc;
+  line-height: 2.2;
+}
+
+.betFilterAnd.modeZM span:before {
+  height: 80px;
+}
+
+.betFilterAnd li {
+  margin: 4px 0;
+}
+
+.betFilterAnd span {
+  vertical-align: top;
+  display: inline-block;
+  font-weight: 700;
+  color: #555;
+  width: 64px;
+  position: relative;
+  margin-left: 22px;
+}
+
+.betFilterAnd span:before {
+  content: "";
+  display: block;
+  width: 1px;
+  height: 54px;
+  background: #e7e7e8;
+  position: absolute;
+  top: -14px;
+  left: -16px;
+}
+
+.betFilterAnd span:after {
+  background: #fff;
+  border: 1px solid #e7e7e8;
+  border-radius: 50%;
+  content: "";
+  display: block;
+  height: 11px;
+  left: -21px;
+  position: absolute;
+  top: 7px;
+  width: 11px;
+}
+
+.betFilterAnd div {
+  display: inline-block;
+  max-width: 620px;
+}
+
+.betFilterAnd div a {
+  color: #555;
+  margin-right: 15px;
+  padding: 4px 6px;
+  border-radius: 3px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.betFilterAnd div .curr {
+  background: #ff9726;
+  color: #fff;
+}
+
+.betTip {
+  padding: 3px 15px;
+  color: #555;
+  background: #fdfdfd;
+}
+
+.betTip i {
+  color: #ff9831;
+  font-size: 14px;
+  margin-right: 3px;
+}
+
+.betTip ins {
+  color: red;
+}
+
+.hoverContent table th,
+.hoverContent table td {
+  white-space: nowrap;
+  padding: 4px 10px;
+  text-align: center;
+  box-shadow: 0 1px 0 #505e70, 1px 0 0 #505e70;
+}
+
+.hoverContent {
+  display: none;
+  background: #2e4158;
+  margin-left: 8px;
+  color: #fff;
+  border-radius: 4px;
+  position: relative;
+  z-index: 999;
+  background: initial;
+  margin-left: 4px;
+}
+
+.hoverContent table {
+  background: #455467;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.hoverContent table th {
+  font-weight: 400;
+}
+
+.sscCheckNumber {
+  margin: 24px 15px;
+  padding: 25px 0;
+  background: url(http://imagess-google.com/system/pc/k3/betBg.png);
+  border-radius: 6px;
+  padding: 15px 0 !important;
+  padding-bottom: 5px !important;
+}
+
+.sscCheckNumber ul li {
+  display: table;
+  margin: 10px 0;
+}
+
+.buyNumber a,
+.buyNumber ins {
+  display: inline-block;
+  margin: 0 6px;
+  background: #cecece;
+  border: 1px solid #c0c5d2;
+  line-height: 38px;
+  font-size: 18px;
+  color: #000;
+  box-shadow: 0 1px 3px #d4d4d4, inset 0 -1px 5px #fff;
+  text-align: center;
+  background: linear-gradient(180deg, #fff 0, #f1efef);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffffff", endColorstr="#f1efef", GradientType=0);
+  filter: none;
+  cursor: pointer;
+  margin-bottom: 10px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.buyNumber {
+  min-width: 500px;
+  text-align: center;
+  margin: 5px 0;
+}
+
+.buyNumber a {
+  filter: none !important;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+}
+
+.buyNumber .red {
+  color: #dc3b40;
+}
+
+.buyNumber .blue {
+  color: #218ddd;
+}
+
+.buyNumber .green {
+  color: #38b366;
+}
+
+.buyNumber .curr {
+  background: linear-gradient(180deg, #d64b15 30%, #ea6a31);
+  background: -moz-linear-gradient(to bottom, #d64b15 30%, #ea6a31 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#d64b15", endColorstr="#ea6a31", GradientType=0);
+  border: 1px solid #d24c10;
+  color: #fff !important;
+  text-decoration: blink;
+  box-shadow: inherit;
+}
+
+.buyNumber .curr.red {
+  background: linear-gradient(180deg, #ff6669 30%, #e53a3d);
+  background: -moz-linear-gradient(to bottom, #ff6669 30%, #e53a3d 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ff6669", endColorstr="#e53a3d", GradientType=0);
+  border: 1px solid #e94548;
+}
+
+.buyNumber .curr.blue {
+  background: linear-gradient(180deg, #33a8ff 30%, #228ede);
+  background: -moz-linear-gradient(to bottom, #33a8ff 30%, #228ede 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#33a8ff", endColorstr="#228ede", GradientType=0);
+  border: 1px solid #2994e3;
+}
+
+.buyNumber .curr.green {
+  background: linear-gradient(180deg, #41e07c 30%, #38b467);
+  background: -moz-linear-gradient(to bottom, #41e07c 30%, #38b467 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#41e07c", endColorstr="#38b467", GradientType=0);
+  border: 1px solid #3cb569;
+}
+
+.buyNumber,
+.buyNumberFilter,
+.buyNumberTitle {
+  display: block;
+  float: left;
+}
+
+.buyNumberTitle {
+  width: 63px;
+  height: 26px;
+  background: #455467;
+  color: #fff;
+  text-align: center;
+  font-size: 14px;
+  line-height: 26px;
+  border-radius: 0 3px 3px 0;
+  margin: 11px 0;
+  margin-right: 25px;
+  position: relative;
+}
+
+.selectMini .buyNumberTitle {
+  margin-right: 20px;
+}
+
+.selectMini .buyNumberTitle i {
+  position: absolute;
+  display: block;
+  right: -5px;
+  top: 8px;
+  border-top: 5px solid transparent;
+  border-left: 5px solid #455467;
+  border-bottom: 5px solid transparent;
+}
+
+.selectMini .buyNumber {
+  width: 610px;
+}
+
+.selectMini .buyNumber,
+.selectSYX5 .buyNumber {
+  text-align: left;
+  padding: 0 4px;
+}
+
+.betTotal {
+  padding: 10px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.betTotal .money {
+  color: red;
+}
+
+.betTotal em,
+.betTotal i {
+  color: #f37036;
+}
+
+.betBtn {
+  display: block;
+  margin: 0 auto;
+  line-height: 44px;
+  font-size: 20px;
+  border-radius: 5px;
+  width: 150px;
+  text-align: center;
+  background: #ea6a31;
+  color: #fff;
+  margin-bottom: 40px;
+}
+
+.checkedList {
+  border: 1px solid #ddd;
+  margin: 15px;
+  padding: 10px;
+  height: 188px;
+  overflow-y: auto;
+  margin-top: 40px;
+  background: #fff;
+}
+
+.checkedList table {
+  width: 100%;
+}
+
+.checkedList table tr {
+  background: #f4f4f4;
+}
+
+.checkedList table tr td {
+  padding: 5px 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.checkedList .order_type {
+  display: inline-block;
+  max-width: 180px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  vertical-align: top;
+}
+
+.checkedList .eachPrice {
+  width: 70px;
+  height: 23px;
+  padding: 4px 5px;
+  border: 1px solid #ddd;
+  margin: 0 3px;
+}
+
+.checkedList .orderMoney {
+  color: red;
+}
+
+.checkedList .orderCancel {
+  color: #ff9600;
+  cursor: pointer;
+}
+
+.checkNumber {
+  margin: 24px 15px;
+  padding: 25px 0;
+  background: url(http://imagess-google.com/system/pc/k3/betBg.png);
+  border-radius: 6px;
+}
+
+.checkNumber span {
+  color: #333;
+}
+
+.checkNumber.normalbox ul {
+  padding: 0 20px;
+}
+
+.checkNumber.normalbox ul li .bet-item-rate {
+  display: block;
+  text-align: center;
+}
+
+.checkNumber.normalbox ul li .bet-item-eg-box {
+  font-size: 12px;
+  line-height: 16px;
+  transform: translateY(-6px);
+}
+
+.checkNumber.normalbox ul li .bet-item-eg-box span {
+  display: inline-block;
+  margin: 0 3px;
+  color: #666;
+}
+
+.checkNumber.normalbox ul li a {
+  font-size: 24px;
+}
+
+.checkNumber ul li {
+  float: left;
+  display: inline-block;
+  margin: 12px 15px;
+  vertical-align: top;
+}
+
+.checkNumber ul li a {
+  box-shadow: 0 1px 5px #d4d4d4;
+  display: block;
+  background: linear-gradient(180deg, #fff 0, #f1efef 90%, #f7f7f7);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffffff", endColorstr="#f7f7f7", GradientType=0);
+  border-radius: 5px;
+  border: 1px solid #c0c5d2;
+  line-height: 50px;
+  font-size: 30px;
+  color: #000;
+  text-align: center;
+  min-width: 52px;
+}
+
+.checkNumber ul li .curr {
+  background: linear-gradient(180deg, #d64b15 30%, #ea6a31);
+  background: -moz-linear-gradient(to bottom, #d64b15 30%, #ea6a31 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#d64b15", endColorstr="#ea6a31", GradientType=0);
+  border: 1px solid #d24c10;
+  color: #fff !important;
+  text-decoration: blink;
+  box-shadow: inherit;
+}
+
+.checkNumber.A02 ul li,
+.checkNumber.B09 ul li,
+.checkNumber.B10 ul li,
+.checkNumber.B11 ul li,
+.checkNumber.B12 ul li,
+.checkNumber.B13 ul li,
+.checkNumber.B14 ul li,
+.checkNumber.F01 ul li,
+.checkNumber.F02 ul li,
+.checkNumber.F03 ul li,
+.checkNumber.F04 ul li {
+  width: 83px;
+  margin: 8px 14px;
+}
+
+.checkNumber.D01 ul li,
+.checkNumber.E01 ul li,
+.checkNumber.E02 ul li,
+.checkNumber.E03 ul li,
+.checkNumber.E04 ul li,
+.checkNumber.E05 ul li {
+  width: 112px;
+  margin: 8px 11px;
+}
+
+.hoverMoney,
+.selectEg {
+  display: inline;
+  margin-left: 4px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: pointer;
+  color: #ff9831;
+}

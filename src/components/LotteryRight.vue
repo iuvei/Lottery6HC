@@ -264,7 +264,7 @@ export default {
             var f = sessionStorage.getItem(cardID);
             if(f !== null) {
                 this.userCardAllInfo = JSON.parse(f);
-                console.log('有缓存的啦, 小样~',this.userCardAllInfo);
+                // console.log('有缓存的啦, 小样~',this.userCardAllInfo);
                 fn();
                 return;
             }

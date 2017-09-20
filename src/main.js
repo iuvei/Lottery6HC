@@ -4,8 +4,8 @@ import App from './App'
 // import ElementUI from 'element-ui'
 // import 'element-ui/lib/theme-default/index.css'
 import VueRouter from 'vue-router'
-// import store from './vuex/store'
-// import Vuex from 'vuex'
+import store from './vuex/store'
+import Vuex from 'vuex'
 // axios
 import axios from 'axios'
 
@@ -29,7 +29,7 @@ import { setLocalStorage, getLocalStorage } from './api/api';
 // Vue.use(api_port)
 // Vue.use(ElementUI)
 Vue.use(VueRouter)
-// Vue.use(Vuex)
+Vue.use(Vuex)
 
 const router = new VueRouter({
 	mode: 'history',       // 需要后台配置支持
@@ -47,7 +47,7 @@ router.beforeEach((to, from, next) => {
 
 new Vue({
 	router,
-	// store,
+	store,
 	render: h => h(App)
 }).$mount('#app')
 

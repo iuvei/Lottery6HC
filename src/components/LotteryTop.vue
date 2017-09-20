@@ -112,6 +112,8 @@ export default {
                 }
             }).then(res => {
                 this.itemData = res.data.BackData[0];
+                // 保存当前期号到仓库。
+                this.$store.state.issueNo = parseInt(this.itemData.IssueNo) + 1;
             }).catch(err => {
                 alert('请求数据错误');
             });
@@ -127,6 +129,8 @@ export default {
                     SourceName: 'PC'
                 }
             }).then(res => {
+                // 服务器时间保存到仓库去。
+                this.$store.state.serverTime = res.data.Data;
                 var surplus = parseInt(res.data.Close - res.data.Data);
                 var addZero = function(i) {
                     if (i < 10) {
