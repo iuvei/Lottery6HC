@@ -198,4 +198,104 @@ a {
 }
 
 
+/* layer */
 
+.layerBet .layui-layer-btn.layui-layer-btn- {
+    position: relative;
+    height: 40px;
+    line-height: 40px;
+    font-size: 0;
+    text-align: center;
+    border-top: 1px solid #EBEBEB;
+    border: none;
+    bottom: 14px;
+    position: absolute;
+    width: 100%;
+    padding: 0;
+}
+.layerBet .layui-layer-btn a {
+    height: 30px;
+    min-width: 85px;
+    padding: 0 15px;
+    background-color: #f1f1f1;
+    color: #333;
+    border-radius: 3px;
+    margin: .5em .4em .5em 0;
+    font-weight: 400;
+    line-height: 29px;
+    cursor: pointer;
+    font-size: 14px;
+    text-align: center;
+    text-decoration: none;
+    position: static;
+    width: auto;
+}
+
+.layerBet .layui-layer-btn a:nth-child(1) {
+    color: #fff;
+    border: none;
+    background: #3e5779;
+}
+.layerBet .layui-layer-title {
+    margin: 0;
+    padding: 0 80px 0 20px;
+    height: 50px;
+    line-height: 50px;
+    font-size: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #2e4158;
+    padding-left: 30px;
+    border-radius: 2px 2px 0 0;
+    border-bottom: none;
+    background-color: white; 
+}
+
+.layerBet .layui-layer-content {
+    padding: 20px 15px;
+    line-height: 22px;
+    border-radius: 5px;
+    text-align: center;
+    padding: 0 20px;
+    margin-top: 40px;
+    /* margin-bottom: 65px; */
+    word-break: break-all;
+    max-height: 500px;
+    max-height: 60vh;
+    overflow: auto;
+}
+.layerBet .lotteryConfirm {
+    min-height: 250px;
+    background: #fff;
+    text-align: left;
+    font-size: 14px;
+    line-height: 2.5;
+    padding-left: 10px;
+    width: 350px;
+}
+.layerBet .lotteryConfirm span {
+    margin-right: 5px;
+}
+
+.layerBet .lotteryConfirm .textarea {
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 2px 5px;
+    display: inline-block;
+    font-size: 12px;
+    width: 310px;
+    height: 120px;
+    overflow: auto;
+    vertical-align: top;
+}
+.layerBet .lotteryConfirm .textarea p {
+    margin: 0;
+}
+.layerBet {
+    min-width: 380px;
+}
+.layerBet .lotteryConfirm em em {
+    color: red;
+    margin: 5px;
+}

@@ -20,8 +20,11 @@ Vue.prototype.$NProgress = NProgress;
 import routes from './routes'
 
 // import 'font-awesome/css/font-awesome.min.css'
+
 //jQuery
-import $ from 'jquery';
+// import $ from 'jquery';
+
+
 
 import { setLocalStorage, getLocalStorage } from './api/api';
 // import api_port from './api/api_address';

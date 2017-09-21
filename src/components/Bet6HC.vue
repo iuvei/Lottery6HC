@@ -90,7 +90,7 @@
                     <a class="betBtn ClickShade" @click="affirmNoNum">确认选号</a>
                 </div>
             </div>
-            
+
             <!-- 编辑区 -->
             <div class="checkedList">
                 <table>
@@ -110,15 +110,14 @@
                             <td>
                                 <i class="order_price">
                                     每注
-                                    <input type="text" class="eachPrice" v-model="item.betting_unitPrice">
-                                    元
+                                    <input type="text" class="eachPrice" v-model="item.betting_unitPrice" @blur="unitPriceItem(item.betting_unitPrice,index)"> 元
                                 </i>
                             </td>
                             <td>
                                 <i class="c_3">
                                     <span class="hide_this">
                                         可中金额
-                                        <i class="orderMoney c_red">{{ (parseInt(item.betting_unitPrice) * parseFloat(item.maxAward)).toFixed(2) }}</i>
+                                        <i class="orderMoney c_red">{{ itemPriceFilter(item,index) }}</i>
                                         元
                                     </span>
                                 </i>
@@ -134,12 +133,12 @@
             <div class="Bet">
                 <p class="betTotal">
                     方案注数
-                    <em>0</em>
+                    <em>{{ chosenLotteryItems.length }}</em>
                     注，金额
-                    <i class="money">0</i>
+                    <i class="money">{{ totalPrice() }}</i>
                     元
                 </p>
-                <a class="betBtn ClickShade UnClick">立即投注</a>
+                <a class="betBtn ClickShade UnClick" @click="goBuy">立即投注</a>
             </div>
         </div>
     </div>
@@ -195,6 +194,9 @@ function mode1Data() {
 }
 // 服务器获取时间
 function getServerYear() {
+    if($store.state.serverTime !== '' || $store.state.serverTime !== undefined) {
+        return $store.state.serverTime;
+    }
     var s;
     var url = '/mock/getServerTime.json';
     var xhr = new XMLHttpRequest();
@@ -208,7 +210,7 @@ function getServerYear() {
         }
     };
     xhr.send();
-    return s;
+    return s.Data;
 }
 // 算本命年
 function animalData(params) {
@@ -242,14 +244,14 @@ function animalData(params) {
     lottery.data = [];
     var yearResponse = getServerYear();
     if (yearResponse) {
-        var year = parseInt(new Date(parseInt(yearResponse.Data)).getFullYear());
+        var year = parseInt(new Date(parseInt(yearResponse)).getFullYear());
         var remainder = (year - 1) % 12 + 1;
         $store.state.natal = benmingArr[remainder - 1];
         var step = parseInt(remainder - base);
-        // remainder  0 
+        // remainder  0     
         if (params === 'odd1' || params === 'odd2') {
-            if(params === 'odd1') lottery.award = ["9.31","11.63"];
-            if(params === 'odd2') lottery. award = ["1.715","2.013"];
+            if (params === 'odd1') lottery.award = ["9.31", "11.63"];
+            if (params === 'odd2') lottery.award = ["1.715", "2.013"];
             for (let i = 0; i < animal.length; i++) {
                 var o = {};
                 o.name = animal[i];
@@ -269,19 +271,19 @@ function animalData(params) {
             lottery.bonusMode = '1';
             var r = {};
             if (params === 'noOdd1') {
-                lottery.award = ["3.62","4.28"];
+                lottery.award = ["3.62", "4.28"];
                 lottery.odd = [
                     { name: "含本命", odd: [3.62659, 3.21448] },
                     { name: "不含本命", odd: [4.28935, 3.80193] }
                 ];
             } else if (params === 'noOdd2') {
-                lottery.award = ["9.17","10.93"];
+                lottery.award = ["9.17", "10.93"];
                 lottery.odd = [
                     { name: "含本命", odd: [9.17145, 8.12924] },
                     { name: "不含本命", odd: [10.9363, 9.69354] }
                 ];
             } else if (params === 'noOdd3') {
-                lottery.award = ["26.57","31.97783"];
+                lottery.award = ["26.57", "31.97783"];
                 lottery.odd = [
                     { name: "含本命", odd: [26.5703, 23.55095] },
                     { name: "不含本命", odd: [31.97783, 28.34398] }
@@ -304,7 +306,7 @@ function mantissa(n) {
     lottery.mode = '1';
     lottery.flag = '1';
     if (n === 'odd') {
-        lottery.award = ["5.17","4.655","11.6375","9.31"];
+        lottery.award = ["5.17", "4.655", "11.6375", "9.31"];
         lottery.data = [
             { name: '0头', odd: [5.17222, 4.62778] },
             { name: '1头', odd: [4.655, 4.165] },
@@ -338,19 +340,19 @@ function mantissa(n) {
             { name: '9尾' }
         ];
         if (n === 'noOdd1') {
-            lottery.award = ["3.62","3.06"];
+            lottery.award = ["3.62", "3.06"];
             lottery.odd = [
                 { name: "含0尾", odd: [3.62659, 3.21448] },
                 { name: "不含0尾", odd: [3.06783, 2.71921] }
             ];
         } else if (n === 'noOdd2') {
-            lottery.award = ["7.69","6.45"];
+            lottery.award = ["7.69", "6.45"];
             lottery.odd = [
                 { name: "含0尾", odd: [7.69518, 6.82072] },
                 { name: "不含0尾", odd: [6.45975, 5.72569] }
             ];
         } else if (n === 'noOdd3') {
-            lottery.award = ["18.36","15.28"];
+            lottery.award = ["18.36", "15.28"];
             lottery.odd = [
                 { name: "含0尾", odd: [18.36832, 16.28101] },
                 { name: "不含0尾", odd: [15.28279, 13.54611] }
@@ -394,7 +396,7 @@ export default {
                         lottery: {
                             // mode 代表非 number 型数据
                             mode: '1',
-                            award: ["1.980","3.960","1.980","1.980","1.901","1.980","2.795","2.970"],
+                            award: ["1.980", "3.960", "1.980", "1.980", "1.901", "1.980", "2.795", "2.970"],
                             data: mode1Data()
                         }
                     }]
@@ -443,7 +445,7 @@ export default {
                         eg: [],
                         lottery: {
                             mode: '1',
-                            award: ["1.980","3.960","1.980","1.980","1.901","1.980","2.795","2.970"],
+                            award: ["1.980", "3.960", "1.980", "1.980", "1.901", "1.980", "2.795", "2.970"],
                             data: mode1Data()
                         },
                     },
@@ -472,7 +474,7 @@ export default {
                         eg: [],
                         lottery: {
                             mode: '1',
-                            award: ["1.980","3.960","1.980","1.980","1.901","1.980","2.795","2.970"],
+                            award: ["1.980", "3.960", "1.980", "1.980", "1.901", "1.980", "2.795", "2.970"],
                             data: mode1Data()
                         },
                     },
@@ -501,7 +503,7 @@ export default {
                         eg: [],
                         lottery: {
                             mode: '1',
-                            award: ["1.980","3.960","1.980","1.980","1.901","1.980","2.795","2.970"],
+                            award: ["1.980", "3.960", "1.980", "1.980", "1.901", "1.980", "2.795", "2.970"],
                             data: mode1Data()
                         },
                     },
@@ -530,7 +532,7 @@ export default {
                         eg: [],
                         lottery: {
                             mode: '1',
-                            award: ["1.980","3.960","1.980","1.980","1.901","1.980","2.795","2.970"],
+                            award: ["1.980", "3.960", "1.980", "1.980", "1.901", "1.980", "2.795", "2.970"],
                             data: mode1Data()
                         },
                     },
@@ -559,7 +561,7 @@ export default {
                         eg: [],
                         lottery: {
                             mode: '1',
-                            award: ["1.980","3.960","1.980","1.980","1.901","1.980","2.795","2.970"],
+                            award: ["1.980", "3.960", "1.980", "1.980", "1.901", "1.980", "2.795", "2.970"],
                             data: mode1Data()
                         },
                     },
@@ -588,7 +590,7 @@ export default {
                         eg: [],
                         lottery: {
                             mode: '1',
-                            award: ["1.980","3.960","1.980","1.980","1.901","1.980","2.795","2.970"],
+                            award: ["1.980", "3.960", "1.980", "1.980", "1.901", "1.980", "2.795", "2.970"],
                             data: mode1Data()
                         },
                     }]
@@ -663,7 +665,7 @@ export default {
                                 { name: '二中', odd: [53.312, 47.04] },
                                 { name: '中特', odd: [33.32, 29.4] },
                             ],
-                            award: ["53.31","33.32"],
+                            award: ["53.31", "33.32"],
                             data: allNum()
                         },
                     },
@@ -695,7 +697,7 @@ export default {
                         eg: [],
                         lottery: {
                             mode: '1',
-                            award: ["6.650","4.655","5.818","5.172","5.172","5.818","5.818","6.650","5.818","6.650","6.650","5.818","5.172","6.650","5.818","5.818","5.818","5.818"],
+                            award: ["6.650", "4.655", "5.818", "5.172", "5.172", "5.818", "5.818", "6.650", "5.818", "6.650", "6.650", "5.818", "5.172", "6.650", "5.818", "5.818", "5.818", "5.818"],
                             data: [
                                 { name: "红大", odd: [6.65, 5.95], eg: ["29", "30", "34", "35", "40", "45", "46"] },
                                 { name: "红小", odd: [4.655, 4.165], eg: ["01", "02", "07", "08", "12", "13", "18", "19", "23", "24"] },
@@ -920,6 +922,8 @@ export default {
             selectTab: ["特码", "直选"],
             nowGroupItem: {},
             nowItem: {},
+            // 彩票号码
+            lotteryCode: '1301',
             // 赔率显示
             oddShow: true,
             // number 型彩票
@@ -927,13 +931,15 @@ export default {
             oddNum: this.oddCount,
             // 本命
             natal: this.$store.state.natal,
+            // 彩种
+            LotteryName: '六合彩',
             selectBetCount: 0,
             tip: '从1-49中任选1个或多个号码，每个号码为一注，所选号码中包含特码，即为中奖。',
             red: ["01", "02", "07", "08", "12", "13", "18", "19", "23", "24", "29", "30", "34", "35", "40", "45", "46"],
             blue: ["03", "04", "09", "10", "14", "15", "20", "25", "26", "31", "36", "37", "41", "42", "47", "48"],
             green: ["05", "06", "11", "16", "17", "21", "22", "27", "28", "32", "33", "38", "39", "43", "44", "49"],
             chosenArr: [],
-            chosenLotteryItems:[],
+            chosenLotteryItems: [],
         }
     },
     filters: {
@@ -966,6 +972,9 @@ export default {
         },
         chosen() {
             return this.chosenArr;
+        },
+        mode() {
+            return this.nowItem.mode;
         }
     },
     methods: {
@@ -1049,6 +1058,19 @@ export default {
             $('.sscCheckNumber .buyNumber a').removeClass('curr');
             $('.checkNumber li a').removeClass('curr');
         },
+        // 算法输出
+        arithmeticRes(limit) {
+            if(limit === 2) {
+                let n = this.chosenArr.length;
+                let count = (n * (n - 1)) / 2;
+                this.selectBetCount = count;
+            }else if(3) {
+                let n = this.chosenArr.length;
+                let count = (n * (n - 1) * (n - 2)) / (3*2*1);
+                this.selectBetCount = count;
+            }
+        },
+
         // 选号点击事件
         clickNumber(ele, inx) {
             var $this = $('.sscCheckNumber .buyNumber a').eq(inx);
@@ -1058,96 +1080,99 @@ export default {
             var modeFirst = this.selectTab[0];
             if (flag) {
                 $this.removeClass('curr');
-                for(let i = 0;i < this.chosenArr.length;i++) {
-                    if(this.chosenArr[i] === t) {
-                        this.chosenArr.splice(i,1);
+                for (let i = 0; i < this.chosenArr.length; i++) {
+                    if (this.chosenArr[i] === t) {
+                        this.chosenArr.splice(i, 1);
                     }
                 }
 
                 // 判断注数
-                if(mode === '特码,直选' || modeFirst === '正码') {
+                if (mode === '特码,直选' || modeFirst === '正码') {
                     this.selectBetCount--;
                 }
+
+                if(mode === '连码,三全中') {
+                    this.arithmeticRes(3);
+                }
+
 
             } else {
                 $this.addClass('curr');
                 this.chosenArr.push(t);
 
                 // 判断注数
-                if(mode === '特码,直选' || modeFirst === '正码') {
+                if (mode === '特码,直选' || modeFirst === '正码') {
                     this.selectBetCount++;
+                }
+
+                if(mode === '连码,三全中') {
+                    this.arithmeticRes(3);
                 }
 
 
             }
 
-            
+
 
         },
         // 非选号点击事件
         clickNoNumber(ele, inx) {
             var $this = $('.checkNumber li a').eq(inx);
             var flag = $this.hasClass('curr');
-            var a = $this.siblings('.bet-item-rate').text().replace('赔率','');
-            var res = $this.contents().filter(function() { return this.nodeType === 3; }).text(); 
-            res = res.replace(/\n/g,'');
-            res = res.replace(/ /g,'');
+            var a = $this.siblings('.bet-item-rate').text().replace('赔率', '');
+            var res = $this.contents().filter(function() { return this.nodeType === 3; }).text();
+            res = res.replace(/\n/g, '');
+            res = res.replace(/ /g, '');
             var excludeTab = this.selectTab[1];
             if (flag) {
                 $this.removeClass('curr');
 
                 // 取消
-                for(let i = 0;i < this.chosenLotteryItems.length;i++) {
+                for (let i = 0; i < this.chosenLotteryItems.length; i++) {
                     let num = this.chosenLotteryItems[i].betting_number;
                     var tab = this.chosenLotteryItems[i].text;
-                    if(num === res && this.selectTab.join(',') === tab) {
-                        this.chosenLotteryItems.splice(i,1);
+                    if (num === res && this.selectTab.join(',') === tab) {
+                        this.chosenLotteryItems.splice(i, 1);
                     }
                 }
 
-                if(excludeTab === '二肖连' || excludeTab === '三肖连' || excludeTab === '四肖连' || excludeTab === '二尾连' || excludeTab === '三尾连'|| excludeTab === '四尾连') {
-                    for(let k = 0; k < this.chosenArr.length; k++) {
-                        if(this.chosenArr[k] === res) {
+                if (excludeTab === '二肖连' || excludeTab === '三肖连' || excludeTab === '四肖连' || excludeTab === '二尾连' || excludeTab === '三尾连' || excludeTab === '四尾连') {
+                    for (let k = 0; k < this.chosenArr.length; k++) {
+                        if (this.chosenArr[k] === res) {
                             // 切除取消选中的。
-                            this.chosenArr.splice(k,1);
+                            this.chosenArr.splice(k, 1);
                         }
                     }
                 }
 
                 // 多选非 number 处理中心
-                if(excludeTab === '二肖连') {
-                    let n = this.chosenArr.length;
-                    let limit = 2;
-                    let count = (n * (n-1)) / 2;
-                    this.selectBetCount = count;
+                if (excludeTab === '二肖连') {
+                    this.arithmeticRes(2);
                 }
 
 
             } else {
                 $this.addClass('curr');
-                
+
                 this.chosenArr.push(res)
 
-                if(excludeTab === '二肖连' || excludeTab === '三肖连' || excludeTab === '四肖连' || excludeTab === '二尾连' || excludeTab === '三尾连'|| excludeTab === '四尾连') {
-                    
-                    
+                if (excludeTab === '二肖连' || excludeTab === '三肖连' || excludeTab === '四肖连' || excludeTab === '二尾连' || excludeTab === '三尾连' || excludeTab === '四尾连') {
 
-                    
+
+
+
                     // 多选非 number 处理中心
-                    if(excludeTab === '二肖连') {
-                        let n = this.chosenArr.length;
-                        let limit = 2;
-                        let count = (n * (n-1)) / 2;
-                        this.selectBetCount = count;
+                    if (excludeTab === '二肖连') {
+                        this.arithmeticRes(2);
                     }
 
-                    
-                    
+
+
                     return;
-                }else {
+                } else {
                     var obj = {};
                     obj.betting_count = this.chosenArr.length;
-                    obj.betting_issuseNo = this.$store.state.issuseNo;
+                    obj.betting_issueNo = this.$store.state.issueNo;
                     obj.betting_money = '';
                     obj.betting_number = this.chosenArr.join(',');
                     obj.betting_unitPrice = 1;
@@ -1160,15 +1185,28 @@ export default {
         },
         // number 确认选号
         affirmNum() {
-            if(this.chosenArr.length === 0) return;
+            if (this.chosenArr.length === 0 || parseInt(this.selectBetCount) === 0) return;
             var len = $('.sscCheckNumber .buyNumber').find('a.curr').length;
             var obj = {};
-            obj.betting_count = this.chosenArr.length;
-            obj.betting_issuseNo = this.$store.state.issuseNo;
+            obj.lottery_code = this.lotteryCode;
+            obj.betting_count = this.betCount;
+            obj.betting_issueNo = this.$store.state.issueNo;
             obj.betting_money = '';
             obj.betting_number = this.chosenArr.join(',');
             obj.betting_unitPrice = 1;
-            obj.maxAward = this.award;
+            obj.betting_point = "0-10.00%";
+            obj.play_detail_code = this.lotteryCode + this.mode;
+            obj.maxAward = this.maxAward({
+                betCount: this.betCount,
+                mode: this.mode,
+                award: this.award
+            });
+
+
+            // 暂时
+            obj.graduation_count = 1;
+            obj.betting_model = 1;
+
             obj.text = this.selectTab.join(',');
             this.chosenLotteryItems.push(obj);
             // 清除其他 tab 选号样式
@@ -1180,24 +1218,31 @@ export default {
         // 非 number 确认选号
         affirmNoNum() {
             var modeTab = this.selectTab[1];
-            if(modeTab === '二肖连') {
+            if (modeTab === '二肖连') {
                 var len = this.chosenArr.length;
                 // 注数
                 var zs = this.selectBetCount;
                 // 含不含本命
                 var flag = new RegExp(this.natal).test(this.chosenArr.join());
                 // true 为含本命, false 不含本命
-                if(flag) {
+                if (flag) {
 
-                }else {
-                    
+                } else {
+
                 }
                 var obj = {};
+                obj.lottery_code = this.lotteryCode;
                 obj.betting_count = this.chosenArr.length;
-                obj.betting_issuseNo = this.$store.state.issuseNo;
+                obj.betting_issueNo = this.$store.state.issueNo;
                 obj.betting_money = '';
                 obj.betting_number = this.chosenArr.join(',');
                 obj.betting_unitPrice = 1;
+                obj.betting_point = "0-10.00%";
+
+                // 暂时
+                obj.graduation_count = 1;
+                obj.betting_model = 1;
+
                 // obj.maxAward = parseFloat(a);
                 obj.text = this.selectTab.join(',');
                 this.chosenLotteryItems.push(obj);
@@ -1210,15 +1255,132 @@ export default {
             // 取消
             let num = this.chosenLotteryItems[i].betting_number;
             var tab = this.chosenLotteryItems[i].text;
-            for(let j = 0;j < o.length;j++) {
-                var res = o.eq(j).contents().filter(function() { return this.nodeType === 3; }).text(); 
-                res = res.replace(/\n/g,'');
-                res = res.replace(/ /g,'');
-                if(num === res && this.selectTab.join(',') === tab) {
+            for (let j = 0; j < o.length; j++) {
+                var res = o.eq(j).contents().filter(function() { return this.nodeType === 3; }).text();
+                res = res.replace(/\n/g, '');
+                res = res.replace(/ /g, '');
+                if (num === res && this.selectTab.join(',') === tab) {
                     o.eq(j).removeClass('curr');
                 }
             }
-            this.chosenLotteryItems.splice(i,1);
+            this.chosenLotteryItems.splice(i, 1);
+        },
+        // 方案总金额
+        totalPrice() {
+            var total = 0;
+            for (let i = 0; i < this.chosenLotteryItems.length; i++) {
+                let z = this.chosenLotteryItems[i].betting_count;
+                let d = this.chosenLotteryItems[i].betting_unitPrice;
+                if (d === '') {
+                    d = 0;
+                }
+                total += parseInt(z) * parseInt(d);
+            }
+            return total;
+        },
+        // 立即投注
+        goBuy() {
+            var _this = this;
+            var len = this.chosenLotteryItems.length;
+            var a = '';
+            this.chosenLotteryItems.map(res => {
+                a += res.text.split(',') + res.betting_number + '<br/>'
+            });
+            var c = '<div id="CheckBetLayer" class="lotteryConfirm"><ul>\n                  <li><span>彩种：</span><em class="fill">' + this.LotteryName + '</em></li>\n                  <li><span>期号：</span>第<em class="fill">' + this.$store.state.issueNo + '</em>期</li>\n                  <li><span>详情：</span><div class="fill textarea"><p>' + a + '</p></div></li>\n                  <li><span>投注总金额：</span><em><em class="fill">' + this.totalPrice() + "</em>元</em></li>\n              </ul>\n          </div>";
+            for(let i = 0; i < this.chosenLotteryItems.length;i++) {
+                if(this.chosenLotteryItems[i].betting_unitPrice === '0' || this.chosenLotteryItems[i].betting_unitPrice === '' || this.chosenLotteryItems[i].betting_unitPrice === 0 || this.chosenLotteryItems[i].betting_unitPrice === undefined) {
+                    layer.open({
+                        title: "温馨提示",
+                        style: "width:18em;font-size:.7em",
+                        skin: "layerBet",
+                        type: 1,
+                        area: ['380px', '210px'],
+                        shadeClose: true, //点击遮罩关闭
+                        btn: ["确定"],
+                        content: '<div class="layermcont">请填写您要投注的金额</div>',
+                    });
+                    return;
+                }
+            }
+            
+            //弹出一个页面层
+            if(len !== 0) {
+                layer.open({
+                    title: "投注确认",
+                    style: "width:18em;font-size:.7em",
+                    skin: "layerBet",
+                    type: 1,
+                    area: ['380px', '415px'],
+                    shadeClose: true, //点击遮罩关闭
+                    btn: ["确定", "取消"],
+                    content: c,
+                    yes: function(index,layero) {
+                        _this.$axios({
+                            url: '',
+                            method: 'POST',
+                            data: {
+                                BettingData:_this.chosenLotteryItems
+                            }
+                        }).then(res => {
+                            console.log(res);
+                        }).catch(err => {
+                            console.log(err);
+                        });
+                    }
+                });
+            }else {
+                layer.open({
+                    title: "温馨提示",
+                    style: "width:18em;font-size:.7em",
+                    skin: "layerBet",
+                    type: 1,
+                    area: ['380px', '210px'],
+                    shadeClose: true, //点击遮罩关闭
+                    btn: ["确定"],
+                    content: '<div class="layermcont">请至少选择一注号码投注</div>',
+                });
+            }
+        },
+        // 购买金额失去焦点事件
+        unitPriceItem(e,inx) {
+            var res = (e + '').replace(/\D/g, "").replace(/^0+/, "");
+            e = parseInt(e);
+            this.chosenLotteryItems[inx].betting_unitPrice = res;
+        },
+        itemPriceFilter(ele,inx) {
+            var res = (parseInt(ele.betting_unitPrice) * parseFloat(ele.maxAward)).toFixed(2);
+            if (res === 'NaN') {
+                return '0.00';
+            } else {
+                return res;
+            }
+        },
+        // 计算赔率
+        maxAward(t) {
+            var e = t.betCount,
+                s = t.mode,
+                a = t.award;
+            if(["A01", "B03", "B04", "B05", "B06", "B07", "B08"].indexOf(s) !== -1) {
+                return a  * 1;
+            }
+
+            if("B01" === s) {
+                return e > 6 ? 6 * a: e * a;
+            }
+
+             if (["E01", "E02"].indexOf(s) !== -1) {
+                 return 1 === this.betStr.length && this.betStr === this.natal ? 1 * a[0] : 1 * a[1]
+             }
+
+            // if (["E03", "E04", "E05"].indexOf(s) !== -1) {
+            //     var n = ["E03", "E04", "E05"].indexOf(s) + 2;
+            //     if (this.betStr.length > 13) return (0, c.C)(7, n) * a[1];
+            //     var r = this.betStr.split(","),
+            //     i = r.indexOf(this.natal) === -1 ? 0 : 1;
+            //     return r = r.length - i,
+            //     i * (0, c.C)(r, n - 1) * a[0] + (0, c.C)(r, n) * a[1]
+            // }
+
         }
     },
     created() {

@@ -168,6 +168,9 @@
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffffff", endColorstr="#f1efef", GradientType=0);
     filter: none;
     cursor: pointer;
+    // IE 样式
+    background: #f7f7f7\0;
+    
     margin-bottom: 10px;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -203,6 +206,8 @@
         color: #fff!important;
         text-decoration: blink;
         box-shadow: inherit;
+        // IE 样式
+        background: #ea6a31\0;
     }
     .curr.red {
         background: linear-gradient(180deg, #ff6669 30%, #e53a3d);

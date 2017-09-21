@@ -151,7 +151,7 @@ export default {
                     var final = `${h}:${m}:${s}`;
                     this.endTime = final;
                     surplus = surplus - 1000;
-                    if (surplus <= 0) {
+                    if (surplus <= 0 || this.endTime === '00:00:00') {
                         clearInterval(t);
                     }
                 }, 1000);

@@ -179,6 +179,7 @@
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffffff", endColorstr="#f1efef", GradientType=0);
   filter: none;
   cursor: pointer;
+  background: #f7f7f7\0;
   margin-bottom: 10px;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -219,6 +220,7 @@
   color: #fff !important;
   text-decoration: blink;
   box-shadow: inherit;
+  background: #ea6a31\0;
 }
 
 .buyNumber .curr.red {
