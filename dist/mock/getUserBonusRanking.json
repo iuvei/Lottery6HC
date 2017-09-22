@@ -1,0 +1,95 @@
+{
+    "Code": 1,
+    "StrCode": "数据获取成功",
+    "DataCount": 0,
+    "BackUrl": null,
+    "BackData": {
+        "RankingList": [
+            {
+                "UserId": 650968,
+                "UserName": "13693636138",
+                "NickName": "13***8",
+                "UserPhoto": "CA64E00C3F9FD5F3.jpg",
+                "Bonus": "2494546",
+                "Ranking": "1"
+            },
+            {
+                "UserId": 752119,
+                "UserName": "xjfmc",
+                "NickName": "xj***c",
+                "UserPhoto": "C6021F3486D2B2DB.jpg",
+                "Bonus": "1573096",
+                "Ranking": "2"
+            },
+            {
+                "UserId": 448977,
+                "UserName": "198172",
+                "NickName": "19***2",
+                "UserPhoto": "C6021F3486D2B2DB.jpg",
+                "Bonus": "1468740",
+                "Ranking": "3"
+            },
+            {
+                "UserId": 702724,
+                "UserName": "z242775",
+                "NickName": "石头媳妇",
+                "UserPhoto": "1B6A214FF62BD91F.jpg",
+                "Bonus": "1367453",
+                "Ranking": "4"
+            },
+            {
+                "UserId": 739481,
+                "UserName": "hqx668",
+                "NickName": "hq***8",
+                "UserPhoto": "9816F54B27A9BF48.jpg",
+                "Bonus": "1299600",
+                "Ranking": "5"
+            },
+            {
+                "UserId": 490471,
+                "UserName": "ykweww",
+                "NickName": "回血真辛苦",
+                "UserPhoto": "5C5A53823438F2CD.jpg",
+                "Bonus": "1169555",
+                "Ranking": "6"
+            },
+            {
+                "UserId": 681450,
+                "UserName": "lsl900115",
+                "NickName": "小白",
+                "UserPhoto": "6F1A99A3D02A6DEC.jpg",
+                "Bonus": "1135899",
+                "Ranking": "7"
+            },
+            {
+                "UserId": 867845,
+                "UserName": "alloy",
+                "NickName": "刘耀强",
+                "UserPhoto": "E6CA6EB9F492879E.jpg",
+                "Bonus": "1094512",
+                "Ranking": "8"
+            },
+            {
+                "UserId": 413495,
+                "UserName": "328982708",
+                "NickName": "32***8",
+                "UserPhoto": "6EC9EDCC7B3BD70D.jpg",
+                "Bonus": "1018056",
+                "Ranking": "9"
+            },
+            {
+                "UserId": 765761,
+                "UserName": "31581577",
+                "NickName": "天马国际",
+                "UserPhoto": "F0E57CF931E45118.jpg",
+                "Bonus": "1009380",
+                "Ranking": "10"
+            }
+        ],
+        "UserUnread": null
+    },
+    "Data": null,
+    "CacheData": {},
+    "OpenType": 0,
+    "Style": null
+}

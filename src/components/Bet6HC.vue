@@ -194,8 +194,8 @@ function mode1Data() {
 }
 // 服务器获取时间
 function getServerYear() {
-    if($store.state.serverTime !== '' || $store.state.serverTime !== undefined) {
-        return $store.state.serverTime;
+    if ($store.state.LHC.serverTime !== '' && $store.state.LHC.serverTime !== undefined && $store.state.LHC.serverTime !== 0) {
+        return $store.state.LHC.serverTime;
     }
     var s;
     var url = '/mock/getServerTime.json';
@@ -204,6 +204,7 @@ function getServerYear() {
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
             s = JSON.parse(xhr.responseText);
+            $store.state.LHC.serverTime = s.Data;
         } else {
             s = false;
             console.log(xhr.statusText);
@@ -246,7 +247,7 @@ function animalData(params) {
     if (yearResponse) {
         var year = parseInt(new Date(parseInt(yearResponse)).getFullYear());
         var remainder = (year - 1) % 12 + 1;
-        $store.state.natal = benmingArr[remainder - 1];
+        $store.state.LHC.natal = benmingArr[remainder - 1];
         var step = parseInt(remainder - base);
         // remainder  0     
         if (params === 'odd1' || params === 'odd2') {
@@ -930,7 +931,7 @@ export default {
             lotteryNumber: false,
             oddNum: this.oddCount,
             // 本命
-            natal: this.$store.state.natal,
+            natal: this.$store.state.LHC.natal,
             // 彩种
             LotteryName: '六合彩',
             selectBetCount: 0,
@@ -1009,16 +1010,20 @@ export default {
             this.selectTab[1] = this.nowGroupItem.BackData[0].name;
         },
         oddCount() {
-            var b = this.nowItem.lottery.bonusMode;
-            var r = this.nowItem.lottery.mode;
-            var f = this.nowItem.lottery.flag;
-            if ((b === undefined && r === '1') || f === '1') {
-                this.oddShow = false;
-            } else {
-                this.oddShow = true;
-                var res = (Math.floor(this.nowItem.lottery.odd[0] * 100)) / 100;
-                res = res.toFixed(2);
-                return res;
+            try {
+                var b = this.nowItem.lottery.bonusMode;
+                var r = this.nowItem.lottery.mode;
+                var f = this.nowItem.lottery.flag;
+                if ((b === undefined && r === '1') || f === '1') {
+                    this.oddShow = false;
+                } else {
+                    this.oddShow = true;
+                    var res = (Math.floor(this.nowItem.lottery.odd[0] * 100)) / 100;
+                    res = res.toFixed(2);
+                    return res;
+                }
+            } catch (err) {
+                console.log(err);
             }
         },
         // 初始化
@@ -1060,13 +1065,13 @@ export default {
         },
         // 算法输出
         arithmeticRes(limit) {
-            if(limit === 2) {
+            if (limit === 2) {
                 let n = this.chosenArr.length;
                 let count = (n * (n - 1)) / 2;
                 this.selectBetCount = count;
-            }else if(3) {
+            } else if (3) {
                 let n = this.chosenArr.length;
-                let count = (n * (n - 1) * (n - 2)) / (3*2*1);
+                let count = (n * (n - 1) * (n - 2)) / (3 * 2 * 1);
                 this.selectBetCount = count;
             }
         },
@@ -1091,7 +1096,7 @@ export default {
                     this.selectBetCount--;
                 }
 
-                if(mode === '连码,三全中') {
+                if (mode === '连码,三全中') {
                     this.arithmeticRes(3);
                 }
 
@@ -1105,7 +1110,7 @@ export default {
                     this.selectBetCount++;
                 }
 
-                if(mode === '连码,三全中') {
+                if (mode === '连码,三全中') {
                     this.arithmeticRes(3);
                 }
 
@@ -1172,13 +1177,17 @@ export default {
                 } else {
                     var obj = {};
                     obj.betting_count = this.chosenArr.length;
-                    obj.betting_issueNo = this.$store.state.issueNo;
+                    obj.betting_issueNo = this.$store.state.LHC.issueNo;
                     obj.betting_money = '';
                     obj.betting_number = this.chosenArr.join(',');
                     obj.betting_unitPrice = 1;
-                    obj.maxAward = parseFloat(a);
+                    obj.maxAward = a ? a : this.maxAward({
+                        betCount: this.betCount,
+                        mode: this.mode,
+                        award: this.award
+                    });
                     obj.text = this.selectTab.join(',');
-                    this.chosenLotteryItems.push(obj);
+                    this.chosenLotteryItems.unshift(obj);
                     this.chosenArr = [];
                 }
             }
@@ -1190,7 +1199,7 @@ export default {
             var obj = {};
             obj.lottery_code = this.lotteryCode;
             obj.betting_count = this.betCount;
-            obj.betting_issueNo = this.$store.state.issueNo;
+            obj.betting_issueNo = this.$store.state.LHC.issueNo;
             obj.betting_money = '';
             obj.betting_number = this.chosenArr.join(',');
             obj.betting_unitPrice = 1;
@@ -1208,7 +1217,7 @@ export default {
             obj.betting_model = 1;
 
             obj.text = this.selectTab.join(',');
-            this.chosenLotteryItems.push(obj);
+            this.chosenLotteryItems.unshift(obj);
             // 清除其他 tab 选号样式
             $('.sscCheckNumber .buyNumber a').removeClass('curr');
             // 清除注数
@@ -1217,6 +1226,7 @@ export default {
         },
         // 非 number 确认选号
         affirmNoNum() {
+            console.log('非 number 确认选号');
             var modeTab = this.selectTab[1];
             if (modeTab === '二肖连') {
                 var len = this.chosenArr.length;
@@ -1225,15 +1235,15 @@ export default {
                 // 含不含本命
                 var flag = new RegExp(this.natal).test(this.chosenArr.join());
                 // true 为含本命, false 不含本命
-                if (flag) {
+                // if (flag) {
 
-                } else {
+                // } else {
 
-                }
+                // }
                 var obj = {};
                 obj.lottery_code = this.lotteryCode;
                 obj.betting_count = this.chosenArr.length;
-                obj.betting_issueNo = this.$store.state.issueNo;
+                obj.betting_issueNo = this.$store.state.LHC.issueNo;
                 obj.betting_money = '';
                 obj.betting_number = this.chosenArr.join(',');
                 obj.betting_unitPrice = 1;
@@ -1244,10 +1254,16 @@ export default {
                 obj.betting_model = 1;
 
                 // obj.maxAward = parseFloat(a);
+                obj.maxAward = this.maxAward({
+                    betCount: this.betCount,
+                    mode: this.mode,
+                    award: this.award
+                });
                 obj.text = this.selectTab.join(',');
-                this.chosenLotteryItems.push(obj);
+                this.chosenLotteryItems.shift(obj);
                 this.chosenArr = [];
             }
+            
         },
         // 删除选号
         cancelItem(i) {
@@ -1286,9 +1302,9 @@ export default {
             this.chosenLotteryItems.map(res => {
                 a += res.text.split(',') + res.betting_number + '<br/>'
             });
-            var c = '<div id="CheckBetLayer" class="lotteryConfirm"><ul>\n                  <li><span>彩种：</span><em class="fill">' + this.LotteryName + '</em></li>\n                  <li><span>期号：</span>第<em class="fill">' + this.$store.state.issueNo + '</em>期</li>\n                  <li><span>详情：</span><div class="fill textarea"><p>' + a + '</p></div></li>\n                  <li><span>投注总金额：</span><em><em class="fill">' + this.totalPrice() + "</em>元</em></li>\n              </ul>\n          </div>";
-            for(let i = 0; i < this.chosenLotteryItems.length;i++) {
-                if(this.chosenLotteryItems[i].betting_unitPrice === '0' || this.chosenLotteryItems[i].betting_unitPrice === '' || this.chosenLotteryItems[i].betting_unitPrice === 0 || this.chosenLotteryItems[i].betting_unitPrice === undefined) {
+            var c = '<div id="CheckBetLayer" class="lotteryConfirm"><ul>\n                  <li><span>彩种：</span><em class="fill">' + this.LotteryName + '</em></li>\n                  <li><span>期号：</span>第<em class="fill">' + this.$store.state.LHC.issueNo + '</em>期</li>\n                  <li><span>详情：</span><div class="fill textarea"><p>' + a + '</p></div></li>\n                  <li><span>投注总金额：</span><em><em class="fill">' + this.totalPrice() + "</em>元</em></li>\n              </ul>\n          </div>";
+            for (let i = 0; i < this.chosenLotteryItems.length; i++) {
+                if (this.chosenLotteryItems[i].betting_unitPrice === '0' || this.chosenLotteryItems[i].betting_unitPrice === '' || this.chosenLotteryItems[i].betting_unitPrice === 0 || this.chosenLotteryItems[i].betting_unitPrice === undefined) {
                     layer.open({
                         title: "温馨提示",
                         style: "width:18em;font-size:.7em",
@@ -1302,9 +1318,9 @@ export default {
                     return;
                 }
             }
-            
+
             //弹出一个页面层
-            if(len !== 0) {
+            if (len !== 0) {
                 layer.open({
                     title: "投注确认",
                     style: "width:18em;font-size:.7em",
@@ -1314,21 +1330,43 @@ export default {
                     shadeClose: true, //点击遮罩关闭
                     btn: ["确定", "取消"],
                     content: c,
-                    yes: function(index,layero) {
+                    yes: function(index, layero) {
                         _this.$axios({
-                            url: '',
+                            url: _this.getApi('getPay'),
                             method: 'POST',
                             data: {
-                                BettingData:_this.chosenLotteryItems
+                                BettingData: _this.chosenLotteryItems
                             }
                         }).then(res => {
-                            console.log(res);
+                            // 投注成功提示
+                            layer.close(index);
+                            layer.open({
+                                title: "温馨提示",
+                                style: "width:18em;font-size:.7em",
+                                skin: "layerBet",
+                                type: 1,
+                                area: ['380px', '210px'],
+                                shadeClose: true, //点击遮罩关闭
+                                btn: ["确定"],
+                                content: '<div class="layermcont">' + res.data.StrCode + '</div>',
+                            });
                         }).catch(err => {
-                            console.log(err);
+                            // 投注失败提示
+                            layer.close(index);
+                            layer.open({
+                                title: "温馨提示",
+                                style: "width:18em;font-size:.7em",
+                                skin: "layerBet",
+                                type: 1,
+                                area: ['380px', '210px'],
+                                shadeClose: true, //点击遮罩关闭
+                                btn: ["确定"],
+                                content: '<div class="layermcont">' + '投注失败' + '</div>',
+                            });
                         });
                     }
                 });
-            }else {
+            } else {
                 layer.open({
                     title: "温馨提示",
                     style: "width:18em;font-size:.7em",
@@ -1342,12 +1380,12 @@ export default {
             }
         },
         // 购买金额失去焦点事件
-        unitPriceItem(e,inx) {
+        unitPriceItem(e, inx) {
             var res = (e + '').replace(/\D/g, "").replace(/^0+/, "");
             e = parseInt(e);
             this.chosenLotteryItems[inx].betting_unitPrice = res;
         },
-        itemPriceFilter(ele,inx) {
+        itemPriceFilter(ele, inx) {
             var res = (parseInt(ele.betting_unitPrice) * parseFloat(ele.maxAward)).toFixed(2);
             if (res === 'NaN') {
                 return '0.00';
@@ -1360,26 +1398,80 @@ export default {
             var e = t.betCount,
                 s = t.mode,
                 a = t.award;
-            if(["A01", "B03", "B04", "B05", "B06", "B07", "B08"].indexOf(s) !== -1) {
-                return a  * 1;
+            console.log(a);
+            if (["A01", "B03", "B04", "B05", "B06", "B07", "B08"].indexOf(s) !== -1) {
+                return a * 1;
             }
 
-            if("B01" === s) {
-                return e > 6 ? 6 * a: e * a;
+            if ("B01" === s) {
+                return e > 6 ? 6 * a : e * a;
             }
 
-             if (["E01", "E02"].indexOf(s) !== -1) {
-                 return 1 === this.betStr.length && this.betStr === this.natal ? 1 * a[0] : 1 * a[1]
-             }
+            if (["E01", "E02"].indexOf(s) !== -1) {
+                return 1 === this.betStr.length && this.betStr === this.natal ? 1 * a[0] : 1 * a[1]
+            }
 
-            // if (["E03", "E04", "E05"].indexOf(s) !== -1) {
-            //     var n = ["E03", "E04", "E05"].indexOf(s) + 2;
-            //     if (this.betStr.length > 13) return (0, c.C)(7, n) * a[1];
-            //     var r = this.betStr.split(","),
-            //     i = r.indexOf(this.natal) === -1 ? 0 : 1;
-            //     return r = r.length - i,
-            //     i * (0, c.C)(r, n - 1) * a[0] + (0, c.C)(r, n) * a[1]
-            // }
+            var C = function() {
+                var t = {};
+                return function(e, a) {
+                    if (e === a) return 1;
+                    if (e < a) return 0;
+                    var s = [e, a].join(" ");
+                    if (t[s]) return t[s];
+                    for (var n = 1,
+                        r = 1,
+                        i = 0; i < a; i++) n *= e - i,
+                            r *= i + 1;
+                    return t[s] = Math.round(n / r),
+                        t[s]
+                }
+            }();
+            // 测试重写
+            if (["E03", "E04", "E05"].indexOf(s) !== -1) {
+                var n = ["E03", "E04", "E05"].indexOf(s) + 2;
+                if (this.betStr.length > 13) return (0, C)(7, n) * a[1];
+                var r = this.betStr.split(","),
+                    i = r.indexOf(this.natal) === -1 ? 0 : 1;
+                return r = r.length - i,
+                    i * (0, C)(r, n - 1) * a[0] + (0, C)(r, n) * a[1]
+            }
+            if (["C01", "C02"].indexOf(s) !== -1) {
+                var a = "C01" === s ? a : a[1],
+                    o = this.betStr.split(",").length;
+                return o > 6 && (o = 6),
+                    a * (0, C)(o, 3)
+            }
+            if ("C03" === s) {
+                var o = this.betStr.split(",").length;
+                return o > 6 && (o = 6),
+                    a * (0, C)(o, 2)
+            }
+            if ("C05" === s) {
+                var o = this.betStr.split(",").length;
+                return o > 7 && (o = 7),
+                    a * (o - 1)
+            }
+            if ("C04" === s) {
+                var o = this.betStr.split(",").length;
+                o > 7 && (o = 7);
+                var l = a[1] * (o - 1);
+                return o > 2 && (l += (0, C)(o - 1, 2) * a[0]),
+                    l
+            }
+            if ("G" === s.charAt(0)) {
+                var n = 1 * s.charAt(2) + 4,
+                    o = this.betStr.split(",").length;
+                return o > 42 && (o = 42),
+                    (0, C)(o, n) * a
+            }
+            if ("F" === s.charAt(0)) {
+                var n = 1 * s.charAt(2);
+                if (this.betStr.length > 20) return (0, C)(7, n) * a[1];
+                var r = this.betStr.split(","),
+                    i = r.indexOf("0尾") === -1 ? 0 : 1;
+                return r = r.length - i,
+                    i * r * a[0] + (0, C)(r, n) * a[1]
+            }
 
         }
     },

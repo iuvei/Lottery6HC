@@ -201,29 +201,29 @@ export default {
         loadData() {
             this.$axios({
                 method: 'GET',
-                url: '/mock/getInitData.json'
+                url: this.getApi('getUserBonusRanking'),
             }).then(res => {
                 this.yesterdayBonusList = res.data.BackData.RankingList;
             }).catch(err => {
                 alert('数据请求错误');
             });
         },
-        // 今日开奖
+        // 今日开奖 (往期开奖展示列表)
         todayLottery() {
             this.$axios({
                 method: 'GET',
-                url: '/mock/getLotteryOpenList.json',
+                url: this.getApi('getLotteryOpenList'),
             }).then(res => {
                 this.LotteryOpenList = res.data.BackData;
             }).catch(err => {
                 alert('获取今日开奖列表失败');
             });
         },
-        // 获取最新的奖金列表
+        // 获取中奖信息列表
         getNewestBonusList() {
             this.$axios({
                 method: 'GET',
-                url: '/mock/getNewestBonusList.json',
+                url: this.getApi('getNewestBonusList'),
             }).then(res => {
                 var addArr = [];
                 addArr = res.data.BackData.NewestBonusList.slice(-10);
@@ -270,7 +270,7 @@ export default {
             }
             this.$axios({
                 method: 'GET',
-                url: '/mock/getCard.json'
+                url: this.getApi('getCard'),
             }).then(res => {
                 var allTypeList = ["SSC", "XYNC", "PK10", "KL8", "PL35", "FC3D", "SYX5", "K3"];
                 this.userCardAllInfo.userCardInfo = res.data.BackData;

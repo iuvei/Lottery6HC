@@ -1,0 +1,62 @@
+{
+    "Code": 1,
+    "StrCode": "数据获取成功",
+    "DataCount": 0,
+    "BackUrl": null,
+    "BackData": [
+        {
+            "IssueNo": "2017111",
+            "LotteryOpen": "39,01,04,32,05,03,10",
+            "OpenTime": "9/21/2017 9:34:36 PM"
+        },
+        {
+            "IssueNo": "2017110",
+            "LotteryOpen": "11,34,07,12,36,30,17",
+            "OpenTime": "9/19/2017 9:34:40 PM"
+        },
+        {
+            "IssueNo": "2017109",
+            "LotteryOpen": "23,36,16,47,03,12,33",
+            "OpenTime": "9/17/2017 9:34:41 PM"
+        },
+        {
+            "IssueNo": "2017108",
+            "LotteryOpen": "41,25,42,49,26,34,01",
+            "OpenTime": "9/14/2017 9:34:57 PM"
+        },
+        {
+            "IssueNo": "2017107",
+            "LotteryOpen": "38,49,30,21,23,44,37",
+            "OpenTime": "9/12/2017 9:34:48 PM"
+        },
+        {
+            "IssueNo": "2017106",
+            "LotteryOpen": "04,23,39,29,18,07,49",
+            "OpenTime": "9/9/2017 9:34:52 PM"
+        },
+        {
+            "IssueNo": "2017105",
+            "LotteryOpen": "46,27,41,10,19,29,17",
+            "OpenTime": "9/7/2017 9:35:06 PM"
+        },
+        {
+            "IssueNo": "2017104",
+            "LotteryOpen": "30,08,01,02,43,39,19",
+            "OpenTime": "9/5/2017 9:34:54 PM"
+        },
+        {
+            "IssueNo": "2017103",
+            "LotteryOpen": "05,27,01,24,11,23,15",
+            "OpenTime": "9/2/2017 9:34:43 PM"
+        },
+        {
+            "IssueNo": "2017102",
+            "LotteryOpen": "17,37,33,12,25,18,29",
+            "OpenTime": "8/31/2017 9:34:44 PM"
+        }
+    ],
+    "Data": null,
+    "CacheData": null,
+    "OpenType": 0,
+    "Style": null
+}

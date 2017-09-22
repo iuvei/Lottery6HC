@@ -6,13 +6,24 @@ Vue.use(Vuex);
 // 创建 store 实例
 export default new Vuex.Store({
     state: {
-        count: 0,
-        // 服务器时间
-        serverTime: 0,
-        // 6HC 期号
-        issuseNo: '',
-        // 本命
-        natal: ''
+        "LHC": {
+            LotteryName: '六合彩',
+            // 现在是哪一期
+            NowIssue: '',
+            // 上期是哪一期
+            OldIssue: '',
+            // 服务器时间
+            serverTime: 0,
+            // 6HC 期号
+            issuseNo: '',
+            // 本命
+            natal: '',
+            // 上期开什么
+            LotteryOpenArr:[],
+            LotteryOpenRes: {},
+            // 定时器
+            TimeBar: '00:00:00'
+        }
     },
     mutations: {
         intrement(state, payload) {

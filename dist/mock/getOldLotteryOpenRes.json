@@ -1,0 +1,25 @@
+{
+    "Code": 1,
+    "StrCode": "数据获取成功",
+    "DataCount": 0,
+    "BackUrl": null,
+    "BackData": [
+        {
+        	"IssueNo":"2017108",
+        	"LotteryOpen":[
+        		{"animal":"蛇", "number":"41"},
+        		{"animal":"鸡", "number":"25"},
+        		{"animal":"龙", "number":"42"},
+        		{"animal":"鸡", "number":"49"},
+        		{"animal":"猴", "number":"26"},
+        		{"animal":"鼠", "number":"34"},
+        		{"animal":"鸡", "number":"01"}
+        	],
+        	"OpenTime":"9/14/2017 9:34:57 PM"
+        }
+    ],
+    "Data": null,
+    "CacheData": null,
+    "OpenType": 0,
+    "Style": null
+}

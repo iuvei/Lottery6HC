@@ -1,8 +1,6 @@
 import babelpolyfill from 'babel-polyfill'
 import Vue from 'vue'
 import App from './App'
-// import ElementUI from 'element-ui'
-// import 'element-ui/lib/theme-default/index.css'
 import VueRouter from 'vue-router'
 import store from './vuex/store'
 import Vuex from 'vuex'
@@ -19,7 +17,6 @@ Vue.prototype.$NProgress = NProgress;
 
 import routes from './routes'
 
-// import 'font-awesome/css/font-awesome.min.css'
 
 //jQuery
 // import $ from 'jquery';
@@ -27,15 +24,14 @@ import routes from './routes'
 
 
 import { setLocalStorage, getLocalStorage } from './api/api';
-// import api_port from './api/api_address';
+import api_port from './api/api_address';
 
-// Vue.use(api_port)
-// Vue.use(ElementUI)
+Vue.use(api_port)
 Vue.use(VueRouter)
 Vue.use(Vuex)
 
 const router = new VueRouter({
-	mode: 'history',       // 需要后台配置支持
+	// mode: 'history',       //  http://localhost:8065/lottery/6HC/1301  history 需要后台配置支持, 不需要 history 路由直接注释即可。http://localhost:8065/#/lottery/6HC/1301
 	routes
 })
 

@@ -7010,6 +7010,7 @@ default = {
                 s = 1e6;
                 a && (a > s && (a = s, layer.msg("最高投注额为" + s + "元")), this.basket[t].betting_unitPrice = a, this.basket[t].betting_money = a * this.basket[t].betting_count)
             },
+            // 算最大奖金
             maxAward: function(t) {
                 var e = t.betCount,
                 a = t.award,
@@ -23061,6 +23062,7 @@ default = {
             i = 0,
             l = !1,
             u = {
+                // Vuex 仓库
                 state: {
                     bet: {
                         betting_number: "",

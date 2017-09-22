@@ -5,6 +5,21 @@
     "BackUrl": null,
     "BackData": [
         {
+            "IssueNo": "2017111",
+            "LotteryOpen": "39,01,04,32,05,03,10",
+            "OpenTime": "9/21/2017 9:34:36 PM"
+        },
+        {
+            "IssueNo": "2017110",
+            "LotteryOpen": "11,34,07,12,36,30,17",
+            "OpenTime": "9/19/2017 9:34:40 PM"
+        },
+        {
+            "IssueNo": "2017109",
+            "LotteryOpen": "23,36,16,47,03,12,33",
+            "OpenTime": "9/17/2017 9:34:41 PM"
+        },
+        {
             "IssueNo": "2017108",
             "LotteryOpen": "41,25,42,49,26,34,01",
             "OpenTime": "9/14/2017 9:34:57 PM"
@@ -38,21 +53,6 @@
             "IssueNo": "2017102",
             "LotteryOpen": "17,37,33,12,25,18,29",
             "OpenTime": "8/31/2017 9:34:44 PM"
-        },
-        {
-            "IssueNo": "2017101",
-            "LotteryOpen": "12,34,24,26,48,44,04",
-            "OpenTime": "8/29/2017 9:34:59 PM"
-        },
-        {
-            "IssueNo": "2017100",
-            "LotteryOpen": "34,36,35,16,46,40,31",
-            "OpenTime": "8/26/2017 9:35:06 PM"
-        },
-        {
-            "IssueNo": "2017099",
-            "LotteryOpen": "04,47,21,10,07,28,17",
-            "OpenTime": "8/24/2017 9:43:50 PM"
         }
     ],
     "Data": null,

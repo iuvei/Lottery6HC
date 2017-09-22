@@ -7,12 +7,12 @@
         </div>
         <!-- 定时器 -->
         <div class="time">
-            <div class="timeTitle">距<b>{{ parseInt(itemData.IssueNo) + 1 }}</b>期投注截止还有：</div>
+            <div class="timeTitle">距<b>{{ NowIssue }}</b>期投注截止还有：</div>
             <em>{{ endTime }}</em>
         </div>
         <!-- 上期开奖号码 -->
         <div id="Results" class="announced">
-            <div class="announcedTitle">第<b>{{ parseInt(itemData.IssueNo) }}</b>期开奖号码：</div>
+            <div class="announcedTitle">第<b>{{ OldIssue }}</b>期开奖号码：</div>
             <div class="openNumber">
                 <div class="number-box" v-for="item in LotteryOpenArr">
                     <em :class=" item.number | color(red,blue,green)">{{ item.number }}</em>
@@ -23,7 +23,7 @@
                     <em class="symbol">+</em>
                 </div>
                 <div class="number-box">
-                    <em class="red">{{ LotteryOpenRes.number }}</em>
+                    <em :class=" LotteryOpenRes.number | color(red,blue,green)">{{ LotteryOpenRes.number }}</em>
                     <span class="number-box-text">{{ LotteryOpenRes.animal }}</span>
                 </div>
             </div>
@@ -65,19 +65,12 @@ function filterColor(arr, obj) {
 export default {
     data() {
         return {
-            Lotterytitle: '六合彩',
+            Lotterytitle: this.$store.state.LHC.LotteryName,
             LotteryCode: this.$route.params.code,
             itemData: {},
-            endTime: '',
-            LotteryOpenArr:[
-        		{"animal":"蛇", "number":"41"},
-        		{"animal":"鸡", "number":"25"},
-        		{"animal":"龙", "number":"42"},
-        		{"animal":"鸡", "number":"49"},
-        		{"animal":"猴", "number":"26"},
-        		{"animal":"鼠", "number":"34"},
-            ],
-            LotteryOpenRes: {"animal":"鸡", "number":"01"},
+            endTime: '00:00:00',
+            LotteryOpenArr:[],
+            LotteryOpenRes: {},
             red: ["01", "02", "07", "08", "12", "13", "18", "19", "23", "24", "29", "30", "34", "35", "40", "45", "46"],
             blue: ["03", "04", "09", "10", "14", "15", "20", "25", "26", "31", "36", "37", "41", "42", "47", "48"],
             green: ["05", "06", "11", "16", "17", "21", "22", "27", "28", "32", "33", "38", "39", "43", "44", "49"],
@@ -98,11 +91,22 @@ export default {
             }
         }
     },
+    computed: {
+        NowIssue() {
+            return this.$store.state.LHC.NowIssue;
+        },
+        OldIssue() {
+            return this.$store.state.LHC.OldIssue;
+        },
+        natal() {
+            return this.$store.state.LHC.natal;
+        }
+    },
     methods: {
         loadData() {
             this.$axios({
                 method: 'GET',
-                url: '/mock/lotteryTop.json',
+                url: this.getApi('getOldLotteryOpenRes'),
                 data: {
                     Action: 'GetLotteryOpen',
                     LotteryCode: this.LotteryCode,
@@ -112,8 +116,13 @@ export default {
                 }
             }).then(res => {
                 this.itemData = res.data.BackData[0];
+                this.LotteryOpenArr = this.itemData.LotteryOpen.slice(0,-1);
+                var len = this.itemData.LotteryOpen.length;
+                this.LotteryOpenRes = this.itemData.LotteryOpen[len-1];
+                this.$store.state.LHC.OldIssue = this.itemData.IssueNo;
+                this.$store.state.LHC.NowIssue = parseInt(this.itemData.IssueNo) + 1;
                 // 保存当前期号到仓库。
-                this.$store.state.issueNo = parseInt(this.itemData.IssueNo) + 1;
+                this.$store.state.LHC.issueNo = parseInt(this.itemData.IssueNo) + 1;
             }).catch(err => {
                 alert('请求数据错误');
             });
@@ -123,35 +132,30 @@ export default {
             var abort = this.itemData.OpenTime;
             this.$axios({
                 method: 'GET',
-                url: '/mock/getServerTime.json',
+                url: this.getApi('getServerTime'),
                 data: {
                     Action: 'GetServerTimeMillisecond',
                     SourceName: 'PC'
                 }
             }).then(res => {
                 // 服务器时间保存到仓库去。
-                this.$store.state.serverTime = res.data.Data;
+                this.$store.state.LHC.serverTime = res.data.Data;
                 var surplus = parseInt(res.data.Close - res.data.Data);
-                var addZero = function(i) {
-                    if (i < 10) {
-                        i = '0' + i;
-                    }
-                    return i;
-                };
                 if (surplus <= 0) {
                     return;
                 }
                 var t = setInterval(() => {
-                    var h = Math.floor(surplus / (1000 * 60 * 60));
-                    h = addZero(h);
-                    var m = Math.floor(surplus / (1000 * 60) % 60);
-                    m = addZero(m);
-                    var s = Math.floor((surplus / 1000) % 60);
-                    s = addZero(s);
-                    var final = `${h}:${m}:${s}`;
+                    var s = Math.floor(surplus / (1000 * 60 * 60));
+                    var n = Math.floor(surplus / (1000 * 60) % 60);
+                    var r = Math.floor((surplus / 1000) % 60);
+                    s = s > 9 ? s: "0" + s;
+                    n = n > 9 ? n: "0" + n;
+                    r = r > 9 ? r: "0" + r;
+                    var final = `${s}:${n}:${r}`;
                     this.endTime = final;
                     surplus = surplus - 1000;
                     if (surplus <= 0 || this.endTime === '00:00:00') {
+                        this.openLottery();
                         clearInterval(t);
                     }
                 }, 1000);
@@ -159,7 +163,10 @@ export default {
                 alert('请求数据错误');
             });
         },
-
+        // 开奖
+        openLottery() {
+            console.log('开奖啦~');
+        }
     },
     mounted() {
         this.loadData();
