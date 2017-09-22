@@ -274,20 +274,20 @@ function animalData(params) {
             if (params === 'noOdd1') {
                 lottery.award = ["3.62", "4.28"];
                 lottery.odd = [
-                    { name: "含本命", odd: [3.62659, 3.21448] },
-                    { name: "不含本命", odd: [4.28935, 3.80193] }
+                    { name: "含本命", odd: [3.62, 3.21] },
+                    { name: "不含本命", odd: [4.28, 3.80] }
                 ];
             } else if (params === 'noOdd2') {
                 lottery.award = ["9.17", "10.93"];
                 lottery.odd = [
-                    { name: "含本命", odd: [9.17145, 8.12924] },
-                    { name: "不含本命", odd: [10.9363, 9.69354] }
+                    { name: "含本命", odd: [9.17, 8.12] },
+                    { name: "不含本命", odd: [10.93, 9.69] }
                 ];
             } else if (params === 'noOdd3') {
-                lottery.award = ["26.57", "31.97783"];
+                lottery.award = ["26.57", "31.97"];
                 lottery.odd = [
-                    { name: "含本命", odd: [26.5703, 23.55095] },
-                    { name: "不含本命", odd: [31.97783, 28.34398] }
+                    { name: "含本命", odd: [26.57, 23.55] },
+                    { name: "不含本命", odd: [31.97, 28.34] }
                 ];
             }
             for (let i = 0; i < animal.length; i++) {
@@ -309,12 +309,12 @@ function mantissa(n) {
     if (n === 'odd') {
         lottery.award = ["5.17", "4.655", "11.6375", "9.31"];
         lottery.data = [
-            { name: '0头', odd: [5.17222, 4.62778] },
-            { name: '1头', odd: [4.655, 4.165] },
-            { name: '2头', odd: [4.655, 4.165] },
-            { name: '3头', odd: [4.655, 4.165] },
-            { name: '4头', odd: [4.655, 4.165] },
-            { name: '0尾', odd: [11.6375, 10.4125] },
+            { name: '0头', odd: [5.17, 4.62] },
+            { name: '1头', odd: [4.65, 4.16] },
+            { name: '2头', odd: [4.65, 4.16] },
+            { name: '3头', odd: [4.65, 4.16] },
+            { name: '4头', odd: [4.65, 4.16] },
+            { name: '0尾', odd: [11.63, 10.41] },
             { name: '1尾', odd: [9.31, 8.33] },
             { name: '2尾', odd: [9.31, 8.33] },
             { name: '3尾', odd: [9.31, 8.33] },
@@ -343,20 +343,20 @@ function mantissa(n) {
         if (n === 'noOdd1') {
             lottery.award = ["3.62", "3.06"];
             lottery.odd = [
-                { name: "含0尾", odd: [3.62659, 3.21448] },
-                { name: "不含0尾", odd: [3.06783, 2.71921] }
+                { name: "含0尾", odd: [3.62, 3.21] },
+                { name: "不含0尾", odd: [3.06, 2.71] }
             ];
         } else if (n === 'noOdd2') {
             lottery.award = ["7.69", "6.45"];
             lottery.odd = [
-                { name: "含0尾", odd: [7.69518, 6.82072] },
-                { name: "不含0尾", odd: [6.45975, 5.72569] }
+                { name: "含0尾", odd: [7.69, 6.82] },
+                { name: "不含0尾", odd: [6.45, 5.72] }
             ];
         } else if (n === 'noOdd3') {
             lottery.award = ["18.36", "15.28"];
             lottery.odd = [
-                { name: "含0尾", odd: [18.36832, 16.28101] },
-                { name: "不含0尾", odd: [15.28279, 13.54611] }
+                { name: "含0尾", odd: [18.36, 16.28] },
+                { name: "不含0尾", odd: [15.28, 13.54] }
             ];
         }
         return lottery;
@@ -1065,13 +1065,26 @@ export default {
         },
         // 算法输出
         arithmeticRes(limit) {
+            // limit 为限制选号数量
+            // var n = this.chosenArr.length;
+            // var a = n,
+            //     s = limit;
+            // for(let i = 0;i < limit - 1;i++) {
+            //     a *= (limit-i);
+            //     s *= (limit - i);
+            //     console.log(a);
+            // }
             if (limit === 2) {
-                let n = this.chosenArr.length;
                 let count = (n * (n - 1)) / 2;
                 this.selectBetCount = count;
-            } else if (3) {
-                let n = this.chosenArr.length;
+            } else if (limit === 3) {
                 let count = (n * (n - 1) * (n - 2)) / (3 * 2 * 1);
+                this.selectBetCount = count;
+            } else if (limit === 4) {
+                let count = (n * (n - 1) * (n - 2) * (n - 3)) / (4 * 3 * 2 * 1);
+                this.selectBetCount = count;
+            } else if (limit === 5) {
+                let count = (n * (n - 1) * (n - 2) * (n - 3) * (n - 4)) / (5 * 4 * 3 * 2 * 1);
                 this.selectBetCount = count;
             }
         },
@@ -1096,9 +1109,14 @@ export default {
                     this.selectBetCount--;
                 }
 
-                if (mode === '连码,三全中') {
+                if (mode === '连码,二全中' || mode === '连码,二中特' ||  mode === '连码,特串') {
+                    this.arithmeticRes(2);
+                }
+
+                if (mode === '连码,三全中' || mode === '连码,三中二') {
                     this.arithmeticRes(3);
                 }
+
 
 
             } else {
@@ -1110,8 +1128,18 @@ export default {
                     this.selectBetCount++;
                 }
 
-                if (mode === '连码,三全中') {
+                if (mode === '连码,二全中' || mode === '连码,二中特' ||  mode === '连码,特串') {
+                    this.arithmeticRes(2);
+                }
+
+                if (mode === '连码,三全中' || mode === '连码,三中二') {
                     this.arithmeticRes(3);
+                }
+
+                if (['不中,五不中','不中,六不中','不中,七不中','不中,八不中','不中,九不中','不中,十不中'].indexOf(mode) !== -1) {
+                    let nn = ['不中,五不中','不中,六不中','不中,七不中','不中,八不中','不中,九不中','不中,十不中'].indexOf(mode);
+                    nn = parseInt(nn) + 5;
+                    this.arithmeticRes(nn);
                 }
 
 
@@ -1151,8 +1179,16 @@ export default {
                 }
 
                 // 多选非 number 处理中心
-                if (excludeTab === '二肖连') {
+                if (excludeTab === '二肖连' || excludeTab === '二尾连') {
                     this.arithmeticRes(2);
+                }
+
+                if (excludeTab === '三肖连' || excludeTab === '三尾连') {
+                    this.arithmeticRes(3);
+                }
+
+                if (excludeTab === '四肖连' || excludeTab === '四尾连') {
+                    this.arithmeticRes(4);
                 }
 
 
@@ -1167,8 +1203,16 @@ export default {
 
 
                     // 多选非 number 处理中心
-                    if (excludeTab === '二肖连') {
+                    if (excludeTab === '二肖连' || excludeTab === '二尾连') {
                         this.arithmeticRes(2);
+                    }
+
+                    if (excludeTab === '三肖连' || excludeTab === '三尾连') {
+                        this.arithmeticRes(3);
+                    }
+
+                    if (excludeTab === '四肖连' || excludeTab === '四尾连') {
+                        this.arithmeticRes(4);
                     }
 
 
@@ -1226,9 +1270,9 @@ export default {
         },
         // 非 number 确认选号
         affirmNoNum() {
-            console.log('非 number 确认选号');
+            if (this.chosenArr.length === 0 || parseInt(this.selectBetCount) === 0) return;
             var modeTab = this.selectTab[1];
-            if (modeTab === '二肖连') {
+            // if (modeTab === '二肖连') {
                 var len = this.chosenArr.length;
                 // 注数
                 var zs = this.selectBetCount;
@@ -1242,7 +1286,7 @@ export default {
                 // }
                 var obj = {};
                 obj.lottery_code = this.lotteryCode;
-                obj.betting_count = this.chosenArr.length;
+                obj.betting_count = this.betCount;
                 obj.betting_issueNo = this.$store.state.LHC.issueNo;
                 obj.betting_money = '';
                 obj.betting_number = this.chosenArr.join(',');
@@ -1260,9 +1304,15 @@ export default {
                     award: this.award
                 });
                 obj.text = this.selectTab.join(',');
-                this.chosenLotteryItems.shift(obj);
+                this.chosenLotteryItems.unshift(obj);
+
+                // 清除其他 tab 选号样式
+                $('.checkNumber li a').removeClass('curr');
+
+                // 清除注数
+                this.selectBetCount = 0;
                 this.chosenArr = [];
-            }
+            // }
             
         },
         // 删除选号
