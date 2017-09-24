@@ -10,6 +10,7 @@ export default new Vuex.Store({
             LotteryName: '六合彩',
             // 现在是哪一期
             NowIssue: '',
+            lotteryCode: '1301',
             // 上期是哪一期
             OldIssue: '',
             // 服务器时间
@@ -22,7 +23,9 @@ export default new Vuex.Store({
             LotteryOpenArr:[],
             LotteryOpenRes: {},
             // 定时器
-            TimeBar: '00:00:00'
+            TimeBar: '00:00:00',
+            // 生肖对应表
+            numberToAnimal:[],
         }
     },
     mutations: {

@@ -7,14 +7,16 @@
         </div>
         <!-- 定时器 -->
         <div class="time">
-            <div class="timeTitle">距<b>{{ NowIssue }}</b>期投注截止还有：</div>
+            <div class="timeTitle">距
+                <b>{{ NowIssue }}</b>期投注截止还有：</div>
             <em>{{ endTime }}</em>
         </div>
         <!-- 上期开奖号码 -->
         <div id="Results" class="announced">
-            <div class="announcedTitle">第<b>{{ OldIssue }}</b>期开奖号码：</div>
-            <div class="openNumber">
-                <div class="number-box" v-for="item in LotteryOpenArr">
+            <div class="announcedTitle">第
+                <b>{{ OldIssue }}</b>期开奖号码：</div>
+            <div class="openNumber" v-if="openNumberModel">
+                <div class="number-box" v-for="(item,index) in LotteryOpenArr" :key="index">
                     <em :class=" item.number | color(red,blue,green)">{{ item.number }}</em>
                     <span class="number-box-text">{{ item.animal }}</span>
                 </div>
@@ -25,6 +27,18 @@
                 <div class="number-box">
                     <em :class=" LotteryOpenRes.number | color(red,blue,green)">{{ LotteryOpenRes.number }}</em>
                     <span class="number-box-text">{{ LotteryOpenRes.animal }}</span>
+                </div>
+            </div>
+            <div class="openNumber" v-else>
+                <div class="number-box" v-for="(item,index) in openNumberModelArr" :key="index">
+                    <em class="red">{{ item }}</em>
+                </div>
+                <!---->
+                <div class="number-box plus">
+                    <em class="symbol">+</em>
+                </div>
+                <div class="number-box">
+                    <em class="red">{{ openNumberModelArr[0] }}</em>
                 </div>
             </div>
         </div>
@@ -54,22 +68,26 @@ Date.prototype.format = function(fmt) {
     return fmt;
 }
 function filterColor(arr, obj) {
-  var i = arr.length;
-  while (i--) {
-    if (arr[i] === obj) {
-      return true;
+    var i = arr.length;
+    while (i--) {
+        if (arr[i] === obj) {
+            return true;
+        }
     }
-  }
-  return false;
+    return false;
 }
 export default {
     data() {
         return {
             Lotterytitle: this.$store.state.LHC.LotteryName,
-            LotteryCode: this.$route.params.code,
+            LotteryCode: this.$store.state.LHC.lotteryCode,
             itemData: {},
             endTime: '00:00:00',
-            LotteryOpenArr:[],
+            animalFlag: false,
+            // 揭示上期开奖结果
+            openNumberModel: false,
+            openNumberModelArr: ['01', '01', '01', '01', '01', '01'],
+            LotteryOpenArr: [],
             LotteryOpenRes: {},
             red: ["01", "02", "07", "08", "12", "13", "18", "19", "23", "24", "29", "30", "34", "35", "40", "45", "46"],
             blue: ["03", "04", "09", "10", "14", "15", "20", "25", "26", "31", "36", "37", "41", "42", "47", "48"],
@@ -77,16 +95,16 @@ export default {
         }
     },
     filters: {
-        color(value,r,b,g) {
+        color(value, r, b, g) {
             if (!value) return '';
             var r_flag = filterColor(r, value);
             var b_flag = filterColor(b, value);
             var g_flag = filterColor(g, value);
-            if(r_flag) {
+            if (r_flag) {
                 return 'red';
-            }else if(b_flag) {
+            } else if (b_flag) {
                 return 'blue';
-            }else if(g_flag) {
+            } else if (g_flag) {
                 return 'green';
             }
         }
@@ -100,31 +118,26 @@ export default {
         },
         natal() {
             return this.$store.state.LHC.natal;
+        },
+        LotteryOpenArrC() {
+            return this.$store.state.LHC.LotteryOpenArr;
+        },
+        LotteryOpenResC() {
+            return this.$store.state.LHC.LotteryOpenRes;
+        },
+        numberToAnimalList() {
+            return this.$store.state.LHC.numberToAnimal;
         }
     },
     methods: {
-        loadData() {
+        getLotteryPlanData(fn) {
             this.$axios({
                 method: 'GET',
-                url: this.getApi('getOldLotteryOpenRes'),
-                data: {
-                    Action: 'GetLotteryOpen',
-                    LotteryCode: this.LotteryCode,
-                    IssueNo: 0,
-                    DataNum: 10,
-                    SourceName: 'PC'
-                }
+                url: this.getApi('getLotteryPlan'),
             }).then(res => {
-                this.itemData = res.data.BackData[0];
-                this.LotteryOpenArr = this.itemData.LotteryOpen.slice(0,-1);
-                var len = this.itemData.LotteryOpen.length;
-                this.LotteryOpenRes = this.itemData.LotteryOpen[len-1];
-                this.$store.state.LHC.OldIssue = this.itemData.IssueNo;
-                this.$store.state.LHC.NowIssue = parseInt(this.itemData.IssueNo) + 1;
-                // 保存当前期号到仓库。
-                this.$store.state.LHC.issueNo = parseInt(this.itemData.IssueNo) + 1;
+                fn(res.data);
             }).catch(err => {
-                alert('请求数据错误');
+                console.log(err);
             });
         },
         abortTimer() {
@@ -138,27 +151,62 @@ export default {
                     SourceName: 'PC'
                 }
             }).then(res => {
+                var _this = this;
                 // 服务器时间保存到仓库去。
-                this.$store.state.LHC.serverTime = res.data.Data;
-                var surplus = parseInt(res.data.Close - res.data.Data);
-                if (surplus <= 0) {
-                    return;
-                }
-                var t = setInterval(() => {
-                    var s = Math.floor(surplus / (1000 * 60 * 60));
-                    var n = Math.floor(surplus / (1000 * 60) % 60);
-                    var r = Math.floor((surplus / 1000) % 60);
-                    s = s > 9 ? s: "0" + s;
-                    n = n > 9 ? n: "0" + n;
-                    r = r > 9 ? r: "0" + r;
-                    var final = `${s}:${n}:${r}`;
-                    this.endTime = final;
-                    surplus = surplus - 1000;
-                    if (surplus <= 0 || this.endTime === '00:00:00') {
-                        this.openLottery();
-                        clearInterval(t);
+                _this.$store.state.LHC.serverTime = res.data.Data;
+                var serverYear = new Date(Number(res.data.Data)).getFullYear();
+                var serverMonth = new Date(Number(res.data.Data)).getMonth() + 1;
+                var serverDay = new Date(Number(res.data.Data)).getDate();
+                var NextLotteryOpenTime, NextLotteryOpenDay, lotteryIssue;
+
+                var p = localStorage.getItem('lotteryPlan' + _this.LotteryCode);
+                p = JSON.parse(p);
+                if (p === null || p.Month !== serverMonth) {
+                    _this.getLotteryPlanData(function(r) {
+                        localStorage.setItem('lotteryPlan' + _this.LotteryCode, JSON.stringify(r));
+                        let f = Number(r.Month) === Number(serverMonth);
+                        let ScheduleArr = r.Schedule.split(',');
+                        if (f) {
+                            for (let i = 0; i < ScheduleArr.length; i++) {
+                                if (serverDay <= Number(ScheduleArr[i])) {
+                                    NextLotteryOpenDay = Number(ScheduleArr[i]);
+                                    lotteryIssue = Number(r.BeforeIssue) + (i + 1);
+                                    break;
+                                }
+                            }
+                        }
+                        var NextLotteryOpenTime = new Date('' + serverYear + '-' + serverMonth + '-' + NextLotteryOpenDay + ' 20:00').getTime();
+                        var Difftime = Number(res.data.Data) - (new Date().getTime());
+                        localStorage.setItem('Difftime', Difftime);
+                        _this.TimerAction({
+                            NextLotteryOpenTime: NextLotteryOpenTime,
+                            nowTime: res.data.Data
+                        });
+                    });
+                } else {
+                    let f = Number(p.Month) === Number(serverMonth);
+                    let ScheduleArr = p.Schedule.split(',');
+                    if (f) {
+                        for (let i = 0; i < ScheduleArr.length; i++) {
+                            if (serverDay <= Number(ScheduleArr[i])) {
+                                NextLotteryOpenDay = Number(ScheduleArr[i]);
+                                lotteryIssue = Number(p.BeforeIssue) + (i + 1);
+                                break;
+                            }
+                        }
                     }
-                }, 1000);
+                    var NextLotteryOpenTime = new Date('' + serverYear + '-' + serverMonth + '-' + NextLotteryOpenDay + ' 20:00').getTime();
+
+                    _this.TimerAction({
+                        NextLotteryOpenTime: NextLotteryOpenTime,
+                        nowTime: res.data.Data
+                    });
+                }
+
+                this.$store.state.LHC.OldIssue = serverYear + '' + (lotteryIssue - 1);
+                this.$store.state.LHC.NowIssue = serverYear + '' + lotteryIssue;
+
+
             }).catch(err => {
                 alert('请求数据错误');
             });
@@ -166,11 +214,94 @@ export default {
         // 开奖
         openLottery() {
             console.log('开奖啦~');
+        },
+        TimerAction(o) {
+            var _this = this;
+            var surplus = parseInt(o.NextLotteryOpenTime - o.nowTime);
+            if (surplus <= 0) {
+                return;
+            }
+            var t = setInterval(() => {
+                var s = Math.floor(surplus / (1000 * 60 * 60));
+                var n = Math.floor(surplus / (1000 * 60) % 60);
+                var r = Math.floor((surplus / 1000) % 60);
+                s = s > 9 ? s : "0" + s;
+                n = n > 9 ? n : "0" + n;
+                r = r > 9 ? r : "0" + r;
+                var final = `${s}:${n}:${r}`;
+                _this.endTime = final;
+                surplus = surplus - 1000;
+                if (surplus <= 0 || _this.endTime === '00:00:00') {
+                    _this.openLottery();
+                    clearInterval(t);
+                }
+            }, 1000);
+        },
+        // 号码对应生肖算法
+        numberToAnimal(s) {
+            this.animalFlag = true;
+            var opArr = [];
+            var op = this.LotteryOpenArrC;
+            var ed = String(this.LotteryOpenResC);
+            var edRes = {};
+            var a = this.numberToAnimalList;
+            for (let i = 0; i < op.length; i++) {
+                let o = {};
+                for (let j = 0; j < a.length; j++) {
+                    let f = a[j].eg.some(function(item) {
+                        return item === op[i];
+                    });
+                    if (f) {
+                        o.animal = a[j].name;
+                        o.number = op[i];
+                        opArr.push(o);
+                        break;
+                    } else {
+                        continue;
+                    }
+                }
+            }
+
+            for (let k = 0; k < a.length; k++) {
+                let f = a[k].eg.some(function(item) {
+                    return item === ed;
+                });
+                if (f) {
+                    edRes.animal = a[k].name;
+                    edRes.number = ed;
+                    break;
+                } else {
+                    continue;
+                }
+            }
+            this.LotteryOpenArr = opArr;
+            this.LotteryOpenRes = edRes;
+            this.openNumberModel = true;
+        },
+        openNumberModelAnimation() {
+            var _this = this;
+            setInterval(() => {
+                this.openNumberModelArr.map((ele,index) => {
+                    if(Number(ele) >= 10) {
+                        ele = 1;
+                    }
+                    ele = Number(ele) + 1;
+                    if(ele < 10) {
+                        ele = '0' + ele;
+                    }
+                    this.$set(this.openNumberModelArr, index, ele);
+                });
+            },60);
         }
     },
     mounted() {
-        this.loadData();
         this.abortTimer();
+        this.openNumberModelAnimation();
+    },
+    updated() {
+        if (this.LotteryOpenArrC.length !== 0 && this.animalFlag === false) {
+            this.numberToAnimal();
+        }
     }
 }
 </script>

@@ -3,6 +3,8 @@ export default{
 	{
 		Vue.prototype.getApi = function (api) {
 			const api_port = {
+				// 获取彩票计划
+				getLotteryPlan: '/mock/getLotteryPlan.json',
 				// 获取上期开奖号码
 				getOldLotteryOpenRes: '/mock/getOldLotteryOpenRes.json',
 				// 获取服务器时间

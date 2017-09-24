@@ -297,6 +297,9 @@ function animalData(params) {
                 o.eg = egs[e];
                 lottery.data.push(o);
             }
+            if($store.state.LHC.numberToAnimal.length === 0) {
+                $store.state.LHC.numberToAnimal = lottery.data;
+            }
             return lottery;
         }
     }
@@ -362,6 +365,23 @@ function mantissa(n) {
         return lottery;
     }
 }
+
+// 排列组合算法
+var C = function() {
+    var t = {};
+    return function(e, a) {
+        if (e === a) return 1;
+        if (e < a) return 0;
+        var s = [e, a].join(" ");
+        if (t[s]) return t[s];
+        for (var n = 1,
+            r = 1,
+            i = 0; i < a; i++) n *= e - i,
+                r *= i + 1;
+        return t[s] = Math.round(n / r),
+            t[s]
+    }
+}();
 export default {
     data() {
         return {
@@ -837,7 +857,7 @@ export default {
                         lottery: {
                             mode: '0',
                             odd: [2.12955, 1.90539],
-                            award: '2.21',
+                            award: '2.12',
                             data: allNum()
                         },
                         default:
@@ -924,7 +944,7 @@ export default {
             nowGroupItem: {},
             nowItem: {},
             // 彩票号码
-            lotteryCode: '1301',
+            lotteryCode: this.$store.state.LHC.lotteryCode,
             // 赔率显示
             oddShow: true,
             // number 型彩票
@@ -1066,27 +1086,8 @@ export default {
         // 算法输出
         arithmeticRes(limit) {
             // limit 为限制选号数量
-            // var n = this.chosenArr.length;
-            // var a = n,
-            //     s = limit;
-            // for(let i = 0;i < limit - 1;i++) {
-            //     a *= (limit-i);
-            //     s *= (limit - i);
-            //     console.log(a);
-            // }
-            if (limit === 2) {
-                let count = (n * (n - 1)) / 2;
-                this.selectBetCount = count;
-            } else if (limit === 3) {
-                let count = (n * (n - 1) * (n - 2)) / (3 * 2 * 1);
-                this.selectBetCount = count;
-            } else if (limit === 4) {
-                let count = (n * (n - 1) * (n - 2) * (n - 3)) / (4 * 3 * 2 * 1);
-                this.selectBetCount = count;
-            } else if (limit === 5) {
-                let count = (n * (n - 1) * (n - 2) * (n - 3) * (n - 4)) / (5 * 4 * 3 * 2 * 1);
-                this.selectBetCount = count;
-            }
+            var n = this.chosenArr.length;
+            this.selectBetCount = (0,C)(n,limit);
         },
 
         // 选号点击事件
@@ -1115,6 +1116,13 @@ export default {
 
                 if (mode === '连码,三全中' || mode === '连码,三中二') {
                     this.arithmeticRes(3);
+                }
+
+                
+                if (['不中,五不中','不中,六不中','不中,七不中','不中,八不中','不中,九不中','不中,十不中'].indexOf(mode) !== -1) {
+                    let nn = ['不中,五不中','不中,六不中','不中,七不中','不中,八不中','不中,九不中','不中,十不中'].indexOf(mode);
+                    nn = parseInt(nn) + 5;
+                    this.arithmeticRes(nn);
                 }
 
 
@@ -1221,7 +1229,7 @@ export default {
                 } else {
                     var obj = {};
                     obj.betting_count = this.chosenArr.length;
-                    obj.betting_issueNo = this.$store.state.LHC.issueNo;
+                    obj.betting_issueNo = this.$store.state.LHC.NowIssue;
                     obj.betting_money = '';
                     obj.betting_number = this.chosenArr.join(',');
                     obj.betting_unitPrice = 1;
@@ -1243,7 +1251,7 @@ export default {
             var obj = {};
             obj.lottery_code = this.lotteryCode;
             obj.betting_count = this.betCount;
-            obj.betting_issueNo = this.$store.state.LHC.issueNo;
+            obj.betting_issueNo = this.$store.state.LHC.NowIssue;
             obj.betting_money = '';
             obj.betting_number = this.chosenArr.join(',');
             obj.betting_unitPrice = 1;
@@ -1287,7 +1295,7 @@ export default {
                 var obj = {};
                 obj.lottery_code = this.lotteryCode;
                 obj.betting_count = this.betCount;
-                obj.betting_issueNo = this.$store.state.LHC.issueNo;
+                obj.betting_issueNo = this.$store.state.LHC.NowIssue;
                 obj.betting_money = '';
                 obj.betting_number = this.chosenArr.join(',');
                 obj.betting_unitPrice = 1;
@@ -1352,7 +1360,7 @@ export default {
             this.chosenLotteryItems.map(res => {
                 a += res.text.split(',') + res.betting_number + '<br/>'
             });
-            var c = '<div id="CheckBetLayer" class="lotteryConfirm"><ul>\n                  <li><span>彩种：</span><em class="fill">' + this.LotteryName + '</em></li>\n                  <li><span>期号：</span>第<em class="fill">' + this.$store.state.LHC.issueNo + '</em>期</li>\n                  <li><span>详情：</span><div class="fill textarea"><p>' + a + '</p></div></li>\n                  <li><span>投注总金额：</span><em><em class="fill">' + this.totalPrice() + "</em>元</em></li>\n              </ul>\n          </div>";
+            var c = '<div id="CheckBetLayer" class="lotteryConfirm"><ul>\n                  <li><span>彩种：</span><em class="fill">' + this.LotteryName + '</em></li>\n                  <li><span>期号：</span>第<em class="fill">' + this.$store.state.LHC.NowIssue + '</em>期</li>\n                  <li><span>详情：</span><div class="fill textarea"><p>' + a + '</p></div></li>\n                  <li><span>投注总金额：</span><em><em class="fill">' + this.totalPrice() + "</em>元</em></li>\n              </ul>\n          </div>";
             for (let i = 0; i < this.chosenLotteryItems.length; i++) {
                 if (this.chosenLotteryItems[i].betting_unitPrice === '0' || this.chosenLotteryItems[i].betting_unitPrice === '' || this.chosenLotteryItems[i].betting_unitPrice === 0 || this.chosenLotteryItems[i].betting_unitPrice === undefined) {
                     layer.open({
@@ -1448,7 +1456,6 @@ export default {
             var e = t.betCount,
                 s = t.mode,
                 a = t.award;
-            console.log(a);
             if (["A01", "B03", "B04", "B05", "B06", "B07", "B08"].indexOf(s) !== -1) {
                 return a * 1;
             }
@@ -1460,22 +1467,6 @@ export default {
             if (["E01", "E02"].indexOf(s) !== -1) {
                 return 1 === this.betStr.length && this.betStr === this.natal ? 1 * a[0] : 1 * a[1]
             }
-
-            var C = function() {
-                var t = {};
-                return function(e, a) {
-                    if (e === a) return 1;
-                    if (e < a) return 0;
-                    var s = [e, a].join(" ");
-                    if (t[s]) return t[s];
-                    for (var n = 1,
-                        r = 1,
-                        i = 0; i < a; i++) n *= e - i,
-                            r *= i + 1;
-                    return t[s] = Math.round(n / r),
-                        t[s]
-                }
-            }();
             // 测试重写
             if (["E03", "E04", "E05"].indexOf(s) !== -1) {
                 var n = ["E03", "E04", "E05"].indexOf(s) + 2;

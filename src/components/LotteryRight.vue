@@ -215,6 +215,9 @@ export default {
                 url: this.getApi('getLotteryOpenList'),
             }).then(res => {
                 this.LotteryOpenList = res.data.BackData;
+                var r = res.data.BackData[0].LotteryOpen.split(',');
+                this.$store.state.LHC.LotteryOpenArr = r.slice(0,-1);
+                this.$store.state.LHC.LotteryOpenRes = r[r.length - 1];
             }).catch(err => {
                 alert('获取今日开奖列表失败');
             });
