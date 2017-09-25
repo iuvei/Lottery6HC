@@ -76,7 +76,7 @@
                                     <span class="bet-item-eg" v-for="(subItem, subIndex) in item.eg" :key="subIndex">{{ subItem }}</span>
                                 </div>
                             </a>
-                            <span class="bet-item-rate">{{ (item.odd !== undefined) ? "赔率" + (Math.floor(item.odd[0] * 100) / 100).toFixed(2) : ''}}</span>
+                            <span class="bet-item-rate">{{ item | noNumberOddFilter(item)}}</span>
                         </li>
                     </ul>
                 </div>
@@ -975,6 +975,19 @@ export default {
                 return 'blue';
             } else if (g_flag) {
                 return 'green';
+            }
+        },
+        noNumberOddFilter(value,item) {
+            var arr = ["鼠", "牛", "虎", "兔", "龙", "蛇", "马", "羊", "猴", "鸡", "狗", "猪", "0头", "1头", "2头", "3头", "4头", "0尾", "1尾", "2尾", "3尾", "4尾", "5尾", "6尾", "7尾", "8尾", "9尾"];
+            if(item.odd !== undefined) {
+                if(arr.indexOf(item.name) !== -1) {
+                    return "赔率" + (Math.floor(item.odd[0] * 100) / 100).toFixed(2);
+                }else {
+                    return "赔率" + (Math.floor(item.odd[0] * 1000) / 1000).toFixed(3);
+                }
+                return "赔率" + (Math.floor(item.odd[0] * 100) / 100).toFixed(2);
+            }else {
+                return '';
             }
         }
     },
