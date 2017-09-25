@@ -6,6 +6,9 @@ Vue.use(Vuex);
 // 创建 store 实例
 export default new Vuex.Store({
     state: {
+        // 用户名
+        userName: '',
+        myCard: [],
         "LHC": {
             LotteryName: '六合彩',
             // 现在是哪一期

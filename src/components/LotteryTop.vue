@@ -175,7 +175,7 @@ export default {
                                 }
                             }
                         }
-                        var NextLotteryOpenTime = new Date('' + serverYear + '-' + serverMonth + '-' + NextLotteryOpenDay + ' 20:00').getTime();
+                        var NextLotteryOpenTime = new Date('' + serverYear + '-' + serverMonth + '-' + NextLotteryOpenDay + ' 21:15').getTime();
                         var Difftime = Number(res.data.Data) - (new Date().getTime());
                         localStorage.setItem('Difftime', Difftime);
                         _this.TimerAction({
@@ -195,8 +195,7 @@ export default {
                             }
                         }
                     }
-                    var NextLotteryOpenTime = new Date('' + serverYear + '-' + serverMonth + '-' + NextLotteryOpenDay + ' 20:00').getTime();
-
+                    var NextLotteryOpenTime = new Date('' + serverYear + '-' + serverMonth + '-' + NextLotteryOpenDay + ' 21:15').getTime();
                     _this.TimerAction({
                         NextLotteryOpenTime: NextLotteryOpenTime,
                         nowTime: res.data.Data

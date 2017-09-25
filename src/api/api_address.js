@@ -3,6 +3,18 @@ export default{
 	{
 		Vue.prototype.getApi = function (api) {
 			const api_port = {
+				// APP
+				// 登录判断,及保留用户名
+				getLogin: '/mock/getLogin.json',
+				// 获取用户信息
+				getUserInfo: '/mock/getUserInfo.json',
+
+				// 头部请求
+				// 余额显示
+				getUserBalance: '/mock/getUserBalance.json',
+				
+				// getInitData
+				getInitData: '/mock/getInitData.json',
 				// 获取彩票计划
 				getLotteryPlan: '/mock/getLotteryPlan.json',
 				// 获取上期开奖号码

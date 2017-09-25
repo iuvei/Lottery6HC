@@ -1,0 +1,14 @@
+{
+    "Code": 1,
+    "StrCode": "数据获取成功",
+    "DataCount": 0,
+    "BackUrl": null,
+    "BackData": {
+        "UserBalance": "1.42",
+        "UserUnread": null
+    },
+    "Data": null,
+    "CacheData": {},
+    "OpenType": 0,
+    "Style": null
+}

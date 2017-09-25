@@ -72,7 +72,7 @@
                     <div id="bd">
                         <div class="tempWrap" style="overflow: hidden; height: 510px;">
                             <ul class="winnerList">
-                                <li v-for="(item, index) in newestBonusList" :key="index" data-card :card-id="'cardA' + index">
+                                <li v-for="(item, index) in newestBonusList" :key="index" @mouseenter="getCardMouseenter(item,index,'li')" @mouseleave="getCardMouseleave">
                                     <img :src="'//imagess-google.com/system/common/headimg/'+ item.UserPhoto" alt="">
                                     <p>{{ item.Nickname !== '' ? item.Nickname : item.UserName }} 大发时时彩<br/>喜中
                                         <span>￥{{ item.Bonus }}</span>
@@ -87,7 +87,7 @@
                         <tr>
                             <th colspan="2">昨日累计奖金排行榜</th>
                         </tr>
-                        <tr v-for="(item, index) in yesterdayBonusList" :key="index" data-card :card-id="'cardB' + index">
+                        <tr v-for="(item, index) in yesterdayBonusList" @mouseenter="getCardMouseenter(item,index,'tr')" @mouseleave="getCardMouseleave">
                             <td>
                                 <img :src="'//imagess-google.com/system/common/headimg/' + item.UserPhoto" alt="">
                                 <p>
@@ -176,9 +176,9 @@ export default {
                 case 1:
                     return '男';
                     break;
-            
+
                 default:
-                return '保密'
+                    return '保密'
                     break;
             }
         }
@@ -216,7 +216,7 @@ export default {
             }).then(res => {
                 this.LotteryOpenList = res.data.BackData;
                 var r = res.data.BackData[0].LotteryOpen.split(',');
-                this.$store.state.LHC.LotteryOpenArr = r.slice(0,-1);
+                this.$store.state.LHC.LotteryOpenArr = r.slice(0, -1);
                 this.$store.state.LHC.LotteryOpenRes = r[r.length - 1];
             }).catch(err => {
                 alert('获取今日开奖列表失败');
@@ -264,56 +264,65 @@ export default {
             }
         },
         getCard(cardID, fn) {
-            var f = sessionStorage.getItem(cardID);
-            if(f !== null) {
+            var f = sessionStorage.getItem('Card' + cardID);
+            if (f !== null) {
                 this.userCardAllInfo = JSON.parse(f);
-                // console.log('有缓存的啦, 小样~',this.userCardAllInfo);
+                console.log('有缓存的啦, 小样~', this.userCardAllInfo);
                 fn();
                 return;
             }
             this.$axios({
                 method: 'GET',
                 url: this.getApi('getCard'),
+                data: {
+                    Action: 'GetCard',
+                    UserId: cardID,
+                    SourceName: 'PC',
+                }
             }).then(res => {
                 var allTypeList = ["SSC", "XYNC", "PK10", "KL8", "PL35", "FC3D", "SYX5", "K3"];
                 this.userCardAllInfo.userCardInfo = res.data.BackData;
                 this.userCardAllInfo.hueLotteryTypeList = res.data.BackData.LotteryType.split(',');
-                allTypeList.map((i,index) => {
-                    var r = RegExp(i);  
+                allTypeList.map((i, index) => {
+                    var r = RegExp(i);
                     var flag = r.test(res.data.BackData.LotteryType);
-                    if(flag) {
+                    if (flag) {
                         allTypeList.splice(index, 1);
                     }
                 });
                 setTimeout(() => {
                     this.userCardAllInfo.LotteryTypeList = allTypeList;
                     this.cardBoxFlag = true;
-                    sessionStorage.setItem(cardID, JSON.stringify(this.userCardAllInfo));
+                    sessionStorage.setItem('Card' + cardID, JSON.stringify(this.userCardAllInfo));
                     fn();
-                },0);
+                }, 0);
             }).catch(err => {
                 alert('获取用户卡片信息失败');
             })
         },
-        $jqAction() {
+        // 获取用户卡片
+        getCardMouseenter(ele, inx, o) {
             var _this = this;
-            $('#Ranking').on('mouseenter', '[data-card]', function(e) {
-                var self = this;
-                var cardID = $(self).attr('card-id');
-                _this.getCard(cardID,function() {
-                    $('.betRight .cardBox').show();
-                    var top = $(self).offset().top-$(document).scrollTop();
-                    var left = $(self).offset().left-$(document).scrollLeft() - 300;
-                    $('.betRight .cardBox').css({
-                        top: top + 'px',
-                        left: left + 'px'
-                    });
+            var cardID = ele.Id;
+            if (o === 'li') {
+                var $self = $('.winnerList li').eq(inx);
+            } else {
+                var $self = $('#moneyList table tr').eq(inx + 1);
+            }
+            _this.getCard(cardID, function() {
+                $('.betRight .cardBox').show();
+                var top = $self.offset().top - $(document).scrollTop();
+                var left = $self.offset().left - $(document).scrollLeft() - 300;
+                $('.betRight .cardBox').css({
+                    top: top + 'px',
+                    left: left + 'px'
                 });
-                
             });
-            $('#app').on('mouseleave', '#Ranking', function(e) {
-                $('.betRight .cardBox').hide();
-            });
+        },
+        getCardMouseleave() {
+            $('.betRight .cardBox').hide();
+        },
+        $jqAction() {
             $('#app').on('mouseenter', '.betRight .cardBox', function(e) {
                 $(this).show();
             });
@@ -560,7 +569,8 @@ export default {
         display: none;
     }
 }
-
+</style>
+<style lang="scss">
 .cardBox {
     top: 0;
     position: fixed;

@@ -1,13 +1,24 @@
 <template>
-    <div class="container bet">
-        <lottery-top></lottery-top>
-        <div class="betContent fix">
-            <bet6-h-c></bet6-h-c>
-            <lottery-right></lottery-right>
+    <div>
+        <!-- 头部预留 -->
+		<lottery-header></lottery-header>
+        
+        <!-- 主体 -->
+        <div class="container bet">
+            <lottery-top></lottery-top>
+            <div class="betContent fix">
+                <bet6-h-c></bet6-h-c>
+                <lottery-right></lottery-right>
+            </div>
         </div>
+
+        <!-- 底部预留 -->
+		<lottery-footer></lottery-footer>
     </div>
 </template>
 <script>
+import LotteryHeader from '../../components/LotteryHeader.vue';
+import LotteryFooter from '../../components/LotteryFooter.vue';
 import LotteryTop from '../../components/LotteryTop.vue';
 import LotteryRight from '../../components/LotteryRight.vue';
 import Bet6HC from '../../components/Bet6HC.vue';
@@ -15,7 +26,9 @@ export default {
     components: {
         LotteryTop,
         LotteryRight,
-        Bet6HC
+        Bet6HC,
+        LotteryHeader,
+		LotteryFooter
     },
     data() {
         return {

@@ -1,22 +1,66 @@
 <template>
-	<div id="app">
-		<!-- 头部预留 -->
-		<div class="header">头部</div>
+	<div id="app" class="lottery">
 		<transition name="fade" mode="out-in">
 			<router-view></router-view>
 		</transition>
-		<!-- 底部预留 -->
-		<div class="footer">底部</div>
 	</div>
 </template>
 
-<script>
+<script> 
+
 export default {
 	name: 'app',
 	components: {
-
+		
 	},
 	methods: {
+		// 登录判断
+		login(usr,psw) {
+			this.$axios({
+				method: 'GET',
+				url: this.getApi('getLogin'),
+				data: {
+					Action: 'Login',
+					UserName: usr,
+					Password: psw,
+					Type: 'Hash',
+					SourceName: 'PC'
+				}
+			}).then(res => {
+				if(res.data.Code === 1) {
+					localStorage.setItem('UserName', usr);
+					this.$store.state.UserName = usr;
+					// 登录成功,请求用户信息
+					this.getUserInfo();
+				}else {
+					alert('登录失败');
+				}
+			}).catch(err => {
+				console.log(err);
+			});
+		},
+		// 请求用户信息并保存
+		getUserInfo() {
+			this.$axios({
+				method: 'GET',
+				url: this.getApi('getUserInfo'),
+				data: {
+					Action: 'GetInitData',
+					Requirement: ["UserUpGradeBonus","NoticeData","UserPhoto"],
+					SourceName: 'PC'
+				}
+			}).then(res => {
+				var BackData = res.data.BackData;
+				var UserPhoto = BackData.UserPhoto;
+				var UserUpGradeBonus = BackData.UserUpGradeBonus;
+				var NoticeData = BackData.NoticeData;
+				localStorage.setItem('UserPhoto', UserPhoto);
+				localStorage.setItem('UserUpGradeBonus',JSON.stringify(UserUpGradeBonus));
+				localStorage.setItem('NoticeData',JSON.stringify(NoticeData));
+			}).catch(err => {
+				console.log(err);
+			});
+		},
 		// 禁止右键事件
 		banRightClick() {
 			document.oncontextmenu = function() {
@@ -25,37 +69,23 @@ export default {
 		}
 	},
 	mounted() {
+		this.login('web2017','');
 		this.banRightClick();
 	}
 }
 
 </script>
 <style lang="scss" scoped>
+
 #app {
 	height: 100%;
 	background: #e6e6e6;
-}
-
-.header {
-	height: 40px;
-	line-height: 40px;
-	margin-bottom: 15px;
-	text-align: center;
-}
-
-.footer {
-	width: 100%;
-	overflow: hidden;
-	background: #fff;
-	box-sizing: border-box;
-	margin-top: 10px;
-	height: 260px;
-	text-align: center;
 }
 </style>
 
 
 <style lang="scss">
+
 .fade-enter-active,
 .fade-leave-active {
 	transition: all .3s ease;

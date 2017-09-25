@@ -75,6 +75,11 @@ li {
 a {
     text-decoration: none
 }
+
+.mgt40 {
+    margin-top: 10px;
+}
+
 .banner .hd ul:after, .bonusTable ul:after, .fix:after, .safeList li:after, .winnerList li:after {
     clear: both;
     overflow: hidden;

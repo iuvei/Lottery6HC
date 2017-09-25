@@ -1,0 +1,270 @@
+{
+    "Code": 1,
+    "StrCode": "数据获取成功",
+    "DataCount": 0,
+    "BackUrl": null,
+    "BackData": {
+        "FooterConfig": [
+            {
+                "ID": 31,
+                "Title": "关于我们"
+            },
+            {
+                "ID": 32,
+                "Title": "联系我们"
+            },
+            {
+                "ID": 33,
+                "Title": "商务合作"
+            },
+            {
+                "ID": 34,
+                "Title": "法律声明"
+            },
+            {
+                "ID": 35,
+                "Title": "隐私声明"
+            }
+        ],
+        "LotteryList": [
+            {
+                "LotteryCode": "1000",
+                "LotteryType": "SSC",
+                "LotteryName": "重庆时时彩",
+                "LotteryIntro": "全天120期",
+                "VerifyIssue": "001",
+                "VerifyEndTime": "00:04:10",
+                "IsStop": ""
+            },
+            {
+                "LotteryCode": "1001",
+                "LotteryType": "SSC",
+                "LotteryName": "新疆时时彩",
+                "LotteryIntro": "全天96期",
+                "VerifyIssue": "001",
+                "VerifyEndTime": "10:08:00",
+                "IsStop": ""
+            },
+            {
+                "LotteryCode": "1003",
+                "LotteryType": "SSC",
+                "LotteryName": "天津时时彩",
+                "LotteryIntro": "全天84期",
+                "VerifyIssue": "001",
+                "VerifyEndTime": "09:07:35",
+                "IsStop": ""
+            },
+            {
+                "LotteryCode": "1008",
+                "LotteryType": "SSC",
+                "LotteryName": "大发时时彩",
+                "LotteryIntro": "1分钟1期",
+                "VerifyIssue": "0001",
+                "VerifyEndTime": "00:00:59",
+                "IsStop": ""
+            },
+            {
+                "LotteryCode": "1401",
+                "LotteryType": "K3",
+                "LotteryName": "江苏快3",
+                "LotteryIntro": "全天82期",
+                "VerifyIssue": "001",
+                "VerifyEndTime": "08:37:10",
+                "IsStop": ""
+            },
+            {
+                "LotteryCode": "1402",
+                "LotteryType": "K3",
+                "LotteryName": "安徽快3",
+                "LotteryIntro": "全天80期",
+                "VerifyIssue": "001",
+                "VerifyEndTime": "08:47:58",
+                "IsStop": ""
+            },
+            {
+                "LotteryCode": "1403",
+                "LotteryType": "K3",
+                "LotteryName": "广西快3",
+                "LotteryIntro": "全天78期",
+                "VerifyIssue": "001",
+                "VerifyEndTime": "09:36:01",
+                "IsStop": ""
+            },
+            {
+                "LotteryCode": "1405",
+                "LotteryType": "K3",
+                "LotteryName": "湖北快3",
+                "LotteryIntro": "全天78期",
+                "VerifyIssue": "001",
+                "VerifyEndTime": "09:08:58",
+                "IsStop": ""
+            },
+            {
+                "LotteryCode": "1406",
+                "LotteryType": "K3",
+                "LotteryName": "北京快3",
+                "LotteryIntro": "全天89期",
+                "VerifyIssue": "001",
+                "VerifyEndTime": "09:08:00",
+                "IsStop": ""
+            },
+            {
+                "LotteryCode": "1407",
+                "LotteryType": "K3",
+                "LotteryName": "大发快3",
+                "LotteryIntro": "1分钟1期",
+                "VerifyIssue": "0001",
+                "VerifyEndTime": "00:00:59",
+                "IsStop": ""
+            },
+            {
+                "LotteryCode": "1408",
+                "LotteryType": "K3",
+                "LotteryName": "河北快3",
+                "LotteryIntro": "全天81期",
+                "VerifyIssue": "001",
+                "VerifyEndTime": "08:37:25",
+                "IsStop": ""
+            },
+            {
+                "LotteryCode": "1411",
+                "LotteryType": "K3",
+                "LotteryName": "甘肃快3",
+                "LotteryIntro": "全天72期",
+                "VerifyIssue": "001",
+                "VerifyEndTime": "10:08:01",
+                "IsStop": ""
+            },
+            {
+                "LotteryCode": "1410",
+                "LotteryType": "K3",
+                "LotteryName": "上海快3",
+                "LotteryIntro": "全天82期",
+                "VerifyIssue": "001",
+                "VerifyEndTime": "08:56:58",
+                "IsStop": ""
+            },
+            {
+                "LotteryCode": "1409",
+                "LotteryType": "K3",
+                "LotteryName": "贵州快3",
+                "LotteryIntro": "全天78期",
+                "VerifyIssue": "001",
+                "VerifyEndTime": "09:10:00",
+                "IsStop": ""
+            },
+            {
+                "LotteryCode": "1404",
+                "LotteryType": "K3",
+                "LotteryName": "吉林快3",
+                "LotteryIntro": "全天87期",
+                "VerifyIssue": "001",
+                "VerifyEndTime": "08:28:00",
+                "IsStop": ""
+            },
+            {
+                "LotteryCode": "1100",
+                "LotteryType": "SYX5",
+                "LotteryName": "广东11选5",
+                "LotteryIntro": "全天84期",
+                "VerifyIssue": "01",
+                "VerifyEndTime": "09:09:00",
+                "IsStop": ""
+            },
+            {
+                "LotteryCode": "1101",
+                "LotteryType": "SYX5",
+                "LotteryName": "上海11选5",
+                "LotteryIntro": "全天90期",
+                "VerifyIssue": "01",
+                "VerifyEndTime": "08:58:30",
+                "IsStop": ""
+            },
+            {
+                "LotteryCode": "1102",
+                "LotteryType": "SYX5",
+                "LotteryName": "山东11选5",
+                "LotteryIntro": "全天87期",
+                "VerifyIssue": "01",
+                "VerifyEndTime": "08:35:30",
+                "IsStop": ""
+            },
+            {
+                "LotteryCode": "1103",
+                "LotteryType": "SYX5",
+                "LotteryName": "江西11选5",
+                "LotteryIntro": "全天84期",
+                "VerifyIssue": "01",
+                "VerifyEndTime": "09:08:00",
+                "IsStop": ""
+            },
+            {
+                "LotteryCode": "1201",
+                "LotteryType": "FC3D",
+                "LotteryName": "福彩3D",
+                "LotteryIntro": "全天1期",
+                "VerifyIssue": "001",
+                "VerifyEndTime": "20:00:00",
+                "IsStop": "0"
+            },
+            {
+                "LotteryCode": "1202",
+                "LotteryType": "PL35",
+                "LotteryName": "排列3",
+                "LotteryIntro": "全天1期",
+                "VerifyIssue": "001",
+                "VerifyEndTime": "20:00:00",
+                "IsStop": "0"
+            },
+            {
+                "LotteryCode": "1302",
+                "LotteryType": "KL8",
+                "LotteryName": "北京快乐8",
+                "LotteryIntro": "全天179期",
+                "VerifyIssue": "001",
+                "VerifyEndTime": "09:03:30",
+                "IsStop": ""
+            },
+            {
+                "LotteryCode": "1303",
+                "LotteryType": "PK10",
+                "LotteryName": "北京PK10",
+                "LotteryIntro": "全天179期",
+                "VerifyIssue": "001",
+                "VerifyEndTime": "09:06:10",
+                "IsStop": ""
+            },
+            {
+                "LotteryCode": "1301",
+                "LotteryType": "6HC",
+                "LotteryName": "六合彩",
+                "LotteryIntro": "一周三期",
+                "VerifyIssue": "001",
+                "VerifyEndTime": "21:15:00",
+                "IsStop": "0"
+            }
+        ],
+        "ServiceRating": {
+            "WithdrawTime": "127",
+            "RechargeTime": "49"
+        },
+        "UserUnread": null
+    },
+    "Data": null,
+    "CacheData": {
+        "FooterConfig": "b6cd",
+        "SiteConfig": "b820",
+        "HallBanner": "8c9c",
+        "BannerList": "e8fa",
+        "ActivityConfig": "d751",
+        "DefaultPhotoList": "9942",
+        "RewardData": "7960",
+        "GradeList": "759a",
+        "LotteryList": "9540",
+        "LotteryHot": "2fc6",
+        "LotteryConfig": "f68f",
+        "SysActivity": "2948"
+    },
+    "OpenType": 0,
+    "Style": null
+}
