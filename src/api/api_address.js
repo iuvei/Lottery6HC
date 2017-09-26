@@ -12,6 +12,8 @@ export default{
 				// 头部请求
 				// 余额显示
 				getUserBalance: '/mock/getUserBalance.json',
+				// 获取我的卡片
+				getMyCard: '/mock/getMyCard.json',
 				
 				// getInitData
 				getInitData: '/mock/getInitData.json',

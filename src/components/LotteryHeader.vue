@@ -10,7 +10,7 @@
                     </div>
                     <ul class="snavInfo">
                         <li class="userName MsgShow">
-                            <a class="_personalInfo"><img alt="" src="//imagess-google.com/system/common/headimg/9A9C9E1A719CE536.jpg">
+                            <a class="_personalInfo" @mouseenter="MyCardShow" @mouseleave="MyCardShowClose"><img alt="" src="//imagess-google.com/system/common/headimg/9A9C9E1A719CE536.jpg">
                                 <i>{{ userName }}</i>
                             </a>
                             <span id="unreadMsgNum" onclick="window.location='letter'">
@@ -55,70 +55,34 @@
                         </a>
                     </ul>
                 </div>
-                <div class="cardBox" style="left: 755px; top: 35px; display: none;">
-                    <div class="card fix">
-                        <div class="cardLeft"><img src="//imagess-google.com/system/common/headimg/9A9C9E1A719CE536.jpg" alt="" width="80" height="80">
-                            <h6>热豆腐</h6>
-                        </div>
-                        <div class="cardInfo">
-                            <ul>
-                                <li>性别：保密</li>
-                                <li>账号：we****7</li>
-                                <li>等级：VIP2</li>
-                                <li>头衔：地主</li>
-                                <li>累计中奖：192.53</li>
+                <div v-if="cardBoxFlag">
+                    <div class="cardBox" style="left: 755px; top: 35px;overflow:hidden;">
+                        <div class="card fix">
+                            <div class="cardLeft"><img :src="'//imagess-google.com/system/common/headimg/' + userCardAllInfo.userCardInfo.UserPhoto" alt="" width="80" height="80">
+                                <h6>{{ userCardAllInfo.userCardInfo.NickName ? userCardAllInfo.userCardInfo.NickName : '昵称未设置' }}</h6>
+                            </div>
+                            <div class="cardInfo">
+                                <ul>
+                                    <li>性别：{{ userCardAllInfo.userCardInfo.Sex | SexFilter }}</li>
+                                    <li>账号：{{ userCardAllInfo.userCardInfo.UserName }}</li>
+                                    <li>等级：{{ userCardAllInfo.userCardInfo.GroupTitle }}</li>
+                                    <li>头衔：{{ userCardAllInfo.userCardInfo.Rank }}</li>
+                                    <li>累计中奖：{{ userCardAllInfo.userCardInfo.Award }}</li>
+                                </ul>
+                            </div>
+                            <ul class="cardIcon fix">
+                                <li v-for="(item, index) in userCardAllInfo.hueLotteryTypeList" :key="index">
+                                    <a href="###">
+                                        <i class="iconfont" :class="'L_' + item"></i>
+                                    </a>
+                                </li>
+                                <li v-for="(item, index) in userCardAllInfo.LotteryTypeList" :key="index">
+                                    <a href="###">
+                                        <i class="iconfont noActive" :class="'L_' + item"></i>
+                                    </a>
+                                </li>
                             </ul>
                         </div>
-                        <ul class="cardIcon fix">
-                            <li>
-                                <a>
-                                    <i class="iconfont L_K3"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a>
-                                    <i class="iconfont L_SSC"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a>
-                                    <i class="iconfont L_SYX5"></i>
-                                </a>
-                            </li>
-                            <!---->
-                            <li>
-                                <a>
-                                    <i class="iconfont L_KL8"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a>
-                                    <i class="iconfont L_FC3D"></i>
-                                </a>
-                            </li>
-                            <!---->
-                            <li>
-                                <a>
-                                    <i class="iconfont L_6HC"></i>
-                                </a>
-                            </li>
-                            <!---->
-                            <!---->
-                            <!---->
-                            <li>
-                                <a>
-                                    <i class="iconfont noActive L_PK10"></i>
-                                </a>
-                            </li>
-                            <!---->
-                            <!---->
-                            <li>
-                                <a>
-                                    <i class="iconfont noActive L_PL35"></i>
-                                </a>
-                            </li>
-                            <!---->
-                        </ul>
                     </div>
                 </div>
             </div>
@@ -185,6 +149,30 @@ export default {
             UserBalance: '',
             // 余额组件条件渲染
             GetMoneyShow: false,
+            // 我的卡片
+            userCardAllInfo: {
+                userCardInfo: {},
+                LotteryTypeList: [],
+                hueLotteryTypeList: []
+            },
+            // 我的卡片Model
+            cardBoxFlag: false,
+        }
+    },
+    filters: {
+        SexFilter(value) {
+            switch (value) {
+                case 0:
+                    return '女';
+                    break;
+                case 1:
+                    return '男';
+                    break;
+
+                default:
+                    return '保密'
+                    break;
+            }
         }
     },
     computed: {
@@ -193,34 +181,21 @@ export default {
         }
     },
     methods: {
-        getInitData(Requirement) {
-            this.$axios({
-                method: 'GET',
-                url: this.getApi('getInitData'),
-                data: {
-                    Action: 'GetInitData',
-                    Requirement: Requirement,
-                    SourceName: 'PC'
+        init() {
+            var LotteryList = localStorage.getItem('LotteryList');
+            this.LotteryList = JSON.parse(LotteryList);
+            this.LotteryList.map(item => {
+                if (item.LotteryType === 'SSC') {
+                    this.SSCArr.push(item);
+                } else if (item.LotteryType === 'K3') {
+                    this.K3Arr.push(item);
+                } else if (item.LotteryType === 'SYX5') {
+                    this.SYX5Arr.push(item);
+                } else if (["FC3D", "PL35"].indexOf(item.LotteryType) !== -1) {
+                    this.DPCArr.push(item);
+                } else if (["KL8", "PK10", "6HC"].indexOf(item.LotteryType) !== -1) {
+                    this.KLCArr.push(item);
                 }
-            }).then(res => {
-                var BackData = res.data.BackData;
-                this.LotteryList = BackData.LotteryList;
-                localStorage.setItem('FooterConfig', JSON.stringify(BackData.FooterConfig));
-                localStorage.setItem('LotteryList', JSON.stringify(BackData.LotteryList));
-                localStorage.setItem('ServiceRating', JSON.stringify(BackData.ServiceRating));
-                this.LotteryList.map(item => {
-                    if(item.LotteryType === 'SSC') {
-                        this.SSCArr.push(item);
-                    }else if(item.LotteryType === 'K3') {
-                        this.K3Arr.push(item);
-                    }else if(item.LotteryType === 'SYX5') {
-                        this.SYX5Arr.push(item);
-                    }else if(["FC3D","PL35"].indexOf(item.LotteryType) !== -1) {
-                        this.DPCArr.push(item);
-                    }else if(["KL8","PK10","6HC"].indexOf(item.LotteryType) !== -1) {
-                        this.KLCArr.push(item);
-                    }
-                });
             });
         },
         // 全部彩票
@@ -238,6 +213,8 @@ export default {
         },
         // 用户余额显示
         UserBalanceShow() {
+            // 刷新小圆圈
+            $('#icon').addClass('click');
             this.$axios({
                 method: 'GET',
                 url: this.getApi('getUserBalance'),
@@ -248,24 +225,65 @@ export default {
                 }
             }).then(res => {
                 this.UserBalance = res.data.BackData.UserBalance;
+                $('#icon').removeClass('click');
                 this.GetMoneyShow = true;
             });
         },
         // 提取我的 Card
-        getMyCard() {
+        getMyCard(cardID, fn) {
+            var f = sessionStorage.getItem('Card' + cardID);
+            if (f !== null) {
+                this.userCardAllInfo = JSON.parse(f);
+                // console.log('有缓存的啦, 小样~', this.userCardAllInfo);
+                fn();
+                this.cardBoxFlag = true;
+                return;
+            }
             this.$axios({
                 method: 'GET',
                 url: this.getApi('getMyCard'),
                 data: {
                     Action: 'GetCard',
-                    UserId: 0,
+                    UserId: cardID,
                     SourceName: 'PC'
                 }
             }).then(res => {
-                console.log(res);
+                var allTypeList = ["SSC", "PK10", "KL8", "PL35", "FC3D", "SYX5", "K3", "SYNC"];
+                this.userCardAllInfo.userCardInfo = res.data.BackData;
+                this.userCardAllInfo.hueLotteryTypeList = res.data.BackData.LotteryType.split(',');
+                var arr = [];
+                allTypeList.map((i, index) => {
+                    if (this.userCardAllInfo.hueLotteryTypeList.indexOf(i) == -1) {
+                        arr.push(i);
+                    }
+                });
+                setTimeout(() => {
+                    this.userCardAllInfo.LotteryTypeList = arr;
+                    this.cardBoxFlag = true;
+                    sessionStorage.setItem('Card' + cardID, JSON.stringify(this.userCardAllInfo));
+                    fn();
+                }, 0);
             }).catch(err => {
                 console.log(err);
             });
+        },
+        // MyCard
+        MyCardShow() {
+            var cardID = '0';
+            var $this = $('a._personalInfo');
+            this.getMyCard(cardID, function() {
+                $('.header .cardBox').show();
+                var top = $this.offset().top - $(document).scrollTop() + 26;
+                var left = $this.offset().left - $(document).scrollLeft() - 80;
+                $('.header .cardBox').css({
+                    top: top + 'px',
+                    left: left + 'px'
+                });
+            });
+        },
+        // 隐藏我的卡片
+        MyCardShowClose() {
+            $('.header .cardBox').hide();
         },
         jqAction() {
             $('#app').on('mouseenter', 'table.betMoreList', function(e) {
@@ -274,22 +292,55 @@ export default {
             $('#app').on('mouseleave', 'table.betMoreList', function(e) {
                 $(this).hide();
             });
+
+            $('#app').on('mouseenter', '.header .cardBox', function(e) {
+                $(this).show();
+            });
+            $('#app').on('mouseleave', '.header .cardBox', function(e) {
+                $(this).hide();
+            });
+
             $('#app').on('mouseenter', '.HoverShow a:contains("我的账户")', function(e) {
                 $('.accountList.HoverShowContent').show();
             });
             $('#app').on('mouseleave', '.HoverShow', function(e) {
                 $('.accountList.HoverShowContent').hide();
             });
+
         }
     },
     mounted() {
-        this.getInitData(["FooterConfig", "LotteryList", 'ServiceRating']);
+        this.init();
         this.jqAction();
     }
 }
 </script>
 
 <style lang="scss" scoped>
+#icon {
+    &.click {
+        animation: Myrotate 1s linear infinite;
+        -webkit-animation: Myrotate 1s linear infinite;
+        -moz-animation: Myrotate 1s linear infinite;
+        -o-animation: Myrotate 1s linear infinite;
+    }
+}
+
+@keyframes Myrotate {
+    0%   {
+        transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(720deg);
+        -webkit-transform: rotate(720deg);
+        -moz-transform: rotate(720deg);
+        -o-transform: rotate(720deg);
+    }
+}
+
 .header {
     font-size: 12px;
 }
@@ -536,7 +587,18 @@ export default {
         box-shadow: none;
     }
 }
-.announcementList li a:hover, .checkedList a:hover, .footer>div>p a:hover, .LoginOut:hover, .messageShow dt p:hover, .mybet a:hover, .noticCon ul a:hover, .sildeSession a:hover, .snavInfo a:hover, .userName span:hover, .userTitle span:hover {
+
+.announcementList li a:hover,
+.checkedList a:hover,
+.footer>div>p a:hover,
+.LoginOut:hover,
+.messageShow dt p:hover,
+.mybet a:hover,
+.noticCon ul a:hover,
+.sildeSession a:hover,
+.snavInfo a:hover,
+.userName span:hover,
+.userTitle span:hover {
     color: #e4393c!important;
     text-decoration: underline;
 }

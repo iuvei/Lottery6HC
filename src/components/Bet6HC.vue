@@ -1457,7 +1457,9 @@ export default {
             this.chosenLotteryItems[inx].betting_unitPrice = res;
         },
         itemPriceFilter(ele, inx) {
-            var res = (parseInt(ele.betting_unitPrice) * parseFloat(ele.maxAward)).toFixed(2);
+            // var res = (parseInt(ele.betting_unitPrice) * parseFloat(ele.maxAward)).toFixed(2);
+            var res = Math.round(ele.maxAward * ele.betting_unitPrice * 100) / 100;
+            console.log(res);
             if (res === 'NaN') {
                 return '0.00';
             } else {
@@ -1526,7 +1528,6 @@ export default {
                 return r = r.length - i,
                     i * r * a[0] + (0, C)(r, n) * a[1]
             }
-
         }
     },
     created() {

@@ -245,8 +245,8 @@
             }
         ],
         "ServiceRating": {
-            "WithdrawTime": "127",
-            "RechargeTime": "49"
+            "WithdrawTime": "126",
+            "RechargeTime": "52"
         },
         "UserUnread": null
     },

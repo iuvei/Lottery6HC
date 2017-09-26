@@ -24,16 +24,16 @@
                         <ul class="serviceExperience">
                             <li>昨日充值到账平均时间
                                 <p class="footBar">
-                                    <span style="width: 27.2222%;"></span>
+                                    <span :style="'width:' + ServiceTime.WidthA + '%'"></span>
                                 </p>
-                                <em>0'49</em>
+                                <em>{{ ServiceTime.RechargeTime }}</em>
                                 <i>秒</i>
                             </li>
                             <li>昨日提现到账平均时间
                                 <p class="footBar">
-                                    <span style="width: 70.5556%;"></span>
+                                    <span :style="'width:' + ServiceTime.WidthB + '%'"></span>
                                 </p>
-                                <em>2'07</em>
+                                <em>{{ ServiceTime.WithdrawTime }}</em>
                                 <i>秒</i>
                             </li>
                         </ul>
@@ -53,11 +53,10 @@
         </div>
         <div class="container _about aboutText">
             <p class="fix">
-                <a>关于我们</a>|
-                <a>联系我们</a>|
-                <a>商务合作</a>|
-                <a>法律声明</a>|
-                <a>隐私声明</a>|</p>
+                <template v-for="(item,index) in FooterConfig">
+                    <a>{{ item.Title }}</a>|
+                </template>
+            </p>
             <p class="copyright">Copyright ©
                 <span class="siteName">大发彩票</span> Reserved | 18+</p>
         </div>
@@ -67,11 +66,46 @@
 export default {
     data() {
         return {
-
+            // 底部文字设置
+            FooterConfig: [],
+            // 底部服务时间设置
+            ServiceRating: {},
+            // 服务时间和宽度
+            ServiceTime: {
+                RechargeTime: 0,
+                WithdrawTime: 0,
+                WidthA: 0,
+                WidthB: 0
+            }
         }
     },
     methods: {
+        // 渲染底部关于我们, 联系我们等等。
+        renderFooter() {
+            var f = localStorage.getItem('FooterConfig');
+            this.FooterConfig = JSON.parse(f);
+        },
+        // 设置服务体验时间
+        setTime() {
+            var s = localStorage.getItem('ServiceRating');
+            this.ServiceRating = JSON.parse(s);
 
+            var t = parseFloat(this.ServiceRating.RechargeTime),
+                e = parseFloat(this.ServiceRating.WithdrawTime),
+                a = t % 60,
+                a = a > 9 ? a: "0" + a,
+                s = e % 60,
+                s = s > 9 ? s: "0" + s,
+                n = 60 * Math.round((t + e) / 60);
+                this.ServiceTime.RechargeTime = Math.floor(t / 60) + "'" + a,
+                this.ServiceTime.WithdrawTime = Math.floor(e / 60) + "'" + s,
+                this.ServiceTime.WidthA = t / n * 100,
+                this.ServiceTime.WidthB = e / n * 100;
+        }
+    },
+    mounted() {
+        this.renderFooter();
+        this.setTime();
     }
 }
 </script>

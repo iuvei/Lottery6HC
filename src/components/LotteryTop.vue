@@ -7,14 +7,12 @@
         </div>
         <!-- 定时器 -->
         <div class="time">
-            <div class="timeTitle">距
-                <b>{{ NowIssue }}</b>期投注截止还有：</div>
+            <div class="timeTitle">距<b>{{ NowIssue }}</b>期投注截止还有：</div>
             <em>{{ endTime }}</em>
         </div>
         <!-- 上期开奖号码 -->
         <div id="Results" class="announced">
-            <div class="announcedTitle">第
-                <b>{{ OldIssue }}</b>期开奖号码：</div>
+            <div class="announcedTitle">第<b>{{ OldIssue }}</b>期开奖号码：</div>
             <div class="openNumber" v-if="openNumberModel">
                 <div class="number-box" v-for="(item,index) in LotteryOpenArr" :key="index">
                     <em :class=" item.number | color(red,blue,green)">{{ item.number }}</em>
@@ -175,7 +173,7 @@ export default {
                                 }
                             }
                         }
-                        var NextLotteryOpenTime = new Date('' + serverYear + '-' + serverMonth + '-' + NextLotteryOpenDay + ' 21:15').getTime();
+                        var NextLotteryOpenTime = new Date('' + serverYear + '-' + serverMonth + '-' + NextLotteryOpenDay + ' 21:25').getTime();
                         var Difftime = Number(res.data.Data) - (new Date().getTime());
                         localStorage.setItem('Difftime', Difftime);
                         _this.TimerAction({
@@ -195,7 +193,7 @@ export default {
                             }
                         }
                     }
-                    var NextLotteryOpenTime = new Date('' + serverYear + '-' + serverMonth + '-' + NextLotteryOpenDay + ' 21:15').getTime();
+                    var NextLotteryOpenTime = new Date('' + serverYear + '-' + serverMonth + '-' + NextLotteryOpenDay + ' 21:25').getTime();
                     _this.TimerAction({
                         NextLotteryOpenTime: NextLotteryOpenTime,
                         nowTime: res.data.Data

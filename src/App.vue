@@ -29,7 +29,7 @@ export default {
 			}).then(res => {
 				if(res.data.Code === 1) {
 					localStorage.setItem('UserName', usr);
-					this.$store.state.UserName = usr;
+					this.$store.state.userName = usr;
 					// 登录成功,请求用户信息
 					this.getUserInfo();
 				}else {
@@ -61,6 +61,23 @@ export default {
 				console.log(err);
 			});
 		},
+		// 初始化页面数据并保存
+		getInitData(Requirement) {
+            this.$axios({
+                method: 'GET',
+                url: this.getApi('getInitData'),
+                data: {
+                    Action: 'GetInitData',
+                    Requirement: Requirement,
+                    SourceName: 'PC'
+                }
+            }).then(res => {
+                var BackData = res.data.BackData;
+                localStorage.setItem('FooterConfig', JSON.stringify(BackData.FooterConfig));
+                localStorage.setItem('LotteryList', JSON.stringify(BackData.LotteryList));
+				localStorage.setItem('ServiceRating', JSON.stringify(BackData.ServiceRating));
+            });
+        },
 		// 禁止右键事件
 		banRightClick() {
 			document.oncontextmenu = function() {
@@ -69,6 +86,7 @@ export default {
 		}
 	},
 	mounted() {
+		this.getInitData(["FooterConfig", "LotteryList", 'ServiceRating']);
 		this.login('web2017','');
 		this.banRightClick();
 	}
