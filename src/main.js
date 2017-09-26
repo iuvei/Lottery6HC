@@ -31,7 +31,7 @@ Vue.use(VueRouter)
 Vue.use(Vuex)
 
 const router = new VueRouter({
-	mode: 'history',       //  http://localhost:8065/lottery/6HC/1301  history 需要后台配置支持, 不需要 history 路由直接注释即可。http://localhost:8065/#/lottery/6HC/1301
+	// mode: 'history',       //  http://localhost:8065/lottery/6HC/1301  history 需要后台配置支持, 不需要 history 路由直接注释即可。http://localhost:8065/#/lottery/6HC/1301
 	routes
 })
 
