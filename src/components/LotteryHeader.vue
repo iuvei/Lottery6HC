@@ -99,27 +99,27 @@
                 </tr>
                 <tr>
                     <td>
-                        <a v-for="(item,index) in K3Arr" :key="index">
+                        <a :href="'/lottery/' + item.LotteryType + '/' + item.LotteryCode" v-for="(item,index) in K3Arr" :key="index">
                             {{ item.LotteryName }}
                         </a>
                     </td>
                     <td>
-                        <a v-for="(item,index) in SSCArr" :key="index">
+                        <a :href="'/lottery/' + item.LotteryType + '/' + item.LotteryCode" v-for="(item,index) in SSCArr" :key="index">
                             {{ item.LotteryName }}
                         </a>
                     </td>
                     <td>
-                        <a v-for="(item,index) in KLCArr" :key="index">
+                        <a :href="'/lottery/' + item.LotteryType + '/' + item.LotteryCode" v-for="(item,index) in KLCArr" :key="index">
                             {{ item.LotteryName }}
                         </a>
                     </td>
                     <td>
-                        <a v-for="(item,index) in SYX5Arr" :key="index">
+                        <a :href="'/lottery/' + item.LotteryType + '/' + item.LotteryCode" v-for="(item,index) in SYX5Arr" :key="index">
                             {{ item.LotteryName }}
                         </a>
                     </td>
                     <td>
-                        <a v-for="(item,index) in DPCArr" :key="index">
+                        <a :href="'/lottery/' + item.LotteryType + '/' + item.LotteryCode" v-for="(item,index) in DPCArr" :key="index">
                             {{ item.LotteryName }}
                         </a>
                     </td>
