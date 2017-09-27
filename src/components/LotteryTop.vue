@@ -194,7 +194,7 @@ export default {
                         nowTime: res.data.Data
                     });
                 }
-
+                console.log(lotteryIssue);
                 this.$store.state.LHC.OldIssue = serverYear + '' + (lotteryIssue - 1);
                 this.$store.state.LHC.NowIssue = serverYear + '' + lotteryIssue;
 
