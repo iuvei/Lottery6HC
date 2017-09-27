@@ -1,20 +1,31 @@
-import Vue from 'vue';
-
-export let setLocalStorage = function(key, value, exp) {
-	var curTime = new Date().getTime();
-	curTime = exp + curTime;
-    localStorage.setItem(key,JSON.stringify({data:value,time:curTime}));
-};
-
-export let getLocalStorage = function(key) {
-	var data = localStorage.getItem(key);
-    var dataObj = JSON.parse(data);
-    if (new Date().getTime() - dataObj.time > 0) {
-        // console.log('信息已过期');
-        new Vue().$message('登录信息已过期');
-    }else{
-        return dataObj.data;
+import $axios from 'axios';
+export const api = {
+    // 获取往期开奖列表
+    todayLottery(fn,data) {
+        $axios({
+            method: 'GET',
+            url: data.url,
+        }).then(res => {
+            fn(res);
+        }).catch(err => {
+            console.log('获取今日开奖列表失败');
+        });
+    },
+    // 请求服务器时间
+    getServerTime(fn,data) {
+        $axios({
+            method: 'GET',
+            url: data.url,
+            data: {
+                Action: 'GetServerTimeMillisecond',
+                SourceName: 'PC'
+            }
+        }).then(res => {
+            fn(res);
+        }).catch(err => {
+            console.log('获取服务器时间失败');
+        });
     }
 }
 
-
+export default api;

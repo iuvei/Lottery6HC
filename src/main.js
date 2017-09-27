@@ -22,8 +22,10 @@ import routes from './routes'
 // import $ from 'jquery';
 
 
+// 工具函数
+import { setLocalStorage, getLocalStorage } from './common/js/util.js';
 
-import { setLocalStorage, getLocalStorage } from './api/api';
+// api 地址
 import api_port from './api/api_address';
 
 Vue.use(api_port)

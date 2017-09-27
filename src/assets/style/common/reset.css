@@ -205,6 +205,7 @@ a {
 
 /* layer */
 
+
 .layerBet .layui-layer-btn.layui-layer-btn- {
     position: relative;
     height: 40px;
@@ -299,8 +300,16 @@ a {
 }
 .layerBet {
     min-width: 380px;
+    font-size: 14px;
 }
 .layerBet .lotteryConfirm em em {
     color: red;
     margin: 5px;
+}
+
+
+/* 定时器弹框样式 */
+
+.timeConfirm .layui-layer-content{
+    margin-top: 25px;
 }

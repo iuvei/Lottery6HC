@@ -139,15 +139,10 @@ export default {
             });
         },
         abortTimer() {
-            // 六合彩开奖日期  246 21：30
+            
             var abort = this.itemData.OpenTime;
-            this.$axios({
-                method: 'GET',
-                url: this.getApi('getServerTime'),
-                data: {
-                    Action: 'GetServerTimeMillisecond',
-                    SourceName: 'PC'
-                }
+            this.$store.dispatch('getServerTime',{
+                url: this.getApi('getServerTime')
             }).then(res => {
                 var _this = this;
                 // 服务器时间保存到仓库去。
@@ -204,13 +199,31 @@ export default {
                 this.$store.state.LHC.NowIssue = serverYear + '' + lotteryIssue;
 
 
-            }).catch(err => {
-                alert('请求数据错误');
             });
         },
         // 开奖
         openLottery() {
-            console.log('开奖啦~');
+            var _this = this;
+            // 关闭所有的弹窗。
+            layer.closeAll();
+            // 重新请求服务器时间重置定时器
+            _this.abortTimer();
+            // 重新请求往期开奖列表重新渲染模板
+            _this.$store.dispatch('LHC/todayLottery',{
+                url: _this.getApi('getLotteryOpenList')
+            });
+            var s = _this.$store.state.LHC.serverTime;
+            var g = new Date(parseInt(s)).getFullYear;
+            layer.open({
+                title: "温馨提示",
+                style: "width:18em;font-size:.7em",
+                skin: "layerBet timeConfirm",
+                type: 1,
+                area: ['380px', '226px'],
+                shadeClose: true, //点击遮罩关闭
+                btn: ["确定"],
+                content: _this.$store.state.LHC.OldIssue.replace(g, "") + '期已截止</br>当前期号<span style="color:red">' + _this.$store.state.LHC.NowIssue.replace(g, "") + "</span></br>投注时请注意期号",
+            });
         },
         TimerAction(o) {
             var _this = this;
@@ -227,6 +240,7 @@ export default {
                 r = r > 9 ? r : "0" + r;
                 var final = `${s}:${n}:${r}`;
                 _this.endTime = final;
+                _this.$store.state.LHC.TimeBar = _this.endTime;
                 surplus = surplus - 1000;
                 if (surplus <= 0 || _this.endTime === '00:00:00') {
                     _this.openLottery();
@@ -294,6 +308,7 @@ export default {
     mounted() {
         this.abortTimer();
         this.openNumberModelAnimation();
+        console.log(this.$store.state)
     },
     updated() {
         if (this.LotteryOpenArrC.length !== 0 && this.animalFlag === false) {

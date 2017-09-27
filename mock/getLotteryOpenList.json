@@ -5,6 +5,11 @@
     "BackUrl": null,
     "BackData": [
         {
+            "IssueNo": "2017113",
+            "LotteryOpen": "02,31,27,33,19,10,16",
+            "OpenTime": "9/26/2017 9:34:54 PM"
+        },
+        {
             "IssueNo": "2017112",
             "LotteryOpen": "25,22,36,01,30,13,04",
             "OpenTime": "9/23/2017 9:34:54 PM"
@@ -48,11 +53,6 @@
             "IssueNo": "2017104",
             "LotteryOpen": "30,08,01,02,43,39,19",
             "OpenTime": "9/5/2017 9:34:54 PM"
-        },
-        {
-            "IssueNo": "2017103",
-            "LotteryOpen": "05,27,01,24,11,23,15",
-            "OpenTime": "9/2/2017 9:34:43 PM"
         }
     ],
     "Data": null,

@@ -1,0 +1,33 @@
+{
+    "Code": 1,
+    "StrCode": "数据获取成功",
+    "DataCount": 0,
+    "BackUrl": null,
+    "BackData": {
+        "UserUpGradeBonus": {
+            "State": 1,
+            "GradeBonus": "1",
+            "Grade": 2
+        },
+        "NoticeData": [
+            {
+                "ID": 1851,
+                "Title": "系统升级，建议修改下您的密码！",
+                "Add_Time": "2017-09-21 19:00:15"
+            },
+            {
+                "ID": 1709,
+                "Title": "入款账户 （陈益锋）停用通知！",
+                "Add_Time": "2017-09-05 16:31:59"
+            }
+        ],
+        "UserPhoto": "9A9C9E1A719CE536.jpg",
+        "UserUnread": null
+    },
+    "Data": null,
+    "CacheData": {
+        "NoticeData": "92c7"
+    },
+    "OpenType": 0,
+    "Style": null
+}

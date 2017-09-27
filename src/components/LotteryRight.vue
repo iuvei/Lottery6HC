@@ -146,7 +146,7 @@ var addZero = function(i) {
 export default {
     data() {
         return {
-            LotteryOpenList: [],
+            // LotteryOpenList: [],
             mybetContentList: [{}, {}, {}, {}, {}],
             newestBonusList: [],
             yesterdayBonusList: [],
@@ -183,6 +183,11 @@ export default {
             }
         }
     },
+    computed: {
+        LotteryOpenList() {
+            return this.$store.state.LHC.LotteryOpenList;
+        }
+    },
     methods: {
         // 彩票信息榜
         lotteryInfoShow() {
@@ -206,20 +211,6 @@ export default {
                 this.yesterdayBonusList = res.data.BackData.RankingList;
             }).catch(err => {
                 alert('数据请求错误');
-            });
-        },
-        // 今日开奖 (往期开奖展示列表)
-        todayLottery() {
-            this.$axios({
-                method: 'GET',
-                url: this.getApi('getLotteryOpenList'),
-            }).then(res => {
-                this.LotteryOpenList = res.data.BackData;
-                var r = res.data.BackData[0].LotteryOpen.split(',');
-                this.$store.state.LHC.LotteryOpenArr = r.slice(0, -1);
-                this.$store.state.LHC.LotteryOpenRes = r[r.length - 1];
-            }).catch(err => {
-                alert('获取今日开奖列表失败');
             });
         },
         // 获取中奖信息列表
@@ -329,13 +320,15 @@ export default {
             $('#app').on('mouseleave', '.betRight .cardBox', function(e) {
                 $(this).hide();
             });
-        }
+        },
     },
     mounted() {
         this.$jqAction();
-        this.todayLottery();
         this.loadData();
         this.getNewestBonusList();
+        this.$store.dispatch('LHC/todayLottery',{
+            url: this.getApi('getLotteryOpenList')
+        });
     }
 }
 </script>
