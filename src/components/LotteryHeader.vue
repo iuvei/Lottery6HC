@@ -10,7 +10,7 @@
                     </div>
                     <ul class="snavInfo">
                         <li class="userName MsgShow">
-                            <a class="_personalInfo" @mouseenter="MyCardShow" @mouseleave="MyCardShowClose"><img alt="" src="//imagess-google.com/system/common/headimg/9A9C9E1A719CE536.jpg">
+                            <a class="_personalInfo" @mouseenter="MyCardShow" @mouseleave="MyCardShowClose"><img alt="" :src="'//imagess-google.com/system/common/headimg/' + this.$store.state.userPhoto">
                                 <i>{{ userName }}</i>
                             </a>
                             <span id="unreadMsgNum" onclick="window.location='letter'">
@@ -48,7 +48,7 @@
                         <li>
                             <a href="/withdraw" class="">提现</a>
                         </li>
-                        <li class="LoginOut">退出</li>
+                        <li class="LoginOut" @click="loginOut">退出</li>
                         <a class="serviceLink ServiceBtn">
                             <i class="iconfont"></i>
                             <span></span>
@@ -72,12 +72,12 @@
                             </div>
                             <ul class="cardIcon fix">
                                 <li v-for="(item, index) in userCardAllInfo.hueLotteryTypeList" :key="index">
-                                    <a href="###">
+                                    <a :href="item === 'XYNC' ? 'javascript:void(0);' : '/lottery/' + item + '/' + $store.state.LotterArr[item][0]">
                                         <i class="iconfont" :class="'L_' + item"></i>
                                     </a>
                                 </li>
                                 <li v-for="(item, index) in userCardAllInfo.LotteryTypeList" :key="index">
-                                    <a href="###">
+                                    <a :href="item === 'XYNC' ? 'javascript:void(0);' : '/lottery/' + item + '/' + $store.state.LotterArr[item][0]">
                                         <i class="iconfont noActive" :class="'L_' + item"></i>
                                     </a>
                                 </li>
@@ -130,6 +130,7 @@
     </div>
 </template>
 <script>
+import { formDataInit } from '../common/js/util.js';
 export default {
     data() {
         return {
@@ -183,8 +184,10 @@ export default {
     methods: {
         init() {
             var LotteryList = localStorage.getItem('LotteryList');
+            if(LotteryList === null || LotteryList === 'undefined') return;
             this.LotteryList = JSON.parse(LotteryList);
-            this.LotteryList.map(item => {
+            for(let i in this.LotteryList) {
+                var item = this.LotteryList[i];
                 if (item.LotteryType === 'SSC') {
                     this.SSCArr.push(item);
                 } else if (item.LotteryType === 'K3') {
@@ -196,7 +199,7 @@ export default {
                 } else if (["KL8", "PK10", "6HC"].indexOf(item.LotteryType) !== -1) {
                     this.KLCArr.push(item);
                 }
-            });
+            }
         },
         // 全部彩票
         MoreLotteryType() {
@@ -214,41 +217,64 @@ export default {
         // 用户余额显示
         UserBalanceShow() {
             // 刷新小圆圈
+            var o = {
+                Action: 'GetInitData',
+                Requirement: '["UserBalance", "UserUnread"]',
+                CacheData: JSON.stringify(this.$store.state.CacheData),
+                SourceName: 'PC'
+            }
+            var a = formDataInit(o);
             $('#icon').addClass('click');
             this.$axios({
-                method: 'GET',
+                method: 'POST',
                 url: this.getApi('getUserBalance'),
-                data: {
-                    Action: 'GetInitData',
-                    Requirement: ["UserBalance", "UserUnread"],
-                    SourceName: 'PC'
-                }
+                params: {
+                A: 'GetInitData',
+                S: this.$store.state.Attach,
+                U: this.userName,
+                },
+                data: a,
+                cache: "no-store",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
             }).then(res => {
-                this.UserBalance = res.data.BackData.UserBalance;
+                var y = res.data.BackData.UserBalance === undefined ? '0.00' : res.data.BackData.UserBalance;
+                this.UserBalance = y;
                 $('#icon').removeClass('click');
                 this.GetMoneyShow = true;
             });
         },
         // 提取我的 Card
         getMyCard(cardID, fn) {
+            var o = {
+                Action: 'GetCard',
+                UserId: JSON.stringify(cardID),
+                SourceName: 'PC'
+            };
+            var a = formDataInit(o);
             var f = sessionStorage.getItem('Card' + cardID);
             if (f !== null) {
+                this.cardBoxFlag = true;
                 this.userCardAllInfo = JSON.parse(f);
                 // console.log('有缓存的啦, 小样~', this.userCardAllInfo);
                 fn();
-                this.cardBoxFlag = true;
                 return;
             }
             this.$axios({
-                method: 'GET',
+                method: 'POST',
                 url: this.getApi('getMyCard'),
-                data: {
-                    Action: 'GetCard',
-                    UserId: cardID,
-                    SourceName: 'PC'
-                }
+                params: {
+                    A: 'GetCard',
+                    S: this.$store.state.Attach,
+                    U: this.userName
+                },
+                data: a,
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
             }).then(res => {
-                var allTypeList = ["SSC", "PK10", "KL8", "PL35", "FC3D", "SYX5", "K3", "SYNC"];
+                var allTypeList = ["SSC", "PK10", "KL8", "PL35", "FC3D", "SYX5", "K3", "XYNC"];
                 this.userCardAllInfo.userCardInfo = res.data.BackData;
                 this.userCardAllInfo.hueLotteryTypeList = res.data.BackData.LotteryType.split(',');
                 var arr = [];
@@ -284,6 +310,11 @@ export default {
         // 隐藏我的卡片
         MyCardShowClose() {
             $('.header .cardBox').hide();
+        },
+        // 退出
+        loginOut() {
+            localStorage.removeItem('UserName');
+            location.href = '/login';
         },
         jqAction() {
             $('#app').on('mouseenter', 'table.betMoreList', function(e) {

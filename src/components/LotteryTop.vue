@@ -43,6 +43,7 @@
     </div>
 </template>
 <script>
+import { formDataInit } from '../common/js/util.js';
 // Date format
 Date.prototype.format = function(fmt) {
     var o = {
@@ -125,13 +126,31 @@ export default {
         },
         numberToAnimalList() {
             return this.$store.state.LHC.numberToAnimal;
+        },
+        userName() {
+            return this.$store.state.userName;
         }
     },
     methods: {
         getLotteryPlanData(fn) {
+            var o = {
+                Action: 'GetLotteryPlan',
+                Qort: '1301',
+                SourceName: 'PC',
+            };
+            var a = formDataInit(o);
             this.$axios({
-                method: 'GET',
+                method: 'POST',
                 url: this.getApi('getLotteryPlan'),
+                params: {
+                    A: 'GetLotteryPlan',
+                    S: this.$store.state.Attach,
+                    U: this.userName
+                },
+                data: a,
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
             }).then(res => {
                 fn(res.data);
             }).catch(err => {
@@ -156,26 +175,33 @@ export default {
                 p = JSON.parse(p);
                 if (p === null || p.Month !== serverMonth) {
                     _this.getLotteryPlanData(function(r) {
-                        localStorage.setItem('lotteryPlan' + _this.LotteryCode, JSON.stringify(r));
-                        let f = Number(r.Month) === Number(serverMonth);
-                        let ScheduleArr = r.Schedule.split(',');
+                        if(r.Code === 0) {
+                            return;
+                        }
+                        localStorage.setItem('lotteryPlan' + _this.LotteryCode, JSON.stringify(r.Data));
+                        let f = Number(r.Data.Month) === Number(serverMonth);
+                        let ScheduleArr = r.Data.Schedule.split(',');
                         if (f) {
                             for (let i = 0; i < ScheduleArr.length; i++) {
                                 if (serverDay <= Number(ScheduleArr[i])) {
                                     NextLotteryOpenDay = Number(ScheduleArr[i]);
-                                    lotteryIssue = Number(r.BeforeIssue) + (i + 1);
+                                    lotteryIssue = Number(r.Data.BeforeIssue) + (i + 1);
                                     break;
                                 }
                             }
+                            _this.$store.state.LHC.OldIssue = serverYear + '' + (lotteryIssue - 1);
+                            _this.$store.state.LHC.NowIssue = serverYear + '' + lotteryIssue;
                         }
                         var NextLotteryOpenTime = new Date('' + serverYear + '-' + serverMonth + '-' + NextLotteryOpenDay + ' 21:25').getTime();
-                        var Difftime = Number(res.data.Data) - (new Date().getTime());
+                        var Difftime = (new Date().getTime()) - Number(res.data.Data);
+                        _this.$store.state.Difftime = Difftime;
                         localStorage.setItem('Difftime', Difftime);
                         _this.TimerAction({
                             NextLotteryOpenTime: NextLotteryOpenTime,
                             nowTime: res.data.Data
                         });
                     });
+                    
                 } else {
                     let f = Number(p.Month) === Number(serverMonth);
                     let ScheduleArr = p.Schedule.split(',');
@@ -193,8 +219,9 @@ export default {
                         NextLotteryOpenTime: NextLotteryOpenTime,
                         nowTime: res.data.Data
                     });
+                    
                 }
-                console.log(lotteryIssue);
+                
                 this.$store.state.LHC.OldIssue = serverYear + '' + (lotteryIssue - 1);
                 this.$store.state.LHC.NowIssue = serverYear + '' + lotteryIssue;
 
@@ -308,7 +335,6 @@ export default {
     mounted() {
         this.abortTimer();
         this.openNumberModelAnimation();
-        console.log(this.$store.state)
     },
     updated() {
         if (this.LotteryOpenArrC.length !== 0 && this.animalFlag === false) {

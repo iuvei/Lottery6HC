@@ -4,8 +4,8 @@
         <div class="today box">
             <h3>今日开奖</h3>
             <div class="more">
-                <a href="###" target="_blank">走势图</a>
-                <a href="###">玩法推荐</a>
+                <a href="/trendChart/1301" target="_blank">走势图</a>
+                <a href="/howtoplay/1301" target="_blank">玩法推荐</a>
             </div>
             <div class="ResultList">
                 <table width="100%" border="0" cellspacing="0" cellpadding="0" id="fn_getoPenGame" class="ty_table_gameBet curr">
@@ -41,9 +41,9 @@
                         <th>奖金</th>
                     </tr>
                     <tr v-for="(item, index) in mybetContentList" :key="index">
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>{{ item.issueNo }}</td>
+                        <td>{{ item.normal_money }}</td>
+                        <td>{{ item.openState }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -51,7 +51,7 @@
                 <tbody>
                     <tr>
                         <td>
-                            <a href="###">更多>></a>
+                            <a href="/betRecord">更多>></a>
                         </td>
                     </tr>
                 </tbody>
@@ -122,12 +122,12 @@
                 </div>
                 <div class="cardIcon fix">
                     <li v-for="(item, index) in userCardAllInfo.hueLotteryTypeList" :key="index">
-                        <a href="###">
+                        <a :href="item === 'XYNC' ? 'javascript:void(0);' : '/lottery/' + item + '/' + $store.state.LotterArr[item][0]">
                             <i class="iconfont" :class="'L_' + item"></i>
                         </a>
                     </li>
                     <li v-for="(item, index) in userCardAllInfo.LotteryTypeList" :key="index">
-                        <a href="###">
+                        <a :href="item === 'XYNC' ? 'javascript:void(0);' : '/lottery/' + item + '/' + $store.state.LotterArr[item][0]">
                             <i class="iconfont noActive" :class="'L_' + item"></i>
                         </a>
                     </li>
@@ -137,6 +137,7 @@
     </div>
 </template>
 <script>
+import { formDataInit } from '../common/js/util.js';
 var addZero = function(i) {
     if (i < 10) {
         i = '0' + i;
@@ -146,7 +147,7 @@ var addZero = function(i) {
 export default {
     data() {
         return {
-            // LotteryOpenList: [],
+            // 我的投注列表
             mybetContentList: [{}, {}, {}, {}, {}],
             newestBonusList: [],
             yesterdayBonusList: [],
@@ -186,6 +187,9 @@ export default {
     computed: {
         LotteryOpenList() {
             return this.$store.state.LHC.LotteryOpenList;
+        },
+        userName() {
+            return this.$store.state.userName;
         }
     },
     methods: {
@@ -202,22 +206,120 @@ export default {
             $('.winningList h3:contains("昨日奖金榜")')[0].className = '';
             $('.winningList h3:contains("中奖信息")')[0].className = 'notSelect';
         },
+        // 获取往期开奖列表
+        todayLottery() {
+            this.$store.dispatch('LHC/todayLottery', {
+                url: this.getApi('getLotteryOpenList')
+            });
+        },
+        // 我的投注
+        MyBetting() {
+            var o = {
+                Action: 'GetBetting',
+                SourceName: 'PC'
+            };
+            var a = formDataInit(o);
+            this.$axios({
+                method: 'POST',
+                url: this.getApi('getMyBetting'),
+                params: {
+                    A: 'GetBetting',
+                    S: this.$store.state.Attach,
+                    U: this.userName,
+                },
+                data: a,
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+            }).then(res => {
+                if(res.data.Code === 0) {
+                    layer.open({
+                        title: "温馨提示",
+                        style: "width:18em;font-size:.7em",
+                        skin: "layerBet",
+                        type: 1,
+                        area: ['380px', '210px'],
+                        shadeClose: true, //点击遮罩关闭
+                        btn: ["确定"],
+                        content: '<div class="layermcont">'+ res.data.StrCode +'</div>',
+                        yes: function(index, layero) {
+                            layer.close(index);
+                            // location.href = '/login';
+                            return;
+                        }
+                    });
+                    return;
+                }
+                if(res.data.Data.length === 0) return;
+                this.mybetContentList = res.data.Data;
+            }).catch(err => {
+                console.log('获取我的投注信息失败');
+            });
+        },
         // 昨日奖金榜
         loadData() {
+            var o = {
+                Action: 'GetInitData',
+                Requirement: '["RankingList"]',
+                CacheData: JSON.stringify(this.$store.state.CacheData),
+                SourceName: 'PC'
+            };
+            var a = formDataInit(o);
+            // 如果 localStorage 里面有直接请求
+            var f = localStorage.getItem('RankingList');
+            if (f !== null) {
+                this.yesterdayBonusList = JSON.parse(f);
+                return;
+            }
+            // 如果 localStorage 里面没有再去请求
             this.$axios({
-                method: 'GET',
+                method: 'POST',
                 url: this.getApi('getUserBonusRanking'),
+                params: {
+                    A: 'GetInitData'
+                },
+                data: a,
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
             }).then(res => {
                 this.yesterdayBonusList = res.data.BackData.RankingList;
+                let cache = res.data.BackData.CacheData;
+                if (cache === null || cache === undefined) {
+                    cache = {};
+                }
+                localStorage.setItem('CacheData', JSON.stringify(cache));
+                this.$store.state.CacheData = cache;
+                if (res.data.BackData.length === 0) {
+                    localStorage.setItem('RankingList', JSON.stringify([]));
+                } else {
+                    localStorage.setItem('RankingList', JSON.stringify(res.data.BackData.RankingList));
+                }
+
             }).catch(err => {
-                alert('数据请求错误');
+                console.log('数据请求错误');
             });
         },
         // 获取中奖信息列表
         getNewestBonusList() {
+            var o = {
+                Action: 'GetNewestBonusList',
+                dataNum: '20',
+                SourceName: 'PC'
+            };
+            var a = formDataInit(o);
             this.$axios({
-                method: 'GET',
+                method: 'POST',
                 url: this.getApi('getNewestBonusList'),
+                params: {
+                    A: 'GetNewestBonusList',
+                    S: this.$store.state.Attach,
+                    U: this.userName
+                },
+                data: a,
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
             }).then(res => {
                 var addArr = [];
                 addArr = res.data.BackData.NewestBonusList.slice(-10);
@@ -227,7 +329,7 @@ export default {
                     this.BonusListAnimation();
                 }, 0);
             }).catch(err => {
-                alert('获取最新的奖金列表失败');
+                console.log('获取最新的奖金列表失败');
             });
         },
         // 奖金列表动画
@@ -255,21 +357,32 @@ export default {
             }
         },
         getCard(cardID, fn) {
+            var o = {
+                Action: 'GetCard',
+                UserId: JSON.stringify(cardID),
+                SourceName: 'PC',
+            };
+            var a = formDataInit(o);
             var f = sessionStorage.getItem('Card' + cardID);
             if (f !== null) {
+                this.cardBoxFlag = true;
                 this.userCardAllInfo = JSON.parse(f);
                 // console.log('有缓存的啦, 小样~', this.userCardAllInfo);
                 fn();
                 return;
             }
             this.$axios({
-                method: 'GET',
+                method: 'POST',
                 url: this.getApi('getCard'),
-                data: {
-                    Action: 'GetCard',
-                    UserId: cardID,
-                    SourceName: 'PC',
-                }
+                params: {
+                    A: 'GetCard',
+                    S: this.$store.state.Attach,
+                    U: this.userName
+                },
+                data: a,
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
             }).then(res => {
                 var allTypeList = ["SSC", "XYNC", "PK10", "KL8", "PL35", "FC3D", "SYX5", "K3"];
                 this.userCardAllInfo.userCardInfo = res.data.BackData;
@@ -288,13 +401,13 @@ export default {
                     fn();
                 }, 0);
             }).catch(err => {
-                alert('获取用户卡片信息失败');
+                console.log('获取用户卡片信息失败');
             })
         },
         // 获取用户卡片
         getCardMouseenter(ele, inx, o) {
             var _this = this;
-            var cardID = ele.Id;
+            var cardID = ele.UserId;
             if (o === 'li') {
                 var $self = $('.winnerList li').eq(inx);
             } else {
@@ -326,9 +439,8 @@ export default {
         this.$jqAction();
         this.loadData();
         this.getNewestBonusList();
-        this.$store.dispatch('LHC/todayLottery',{
-            url: this.getApi('getLotteryOpenList')
-        });
+        this.todayLottery();
+        this.MyBetting();
     }
 }
 </script>
@@ -539,6 +651,7 @@ export default {
             vertical-align: initial;
             overflow: hidden;
             height: 510px;
+            min-height: 510px;
         }
         .bd {
             width: 100%;
@@ -560,6 +673,7 @@ export default {
     }
     #moneyList {
         display: none;
+        min-height: 541px;
     }
 }
 </style>

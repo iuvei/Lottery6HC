@@ -32,6 +32,8 @@ const LHC = {
         numberToAnimal:[],
         // 往期开奖列表保存
         LotteryOpenList: [],
+        // 点数
+        Lottery_point: "0-10.00%",
     },
     mutations: {
         UPDATE_LotteryOpenList(state,res) {         // 更新往期彩票列表
@@ -48,6 +50,10 @@ const LHC = {
         todayLottery(context,data) {
             return new Promise((resolve,reject) => {
                 $api.todayLottery((res) => {
+                    if(res.data.Code === 1 && res.data.BackData.length === 0) {
+                        console.log('没有往期开奖数据');
+                        return;
+                    }
                     var r = res.data.BackData[0].LotteryOpen.split(',');
                     context.commit('UPDATE_LotteryOpenList', res.data.BackData);
                     context.commit('UPDATE_LotteryOpenArr', r.slice(0, -1));
@@ -67,9 +73,29 @@ export default new Vuex.Store({
     state: {
         // 用户名
         userName: '',
+        userPhoto: '',
         myCard: [],
+        // 与服务器的时间差
+        Difftime: 0,
+        // S 附加
+        Attach: 'dafa',
+        // 版本缓存
+        CacheData: {},
+        // 最高投注额
+        maxBetPrice: 1e6,
+        // 彩票类型对应的彩票码
+        LotterArr: {
+            K3: [1407, "L_K3"],
+            SSC: [1e3, "L_SSC"],
+            SYX5: [1100, "L_SYX5"],
+            PK10: [1303, "L_PK10"],
+            KL8: [1302, "L_KL8"],
+            FC3D: [1201, "L_FC3D"],
+            PL35: [1202, "L_PL35"],
+            "6HC": [1301, "L_6HC"],
+        },
     },
-    mutations: {},
+    mutations: { },
     actions: {
         getServerTime(context,data) {
             return new Promise((resolve,reject) => {

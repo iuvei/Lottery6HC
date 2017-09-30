@@ -145,6 +145,8 @@
 </template>
 <script>
 import $store from '../vuex/store.js';
+import { format,formDataInit } from '../common/js/util.js';
+Date.prototype.format = format;
 function filterColor(arr, obj) {
     var i = arr.length;
     while (i--) {
@@ -192,29 +194,8 @@ function mode1Data() {
         { name: '蓝波', odd: [2.97063, 2.66438] }
     ];
 }
-// 服务器获取时间
-function getServerYear() {
-    if ($store.state.LHC.serverTime !== '' && $store.state.LHC.serverTime !== undefined && $store.state.LHC.serverTime !== 0) {
-        return $store.state.LHC.serverTime;
-    }
-    var s;
-    var url = '/mock/getServerTime.json';
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, false);
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            s = JSON.parse(xhr.responseText);
-            $store.state.LHC.serverTime = s.Data;
-        } else {
-            s = false;
-            console.log(xhr.statusText);
-        }
-    };
-    xhr.send();
-    return s.Data;
-}
 // 算本命年
-function animalData(params) {
+function animalData(params,d) {
     var lottery = {};
     lottery.mode = '1';
     lottery.flag = '1';
@@ -243,9 +224,8 @@ function animalData(params) {
         ["11", "23", "35", "47"],
     ];
     lottery.data = [];
-    var yearResponse = getServerYear();
-    if (yearResponse) {
-        var year = parseInt(new Date(parseInt(yearResponse)).getFullYear());
+    if (d) {
+        var year = parseInt(new Date(parseInt(d)).getFullYear());
         var remainder = (year - 1) % 12 + 1;
         $store.state.LHC.natal = benmingArr[remainder - 1];
         var step = parseInt(remainder - base);
@@ -746,58 +726,7 @@ export default {
                 },
                 "生肖": {
                     groupTitle: "生肖",
-                    BackData: [{
-                        name: "特肖",
-                        mode: "E01",
-                        tip: "从十二生肖中任选1个或多个，每个生肖为一注，所选生肖与特码对应的生肖相同，即为中奖。",
-                        group: "生肖",
-                        subGroup: "生肖",
-                        tag: "特肖",
-                        eg: [],
-                        lottery: animalData('odd1'),
-                        default:
-                        !0
-                    },
-                    {
-                        name: "一肖",
-                        mode: "E02",
-                        tip: "从十二生肖中任选1个或多个，每个生肖为一注，开奖号码（含特码）中含有投注所属生肖，即为中奖。",
-                        group: "生肖",
-                        subGroup: "生肖",
-                        tag: "一肖",
-                        eg: [],
-                        lottery: animalData('odd2'),
-                    },
-                    {
-                        name: "二肖连",
-                        mode: "E03",
-                        tip: "至少选择两个生肖，每二个生肖为一组合，开奖号码（含特码）中含有投注所属全部生肖，即为中奖。",
-                        group: "生肖",
-                        subGroup: "生肖",
-                        tag: "二肖连",
-                        eg: [],
-                        lottery: animalData('noOdd1'),
-                    },
-                    {
-                        name: "三肖连",
-                        mode: "E04",
-                        tip: "至少选择三个生肖，每三个生肖为一组合，开奖号码（含特码）中含有投注所属全部生肖，即为中奖。",
-                        group: "生肖",
-                        subGroup: "生肖",
-                        tag: "三肖连",
-                        eg: [],
-                        lottery: animalData('noOdd2'),
-                    },
-                    {
-                        name: "四肖连",
-                        mode: "E05",
-                        tip: "至少选择四个生肖，每四个生肖为一组合，开奖号码（含特码）中含有投注所属全部生肖，即为中奖。",
-                        group: "生肖",
-                        subGroup: "生肖",
-                        tag: "四肖连",
-                        eg: [],
-                        lottery: animalData('noOdd3'),
-                    }]
+                    BackData: []
                 },
                 "尾数": {
                     groupTitle: "尾数",
@@ -989,6 +918,12 @@ export default {
             }else {
                 return '';
             }
+        },
+    },
+    // 观察者模式！！！！
+    watch: {
+        s(d) {
+            this.initAnimal(d);
         }
     },
     computed: {
@@ -1009,9 +944,74 @@ export default {
         },
         mode() {
             return this.nowItem.mode;
+        },
+        s() {
+            return this.$store.state.LHC.serverTime;
+        },
+        userName() {
+            return this.$store.state.userName;
         }
     },
     methods: {
+
+
+        // animal 观察者执行函数
+        initAnimal(d) {
+            this.AllData["生肖"].BackData = [{
+                        name: "特肖",
+                        mode: "E01",
+                        tip: "从十二生肖中任选1个或多个，每个生肖为一注，所选生肖与特码对应的生肖相同，即为中奖。",
+                        group: "生肖",
+                        subGroup: "生肖",
+                        tag: "特肖",
+                        eg: [],
+                        lottery: animalData('odd1',d),
+                        default:
+                        !0
+                    },
+                    {
+                        name: "一肖",
+                        mode: "E02",
+                        tip: "从十二生肖中任选1个或多个，每个生肖为一注，开奖号码（含特码）中含有投注所属生肖，即为中奖。",
+                        group: "生肖",
+                        subGroup: "生肖",
+                        tag: "一肖",
+                        eg: [],
+                        lottery: animalData('odd2',d),
+                    },
+                    {
+                        name: "二肖连",
+                        mode: "E03",
+                        tip: "至少选择两个生肖，每二个生肖为一组合，开奖号码（含特码）中含有投注所属全部生肖，即为中奖。",
+                        group: "生肖",
+                        subGroup: "生肖",
+                        tag: "二肖连",
+                        eg: [],
+                        lottery: animalData('noOdd1',d),
+                    },
+                    {
+                        name: "三肖连",
+                        mode: "E04",
+                        tip: "至少选择三个生肖，每三个生肖为一组合，开奖号码（含特码）中含有投注所属全部生肖，即为中奖。",
+                        group: "生肖",
+                        subGroup: "生肖",
+                        tag: "三肖连",
+                        eg: [],
+                        lottery: animalData('noOdd2',d),
+                    },
+                    {
+                        name: "四肖连",
+                        mode: "E05",
+                        tip: "至少选择四个生肖，每四个生肖为一组合，开奖号码（含特码）中含有投注所属全部生肖，即为中奖。",
+                        group: "生肖",
+                        subGroup: "生肖",
+                        tag: "四肖连",
+                        eg: [],
+                        lottery: animalData('noOdd3',d),
+                    }];
+        },
+
+
         // 一级菜单点击事件
         selectRender(ele, inx) {
             var $this = $('.betFilter li:contains(' + inx + ')');
@@ -1241,16 +1241,21 @@ export default {
                     return;
                 } else {
                     var obj = {};
+                    obj.lottery_code = this.lotteryCode;
                     obj.betting_count = this.chosenArr.length;
                     obj.betting_issueNo = this.$store.state.LHC.NowIssue;
                     obj.betting_money = '';
                     obj.betting_number = this.chosenArr.join(',');
                     obj.betting_unitPrice = 1;
+                    obj.betting_point = this.$store.state.LHC.Lottery_point;
+                    obj.play_detail_code = this.lotteryCode + this.mode;
                     obj.maxAward = a ? a : this.maxAward({
                         betCount: this.betCount,
                         mode: this.mode,
                         award: this.award
-                    });
+                    });// 暂时
+                    obj.graduation_count = 1;
+                    obj.betting_model = 1;
                     obj.text = this.selectTab.join(',');
                     this.chosenLotteryItems.unshift(obj);
                     this.chosenArr = [];
@@ -1268,7 +1273,7 @@ export default {
             obj.betting_money = '';
             obj.betting_number = this.chosenArr.join(',');
             obj.betting_unitPrice = 1;
-            obj.betting_point = "0-10.00%";
+            obj.betting_point = this.$store.state.LHC.Lottery_point;
             obj.play_detail_code = this.lotteryCode + this.mode;
             obj.maxAward = this.maxAward({
                 betCount: this.betCount,
@@ -1299,12 +1304,6 @@ export default {
                 var zs = this.selectBetCount;
                 // 含不含本命
                 var flag = new RegExp(this.natal).test(this.chosenArr.join());
-                // true 为含本命, false 不含本命
-                // if (flag) {
-
-                // } else {
-
-                // }
                 var obj = {};
                 obj.lottery_code = this.lotteryCode;
                 obj.betting_count = this.betCount;
@@ -1312,7 +1311,8 @@ export default {
                 obj.betting_money = '';
                 obj.betting_number = this.chosenArr.join(',');
                 obj.betting_unitPrice = 1;
-                obj.betting_point = "0-10.00%";
+                obj.betting_point = this.$store.state.LHC.Lottery_point;
+                obj.play_detail_code = this.lotteryCode + this.mode;
 
                 // 暂时
                 obj.graduation_count = 1;
@@ -1402,11 +1402,40 @@ export default {
                     btn: ["确定", "取消"],
                     content: c,
                     yes: function(index, layero) {
+                        
+                        // 处理 _this.chosenLotteryItems
+                        var arr = _this.chosenLotteryItems.slice(0);
+                        var res = [];
+                        for(let i = 0; i < arr.length;i++) {
+                            var o = {};
+                            for(let j in arr[i]) {
+                                if(j == "betting_unitPrice" || j == "maxAward" || j == "text") {
+                                    continue;
+                                }else {
+                                    o[j] = encodeURIComponent(arr[i][j]);
+                                }
+                            }
+                            res.push(o);
+                        }
+                        var o = {
+                            Action: 'AddBetting',
+                            data: '{'+ "BettingData:" + JSON.stringify(res) +'}',
+                            SourceName: 'PC'
+                        };
+                        var a = formDataInit(o);
+                        var l = new Date().getTime();
                         _this.$axios({
                             url: _this.getApi('getPay'),
                             method: 'POST',
-                            data: {
-                                BettingData: _this.chosenLotteryItems
+                            params: {
+                                A: 'AddBetting',
+                                S: _this.$store.state.Attach,
+                                U: _this.userName,
+                                T: (new Date(l - _this.$store.state.Difftime).format("ddhhmmss")),
+                            },
+                            data: a,
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded"
                             }
                         }).then(res => {
                             // 投注成功提示
@@ -1457,9 +1486,15 @@ export default {
             this.chosenLotteryItems[inx].betting_unitPrice = res;
         },
         itemPriceFilter(ele, inx) {
-            // var res = (parseInt(ele.betting_unitPrice) * parseFloat(ele.maxAward)).toFixed(2);
+            var s = this.$store.state.maxBetPrice
+            if((ele.betting_unitPrice) > s) {
+                layer.msg("最高投注额为" + s + "元");
+                ele.betting_unitPrice = s;
+                ele.betting_money = parseInt(ele.betting_unitPrice) * parseInt(ele.betting_count);
+                return;
+            };
             var res = Math.round(ele.maxAward * ele.betting_unitPrice * 100) / 100;
-            console.log(res);
+            ele.betting_money = parseInt(ele.betting_unitPrice) * parseInt(ele.betting_count);
             if (res === 'NaN') {
                 return '0.00';
             } else {

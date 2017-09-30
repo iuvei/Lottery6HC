@@ -83,11 +83,13 @@ export default {
         // 渲染底部关于我们, 联系我们等等。
         renderFooter() {
             var f = localStorage.getItem('FooterConfig');
+            if(f === null || f === 'undefined') return;
             this.FooterConfig = JSON.parse(f);
         },
         // 设置服务体验时间
         setTime() {
             var s = localStorage.getItem('ServiceRating');
+            if(s === null || s === 'undefined') return;
             this.ServiceRating = JSON.parse(s);
 
             var t = parseFloat(this.ServiceRating.RechargeTime),

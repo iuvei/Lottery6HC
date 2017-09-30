@@ -293,7 +293,7 @@ default.directive("copyBtn", {
             window.site && (v += "&S=" + site);
             var m = "Register" !== t.Action && state.UserName || t.UserName;
             m && (v += "&U=" + m),
-            "AddBetting" !== t.Action && "AddChaseBetting" !== t.Action || (v += "&T=" + new Date(l - state.Difftime).format("ddhhmmss")),
+            "AddBetting" !== t.Action && "AddChaseBetting" !== t.Action || (v += "&T=" + new Date(l - state.Difftime)v),
             fetch(v, {
                 credentials: "same-origin",
                 method: "POST",

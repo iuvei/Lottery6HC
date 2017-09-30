@@ -43,20 +43,10 @@ export default {
                 K3: "快3",
                 "6HC": "六合彩"
             },
-            LotterArr: {
-                K3: [1407, "L_K3"],
-                SSC: [1e3, "L_SSC"],
-                SYX5: [1100, "L_SYX5"],
-                PK10: [1303, "L_PK10"],
-                KL8: [1302, "L_KL8"],
-                FC3D: [1201, "L_FC3D"],
-                PL35: [1202, "L_PL35"],
-                "6HC": [1301, "L_6HC"]
-            }
         }
     },
     methods: {
-
+        
     },
     mounted() {
         this.$NProgress.done();

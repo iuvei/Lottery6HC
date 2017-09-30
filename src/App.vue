@@ -15,69 +15,23 @@ export default {
 	},
 	methods: {
 		// 登录判断
-		login(usr,psw) {
-			this.$axios({
-				method: 'GET',
-				url: this.getApi('getLogin'),
-				data: {
-					Action: 'Login',
-					UserName: usr,
-					Password: psw,
-					Type: 'Hash',
-					SourceName: 'PC'
-				}
-			}).then(res => {
-				if(res.data.Code === 1) {
-					localStorage.setItem('UserName', usr);
-					this.$store.state.userName = usr;
-					// 登录成功,请求用户信息
-					this.getUserInfo();
-				}else {
-					alert('登录失败');
-				}
-			}).catch(err => {
-				console.log(err);
-			});
+		login() {
+			// 保存版本缓存
+			var c = localStorage.getItem('CacheData');
+            if(c === null || c === undefined) {
+                c = {};
+            }
+			this.$store.state.CacheData = c;
+			// 如果 localStorage 里面 UserName 不存在则打回 login 页面
+			var f = process.env.API_ROOT === '/ajax.php' ? localStorage.getItem('UserName') : 'c001';
+			var p = localStorage.getItem('UserPhoto')
+			if(f !== null) {
+				this.$store.state.userName = f;
+				this.$store.state.userPhoto = p;
+				return;
+			};
+			location.href = "/login";
 		},
-		// 请求用户信息并保存
-		getUserInfo() {
-			this.$axios({
-				method: 'GET',
-				url: this.getApi('getUserInfo'),
-				data: {
-					Action: 'GetInitData',
-					Requirement: ["UserUpGradeBonus","NoticeData","UserPhoto"],
-					SourceName: 'PC'
-				}
-			}).then(res => {
-				var BackData = res.data.BackData;
-				var UserPhoto = BackData.UserPhoto;
-				var UserUpGradeBonus = BackData.UserUpGradeBonus;
-				var NoticeData = BackData.NoticeData;
-				localStorage.setItem('UserPhoto', UserPhoto);
-				localStorage.setItem('UserUpGradeBonus',JSON.stringify(UserUpGradeBonus));
-				localStorage.setItem('NoticeData',JSON.stringify(NoticeData));
-			}).catch(err => {
-				console.log(err);
-			});
-		},
-		// 初始化页面数据并保存
-		getInitData(Requirement) {
-            this.$axios({
-                method: 'GET',
-                url: this.getApi('getInitData'),
-                data: {
-                    Action: 'GetInitData',
-                    Requirement: Requirement,
-                    SourceName: 'PC'
-                }
-            }).then(res => {
-                var BackData = res.data.BackData;
-                localStorage.setItem('FooterConfig', JSON.stringify(BackData.FooterConfig));
-                localStorage.setItem('LotteryList', JSON.stringify(BackData.LotteryList));
-				localStorage.setItem('ServiceRating', JSON.stringify(BackData.ServiceRating));
-            });
-        },
 		// 禁止右键事件
 		banRightClick() {
 			document.oncontextmenu = function() {
@@ -86,8 +40,7 @@ export default {
 		}
 	},
 	mounted() {
-		this.getInitData(["FooterConfig", "LotteryList", 'ServiceRating']);
-		this.login('web2017','');
+		this.login();
 		this.banRightClick();
 	}
 }
@@ -106,7 +59,7 @@ export default {
 
 .fade-enter-active,
 .fade-leave-active {
-	transition: all .3s ease;
+	transition: all .5s ease;
 }
 
 .fade-enter,
